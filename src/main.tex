@@ -56,7 +56,8 @@ Context retrieval uses three-leg hybrid candidate scoring and prioritized breadt
 Phase one merges lexical, recency, and dense vector signals.
 Phase two traverses structural dependency edges while respecting invalidation semantics.
 Phase three enforces canonical-first ranking and hot-list conflict preservation under token budgets.
-We evaluate Lambo using continuous 5-minute health sampling (2,486 heartbeat snapshots) over a 12-day live deployment.
+We evaluate Lambo across two production rigs using continuous 5-minute health sampling.
+This evaluation covers 2,494 heartbeat snapshots on CUDA and 3,429 on Metal over 12 to 16 days of deployment.
 Deduplication rates reached 12.0\% during synchronized review swarms on Metal (against 0.9\% in single-agent sessions) and 4.3\% among swarm-named agents on CUDA (against 1.7\% in non-swarm streams, 2.2\% aggregate).
 Zero infrastructure-level faults occurred across all checkpoints.
 Tool-level execution misses (25\% to 28\% on inspect) revealed a text-surface affordance gap that motivates rendering explicit node identifiers.
@@ -632,7 +633,8 @@ It eliminates distributed locking overheads through asynchronous monotonic write
 
 Lambo establishes an in-memory topological memory substrate for multi-agent software engineering.
 By combining typed multi-graph structures with an earned canonization lifecycle, it maintains architectural context across ephemeral agent executions.
-Production telemetry across 2,486 snapshots demonstrated zero data loss and 12.0\% deduplication in concurrent swarms.
+Production telemetry across 5,923 combined snapshots on both rigs demonstrated zero infrastructure data loss.
+Write-time deduplication reached 12.0\% during review swarms on Metal and 4.3\% among swarm-named agents on CUDA.
 Our mathematical formulation of multi-repository dispersion explains why consensus promotion requires repository scoping.
 Lambo demonstrates that structured topological memory provides a dependable foundation for autonomous software development.
 

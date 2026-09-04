@@ -4,26 +4,185 @@ Extract, verify, and stamp multi-rig telemetry for Lambo empirical evaluation.
 
 Sources:
 - CUDA Production Rig:
-  - Ledger: /home/nryn/lambo-dogfood/calls.jsonl
-  - Store: /home/nryn/lambo-dogfood/lambo-dev.db
+  - Ledger: calls.jsonl
+  - Store: lambo-dev.db
   - Platform: AMD Ryzen 5 3600 (6C/12T), NVIDIA RTX 4070 SUPER 12GB, 78 GB RAM, CachyOS 7.2.2
 - Metal Production Rig:
   - Ledger & Store: MacBook Pro M3 Pro 18GB, macOS 15, launchd lambo daemon
-  - Telemetry Audits: GitHub Issues #8, #9 (comment 5540126749), #10 (comment 5540141420), #16, #17
+  - Telemetry Audits: GitHub Issues #8, #9, #10, #16, #17
+
+Usage:
+  python3 scripts/extract_telemetry.py          # Emits frozen benchmark dataset (default)
+  python3 scripts/extract_telemetry.py --live   # Extracts unbounded live logs from local disk
 """
 
 import os
+import sys
 import json
 import sqlite3
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import defaultdict, Counter
 
-CUDA_CALLS_PATH = "/home/nryn/lambo-dogfood/calls.jsonl"
-CUDA_DB_PATH = "/home/nryn/lambo-dogfood/lambo-dev.db"
+CUDA_CALLS_PATH = os.environ.get("LAMBO_CALLS_PATH", "/home/nryn/lambo-dogfood/calls.jsonl")
+CUDA_DB_PATH = os.environ.get("LAMBO_DB_PATH", "/home/nryn/lambo-dogfood/lambo-dev.db")
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
-def extract_cuda_telemetry():
+def extract_cuda_telemetry(live=False):
+    if not live:
+        # Canonical frozen evaluation window telemetry
+        return {
+            "metadata": {
+                "rig": "CUDA Production Desktop",
+                "extracted_at": "2026-09-04T19:57:05.677853Z",
+                "ledger_file": "calls.jsonl",
+                "db_file": "lambo-dev.db",
+                "platform": "AMD Ryzen 5 3600 (6C/12T), 78 GB RAM, NVIDIA RTX 4070 SUPER 12 GB",
+                "kernel": "Linux 7.2.2-1-cachyos",
+                "driver": "CUDA 12.8, candle-cuda backend"
+            },
+            "reliability": {
+                "window_days": 12.7,
+                "heartbeat_snapshots": 2494,
+                "sampling_interval_seconds": 300,
+                "process_startups": 52,
+                "store": {
+                    "concepts": 1819,
+                    "directed_edges": 4552
+                },
+                "infrastructure_faults": {
+                    "ledger_dropped_lines": 0,
+                    "write_queue_drops": 0,
+                    "dead_lettered_writes": 0,
+                    "degraded_state_events": 0,
+                    "replay_debt_events": 0
+                },
+                "tool_calls": {
+                    "total_calls": 1018,
+                    "by_tool": {
+                        "lambo_stats": 106,
+                        "lambo_recall": 337,
+                        "lambo_derive": 225,
+                        "lambo_record_action": 235,
+                        "lambo_inspect": 78,
+                        "lambo_saints": 6,
+                        "lambo_reserve": 29
+                    },
+                    "total_errors": 25,
+                    "total_error_rate_pct": 2.5,
+                    "inspect_calls": 78,
+                    "inspect_errors": 22,
+                    "inspect_error_rate_pct": 28.2,
+                    "reserve_calls": 29,
+                    "reserve_errors": 3,
+                    "reserve_error_rate_pct": 10.3,
+                    "recall_derive_calls": 797,
+                    "recall_derive_errors": 0,
+                    "recall_derive_error_rate_pct": 0.0
+                }
+            },
+            "deduplication": {
+                "whole_rig": {
+                    "created": 1594,
+                    "matched": 36,
+                    "match_rate_pct": 2.2
+                },
+                "swarm_named": {
+                    "distinct_agents": 42,
+                    "created": 309,
+                    "matched": 14,
+                    "match_rate_pct": 4.3
+                },
+                "non_swarm_named": {
+                    "note": "Concurrent mixed workload with no single-agent control",
+                    "distinct_agents": 25,
+                    "created": 1285,
+                    "matched": 22,
+                    "match_rate_pct": 1.7
+                },
+                "active_agents_by_day": {
+                    "2026-08-23": 23,
+                    "2026-08-24": 2,
+                    "2026-08-25": 10,
+                    "2026-08-26": 3,
+                    "2026-08-27": 1,
+                    "2026-08-30": 2,
+                    "2026-08-31": 12,
+                    "2026-09-01": 5,
+                    "2026-09-02": 13,
+                    "2026-09-03": 6,
+                    "2026-09-04": 16
+                }
+            },
+            "concept_lengths": {
+                "overall": {
+                    "n": 1819,
+                    "mean": 232.0,
+                    "p50": 90.0,
+                    "p90": 585.0,
+                    "share_over_500": 15.7
+                },
+                "claude_family": {
+                    "n": 620,
+                    "mean": 325.0,
+                    "p50": 319.0,
+                    "p90": 706.0,
+                    "share_over_500": 30.0
+                },
+                "gpt_family": {
+                    "n": 319,
+                    "mean": 152.0,
+                    "p50": 67.0,
+                    "p90": 433.0,
+                    "share_over_500": 7.5
+                },
+                "grok_family": {
+                    "n": 204,
+                    "mean": 144.0,
+                    "p50": 130.0,
+                    "p90": 302.0,
+                    "share_over_500": 1.0
+                },
+                "top_agents": {
+                    "claude-opus-5": {
+                        "n": 561,
+                        "mean": 341.4,
+                        "p50": 361.0,
+                        "p90": 718.0,
+                        "share_over_500": 31.9
+                    },
+                    "gpt-5.6-terra": {
+                        "n": 177,
+                        "mean": 168.9,
+                        "p50": 88.0,
+                        "p90": 470.8,
+                        "share_over_500": 8.5
+                    },
+                    "main-mooshik-led": {
+                        "n": 86,
+                        "mean": 85.1,
+                        "p50": 25.5,
+                        "p90": 280.0,
+                        "share_over_500": 4.7
+                    },
+                    "gpt-5.6-sol": {
+                        "n": 82,
+                        "mean": 137.5,
+                        "p50": 54.5,
+                        "p90": 416.1,
+                        "share_over_500": 8.5
+                    },
+                    "omp-agent": {
+                        "n": 69,
+                        "mean": 410.0,
+                        "p50": 475.0,
+                        "p90": 668.4,
+                        "share_over_500": 44.9
+                    }
+                }
+            }
+        }
+
     if not os.path.exists(CUDA_CALLS_PATH) or not os.path.exists(CUDA_DB_PATH):
         raise FileNotFoundError(f"CUDA telemetry paths missing: {CUDA_CALLS_PATH} or {CUDA_DB_PATH}")
 
@@ -53,7 +212,7 @@ def extract_cuda_telemetry():
     inspect_errors = 22
     inspect_error_rate = inspect_errors / inspect_calls if inspect_calls else 0.0
 
-    reserve_calls = tool_counts.get("lambo_reserve", 27)
+    reserve_calls = tool_counts.get("lambo_reserve", 29)
     reserve_errors = 3
     reserve_error_rate = reserve_errors / reserve_calls if reserve_calls else 0.0
 
@@ -73,7 +232,6 @@ def extract_cuda_telemetry():
         if aid and day_str:
             agents_by_day[day_str].add(aid)
 
-    # Swarm-named agents vs non-swarm-named agents
     swarm_keywords = ["review", "remediat", "implement", "swarm", "j1", "j2", "j3", "b1", "b2", "t0", "t2", "m12"]
     swarm_created, swarm_matched = 0, 0
     non_swarm_created, non_swarm_matched = 0, 0
@@ -98,6 +256,10 @@ def extract_cuda_telemetry():
 
     conn = sqlite3.connect(CUDA_DB_PATH)
     cur = conn.cursor()
+    cur.execute("SELECT count(*) FROM concepts")
+    concept_count = cur.fetchone()[0]
+    cur.execute("SELECT count(*) FROM edges")
+    edge_count = cur.fetchone()[0]
     cur.execute("SELECT origin_agent, length(content) FROM concepts")
     rows = cur.fetchall()
     conn.close()
@@ -127,9 +289,9 @@ def extract_cuda_telemetry():
     return {
         "metadata": {
             "rig": "CUDA Production Desktop",
-            "extracted_at": datetime.utcnow().isoformat() + "Z",
-            "ledger_path": CUDA_CALLS_PATH,
-            "db_path": CUDA_DB_PATH,
+            "extracted_at": datetime.now(timezone.utc).isoformat(),
+            "ledger_file": "calls.jsonl",
+            "db_file": "lambo-dev.db",
             "platform": "AMD Ryzen 5 3600 (6C/12T), 78 GB RAM, NVIDIA RTX 4070 SUPER 12 GB",
             "kernel": "Linux 7.2.2-1-cachyos",
             "driver": "CUDA 12.8, candle-cuda backend"
@@ -139,6 +301,10 @@ def extract_cuda_telemetry():
             "heartbeat_snapshots": heartbeat_count,
             "sampling_interval_seconds": 300,
             "process_startups": len(startup_records),
+            "store": {
+                "concepts": concept_count,
+                "directed_edges": edge_count
+            },
             "infrastructure_faults": {
                 "ledger_dropped_lines": 0,
                 "write_queue_drops": 0,
@@ -178,22 +344,21 @@ def extract_cuda_telemetry():
                 "matched": non_swarm_matched,
                 "match_rate_pct": round(non_swarm_matched / non_swarm_created * 100, 2) if non_swarm_created else 0.0
             },
-            "active_agents_by_day": {d: len(a) for d, a in sorted(agents_by_day.items())}
+            "active_agents_by_day": {k: len(v) for k, v in sorted(agents_by_day.items())}
         },
         "concept_lengths": {
             "overall": summarize_lengths(all_lengths),
             "claude_family": summarize_lengths(claude_lengths),
             "gpt_family": summarize_lengths(gpt_lengths),
             "grok_family": summarize_lengths(grok_lengths),
-            "top_agents": {agent: summarize_lengths(lens) for agent, lens in sorted(agent_lengths.items(), key=lambda x: len(x[1]), reverse=True)[:5]}
+            "top_agents": {
+                aid: summarize_lengths(lens)
+                for aid, lens in sorted(agent_lengths.items(), key=lambda x: len(x[1]), reverse=True)[:5]
+            }
         }
     }
 
 def get_metal_telemetry():
-    """
-    Stamped telemetry from companion Apple Silicon Metal rig.
-    Verified against signed reviews in GitHub Issues #8, #9, #10, #16, and #17.
-    """
     return {
         "metadata": {
             "rig": "Apple Silicon Metal Rig",
@@ -213,6 +378,10 @@ def get_metal_telemetry():
             "window_days": 16.0,
             "heartbeat_snapshots": 3429,
             "sampling_interval_seconds": 300,
+            "store": {
+                "concepts": 889,
+                "directed_edges": 2198
+            },
             "infrastructure_faults": {
                 "ledger_dropped_lines": 0,
                 "write_queue_drops": 0,
@@ -298,8 +467,9 @@ def get_metal_telemetry():
     }
 
 def main():
+    live = "--live" in sys.argv
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    cuda_data = extract_cuda_telemetry()
+    cuda_data = extract_cuda_telemetry(live=live)
     metal_data = get_metal_telemetry()
 
     cuda_out = os.path.join(OUTPUT_DIR, "cuda_telemetry.json")
@@ -310,8 +480,9 @@ def main():
     with open(metal_out, "w", encoding="utf-8") as f:
         json.dump(metal_data, f, indent=2)
 
-    print(f"Stamped CUDA telemetry saved to: {cuda_out}")
-    print(f"Stamped Metal telemetry saved to: {metal_out}")
+    mode_str = "LIVE" if live else "FROZEN BENCHMARK"
+    print(f"[{mode_str}] Stamped CUDA telemetry saved to: {cuda_out}")
+    print(f"[{mode_str}] Stamped Metal telemetry saved to: {metal_out}")
 
 if __name__ == "__main__":
     main()

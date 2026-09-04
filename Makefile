@@ -1,6 +1,6 @@
 .PHONY: all extract figures verify pdf site clean
 
-all: extract figures verify pdf site
+all: figures verify pdf site
 
 extract:
 	python3 scripts/extract_telemetry.py

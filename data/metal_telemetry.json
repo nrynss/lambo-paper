@@ -17,6 +17,10 @@
     "window_days": 16.0,
     "heartbeat_snapshots": 3429,
     "sampling_interval_seconds": 300,
+    "store": {
+      "concepts": 889,
+      "directed_edges": 2198
+    },
     "infrastructure_faults": {
       "ledger_dropped_lines": 0,
       "write_queue_drops": 0,

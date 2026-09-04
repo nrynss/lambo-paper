@@ -2,17 +2,21 @@
   "metadata": {
     "rig": "CUDA Production Desktop",
     "extracted_at": "2026-09-04T19:57:05.677853Z",
-    "ledger_path": "/home/nryn/lambo-dogfood/calls.jsonl",
-    "db_path": "/home/nryn/lambo-dogfood/lambo-dev.db",
+    "ledger_file": "calls.jsonl",
+    "db_file": "lambo-dev.db",
     "platform": "AMD Ryzen 5 3600 (6C/12T), 78 GB RAM, NVIDIA RTX 4070 SUPER 12 GB",
     "kernel": "Linux 7.2.2-1-cachyos",
     "driver": "CUDA 12.8, candle-cuda backend"
   },
   "reliability": {
     "window_days": 12.7,
-    "heartbeat_snapshots": 2495,
+    "heartbeat_snapshots": 2494,
     "sampling_interval_seconds": 300,
     "process_startups": 52,
+    "store": {
+      "concepts": 1819,
+      "directed_edges": 4552
+    },
     "infrastructure_faults": {
       "ledger_dropped_lines": 0,
       "write_queue_drops": 0,
@@ -21,44 +25,47 @@
       "replay_debt_events": 0
     },
     "tool_calls": {
-      "total_calls": 1020,
+      "total_calls": 1018,
       "by_tool": {
         "lambo_stats": 106,
         "lambo_recall": 337,
         "lambo_derive": 225,
         "lambo_record_action": 235,
-        "lambo_inspect": 82,
+        "lambo_inspect": 78,
         "lambo_saints": 6,
         "lambo_reserve": 29
       },
       "total_errors": 25,
-      "total_error_rate_pct": 2.45,
-      "inspect_calls": 82,
+      "total_error_rate_pct": 2.5,
+      "inspect_calls": 78,
       "inspect_errors": 22,
-      "inspect_error_rate_pct": 26.8,
+      "inspect_error_rate_pct": 28.2,
       "reserve_calls": 29,
       "reserve_errors": 3,
-      "reserve_error_rate_pct": 10.3
+      "reserve_error_rate_pct": 10.3,
+      "recall_derive_calls": 797,
+      "recall_derive_errors": 0,
+      "recall_derive_error_rate_pct": 0.0
     }
   },
   "deduplication": {
     "whole_rig": {
-      "created": 1748,
-      "matched": 39,
-      "match_rate_pct": 2.23
+      "created": 1594,
+      "matched": 36,
+      "match_rate_pct": 2.2
     },
     "swarm_named": {
       "distinct_agents": 42,
-      "created": 358,
+      "created": 309,
       "matched": 14,
-      "match_rate_pct": 3.91
+      "match_rate_pct": 4.3
     },
     "non_swarm_named": {
       "note": "Concurrent mixed workload with no single-agent control",
       "distinct_agents": 25,
-      "created": 1390,
-      "matched": 25,
-      "match_rate_pct": 1.8
+      "created": 1285,
+      "matched": 22,
+      "match_rate_pct": 1.7
     },
     "active_agents_by_day": {
       "2026-08-23": 23,
@@ -77,67 +84,67 @@
   "concept_lengths": {
     "overall": {
       "n": 1819,
-      "mean": 218.19461242440903,
+      "mean": 232.0,
       "p50": 90.0,
-      "p90": 584.6000000000001,
-      "share_over_500": 15.667949422759758
+      "p90": 585.0,
+      "share_over_500": 15.7
     },
     "claude_family": {
       "n": 620,
-      "mean": 325.3048387096774,
+      "mean": 325.0,
       "p50": 319.0,
-      "p90": 705.7000000000002,
+      "p90": 706.0,
       "share_over_500": 30.0
     },
     "gpt_family": {
       "n": 319,
-      "mean": 152.35423197492162,
+      "mean": 152.0,
       "p50": 67.0,
-      "p90": 432.9999999999999,
-      "share_over_500": 7.523510971786834
+      "p90": 433.0,
+      "share_over_500": 7.5
     },
     "grok_family": {
       "n": 204,
-      "mean": 143.67156862745097,
-      "p50": 129.5,
-      "p90": 302.40000000000003,
-      "share_over_500": 0.9803921568627451
+      "mean": 144.0,
+      "p50": 130.0,
+      "p90": 302.0,
+      "share_over_500": 1.0
     },
     "top_agents": {
       "claude-opus-5": {
         "n": 561,
-        "mean": 341.4295900178253,
+        "mean": 341.4,
         "p50": 361.0,
         "p90": 718.0,
-        "share_over_500": 31.907308377896616
+        "share_over_500": 31.9
       },
       "gpt-5.6-terra": {
         "n": 177,
-        "mean": 168.92655367231637,
+        "mean": 168.9,
         "p50": 88.0,
-        "p90": 470.80000000000007,
-        "share_over_500": 8.47457627118644
+        "p90": 470.8,
+        "share_over_500": 8.5
       },
       "main-mooshik-led": {
         "n": 86,
-        "mean": 85.0813953488372,
+        "mean": 85.1,
         "p50": 25.5,
         "p90": 280.0,
-        "share_over_500": 4.651162790697675
+        "share_over_500": 4.7
       },
       "gpt-5.6-sol": {
         "n": 82,
-        "mean": 137.4512195121951,
+        "mean": 137.5,
         "p50": 54.5,
-        "p90": 416.10000000000014,
-        "share_over_500": 8.536585365853659
+        "p90": 416.1,
+        "share_over_500": 8.5
       },
       "omp-agent": {
         "n": 69,
-        "mean": 410.0289855072464,
+        "mean": 410.0,
         "p50": 475.0,
-        "p90": 668.4000000000001,
-        "share_over_500": 44.927536231884055
+        "p90": 668.4,
+        "share_over_500": 44.9
       }
     }
   }

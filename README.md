@@ -80,6 +80,14 @@ make pdf
 cd src && tectonic main.tex
 ```
 
+If `tectonic` is not on your PATH, install the same pinned build CI uses. It is
+downloaded from the upstream release, checked against a recorded sha256, and
+placed in `~/.local/bin`:
+```bash
+make tectonic
+```
+To use a copy you already have, pass its path: `make pdf TECTONIC=/path/to/tectonic`.
+
 ### 5. Build Web Edition
 ```bash
 cd site

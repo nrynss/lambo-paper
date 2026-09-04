@@ -43,7 +43,7 @@ def extract_cuda_telemetry(live=False):
             },
             "reliability": {
                 "window_days": 12.7,
-                "heartbeat_snapshots": 2494,
+                "heartbeat_snapshots": 2495,
                 "sampling_interval_seconds": 300,
                 "process_startups": 52,
                 "store": {
@@ -58,21 +58,21 @@ def extract_cuda_telemetry(live=False):
                     "replay_debt_events": 0
                 },
                 "tool_calls": {
-                    "total_calls": 1018,
+                    "total_calls": 1020,
                     "by_tool": {
                         "lambo_stats": 106,
                         "lambo_recall": 337,
                         "lambo_derive": 225,
                         "lambo_record_action": 235,
-                        "lambo_inspect": 78,
+                        "lambo_inspect": 82,
                         "lambo_saints": 6,
                         "lambo_reserve": 29
                     },
                     "total_errors": 25,
-                    "total_error_rate_pct": 2.5,
-                    "inspect_calls": 78,
+                    "total_error_rate_pct": 2.45,
+                    "inspect_calls": 82,
                     "inspect_errors": 22,
-                    "inspect_error_rate_pct": 28.2,
+                    "inspect_error_rate_pct": 26.8,
                     "reserve_calls": 29,
                     "reserve_errors": 3,
                     "reserve_error_rate_pct": 10.3,
@@ -207,17 +207,23 @@ def extract_cuda_telemetry(live=False):
                 startup_records.append(entry)
 
     tool_counts = Counter(c.get("tool") for c in call_records)
-    
-    inspect_calls = tool_counts.get("lambo_inspect", 78)
-    inspect_errors = 22
+    error_counts = Counter(c.get("tool") for c in call_records if c.get("outcome") == "error")
+
+    inspect_calls = tool_counts.get("lambo_inspect", 0)
+    inspect_errors = error_counts.get("lambo_inspect", 0)
     inspect_error_rate = inspect_errors / inspect_calls if inspect_calls else 0.0
 
-    reserve_calls = tool_counts.get("lambo_reserve", 29)
-    reserve_errors = 3
+    reserve_calls = tool_counts.get("lambo_reserve", 0)
+    reserve_errors = error_counts.get("lambo_reserve", 0)
     reserve_error_rate = reserve_errors / reserve_calls if reserve_calls else 0.0
 
+    write_read_tools = ("lambo_recall", "lambo_derive", "lambo_record_action")
+    recall_derive_calls = sum(tool_counts.get(t, 0) for t in write_read_tools)
+    recall_derive_errors = sum(error_counts.get(t, 0) for t in write_read_tools)
+    recall_derive_error_rate = recall_derive_errors / recall_derive_calls if recall_derive_calls else 0.0
+
     total_tool_calls = len(call_records)
-    total_tool_errors = inspect_errors + reserve_errors
+    total_tool_errors = sum(error_counts.values())
     total_tool_error_rate = total_tool_errors / total_tool_calls if total_tool_calls else 0.0
 
     ts_list = [datetime.fromisoformat(s["ts"]) for s in stats_records]
@@ -253,6 +259,13 @@ def extract_cuda_telemetry(live=False):
 
     total_created = swarm_created + non_swarm_created
     total_matched = swarm_matched + non_swarm_matched
+
+    def match_rate_pct(created, matched):
+        # Share of write-time ingestion attempts that deduplicated against an
+        # existing concept. The denominator is attempts (created plus matched),
+        # not creations alone.
+        attempts = created + matched
+        return round(matched / attempts * 100, 1) if attempts else 0.0
 
     conn = sqlite3.connect(CUDA_DB_PATH)
     cur = conn.cursor()
@@ -322,27 +335,30 @@ def extract_cuda_telemetry(live=False):
                 "inspect_error_rate_pct": round(inspect_error_rate * 100, 1),
                 "reserve_calls": reserve_calls,
                 "reserve_errors": reserve_errors,
-                "reserve_error_rate_pct": round(reserve_error_rate * 100, 1)
+                "reserve_error_rate_pct": round(reserve_error_rate * 100, 1),
+                "recall_derive_calls": recall_derive_calls,
+                "recall_derive_errors": recall_derive_errors,
+                "recall_derive_error_rate_pct": round(recall_derive_error_rate * 100, 1)
             }
         },
         "deduplication": {
             "whole_rig": {
                 "created": total_created,
                 "matched": total_matched,
-                "match_rate_pct": round(total_matched / total_created * 100, 2) if total_created else 0.0
+                "match_rate_pct": match_rate_pct(total_created, total_matched)
             },
             "swarm_named": {
                 "distinct_agents": len(swarm_agents),
                 "created": swarm_created,
                 "matched": swarm_matched,
-                "match_rate_pct": round(swarm_matched / swarm_created * 100, 2) if swarm_created else 0.0
+                "match_rate_pct": match_rate_pct(swarm_created, swarm_matched)
             },
             "non_swarm_named": {
                 "note": "Concurrent mixed workload with no single-agent control",
                 "distinct_agents": len(non_swarm_agents),
                 "created": non_swarm_created,
                 "matched": non_swarm_matched,
-                "match_rate_pct": round(non_swarm_matched / non_swarm_created * 100, 2) if non_swarm_created else 0.0
+                "match_rate_pct": match_rate_pct(non_swarm_created, non_swarm_matched)
             },
             "active_agents_by_day": {k: len(v) for k, v in sorted(agents_by_day.items())}
         },

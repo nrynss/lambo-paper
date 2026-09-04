@@ -7,7 +7,8 @@ Automated verification script for Lambo research paper constraints:
 4. Exactly 15 citations matching peer-reviewed literature
 5. Zero unscrubbed local user paths (/home/) in public data and web docs
 6. Zero stale or conflated figures (e.g. 2,486 snapshots, 524 tool calls)
-7. Mechanically verified figure consistency across:
+7. Within-file arithmetic consistency of data/*.json (counts sum, rates recompute)
+8. Mechanically verified figure consistency across:
    - data/cuda_telemetry.json
    - data/metal_telemetry.json
    - src/main.tex
@@ -144,8 +145,13 @@ def verify():
 
     # 7. Stale and Conflated Figures Ban
     stale_patterns = [
-        (r"2[,.]?486", "Stale snapshot count 2,486 (reconciled figure is 2,494 CUDA / 3,429 Metal / 5,923 total)"),
-        (r"524\s+tool", "Stale uptime tool invocation count 524 (reconciled dataset has 1,018 calls)"),
+        (r"2[,.]?486", "Stale snapshot count 2,486 (reconciled figure is 2,495 CUDA / 3,429 Metal / 5,924 total)"),
+        (r"2[,.]?494", "Stale snapshot count 2,494 (ledger replay at the frozen stamp gives 2,495)"),
+        (r"5[,.]?923", "Stale combined snapshot count 5,923 (reconciled total is 5,924)"),
+        (r"524\s+tool", "Stale uptime tool invocation count 524 (reconciled dataset has 1,020 calls)"),
+        (r"1[,.]?018", "Stale CUDA tool call count 1,018 (by_tool replay sums to 1,020)"),
+        (r"22\s*/\s*78", "Stale inspect denominator 78 (ledger replay at the frozen stamp gives 82)"),
+        (r"28\.2", "Stale inspect miss rate 28.2% (recomputed as 26.8% on 22 / 82)"),
         (r"under\s+15\s*ms", "Unqualified vector scan claim 'under 15 ms' (measured 130.1 ms on CUDA, 71.0 ms on Metal)"),
     ]
     stale_found = []
@@ -175,7 +181,7 @@ def verify():
     else:
         print("[PASS] Zero stale or conflated figures found.")
 
-    # 8. Figure Consistency between data/*.json, src/main.tex, and site/src/content/docs/
+    # 7b. Figure Consistency between data/*.json, src/main.tex, and site/src/content/docs/
     if not os.path.exists(CUDA_DATA_FILE) or not os.path.exists(METAL_DATA_FILE):
         print(f"[FAIL] Telemetry JSON files missing: {CUDA_DATA_FILE} or {METAL_DATA_FILE}")
         failed = True
@@ -185,6 +191,72 @@ def verify():
         cuda_data = json.load(f)
     with open(METAL_DATA_FILE, "r", encoding="utf-8") as f:
         metal_data = json.load(f)
+
+    # 7. Within-file arithmetic: every count and rate in data/*.json must
+    # reconcile against its own components. A figure can agree across all three
+    # corpora and still be internally impossible, which is how a by_tool
+    # breakdown summing to 1,016 sat under a total_calls of 1,018.
+    arith = []
+
+    def check_sum(label, parts, total):
+        if sum(parts) != total:
+            arith.append(f"{label}: components sum to {sum(parts)}, file states {total}")
+
+    def check_rate(label, numerator, denominator, stated, places=1):
+        expected = round(numerator / denominator * 100, places) if denominator else 0.0
+        if abs(expected - stated) > 1e-9:
+            arith.append(f"{label}: {numerator} / {denominator} recomputes to {expected}, file states {stated}")
+
+    ctc = cuda_data["reliability"]["tool_calls"]
+    by_tool = ctc["by_tool"]
+    check_sum("CUDA by_tool vs total_calls", list(by_tool.values()), ctc["total_calls"])
+    check_sum("CUDA inspect_calls vs by_tool", [by_tool["lambo_inspect"]], ctc["inspect_calls"])
+    check_sum("CUDA reserve_calls vs by_tool", [by_tool["lambo_reserve"]], ctc["reserve_calls"])
+    check_sum("CUDA recall_derive_calls vs by_tool",
+              [by_tool["lambo_recall"], by_tool["lambo_derive"], by_tool["lambo_record_action"]],
+              ctc["recall_derive_calls"])
+    check_sum("CUDA total_errors vs components",
+              [ctc["inspect_errors"], ctc["reserve_errors"], ctc["recall_derive_errors"]],
+              ctc["total_errors"])
+    check_rate("CUDA inspect error rate", ctc["inspect_errors"], ctc["inspect_calls"], ctc["inspect_error_rate_pct"])
+    check_rate("CUDA reserve error rate", ctc["reserve_errors"], ctc["reserve_calls"], ctc["reserve_error_rate_pct"])
+    check_rate("CUDA total error rate", ctc["total_errors"], ctc["total_calls"], ctc["total_error_rate_pct"], places=2)
+
+    mtc = metal_data["reliability"]["tool_calls"]
+    check_sum("Metal total_errors vs components",
+              [mtc["inspect_errors"], mtc["reserve_errors"]], mtc["total_errors"])
+    check_rate("Metal inspect error rate", mtc["inspect_errors"], mtc["inspect_calls"], mtc["inspect_error_rate_pct"])
+    check_rate("Metal total error rate", mtc["total_errors"], mtc["total_calls"], mtc["total_error_rate_pct"], places=2)
+
+    # Match rate denominator is ingestion attempts (created plus matched), not creations.
+    def check_dedup(label, regime):
+        check_rate(label, regime["matched"], regime["created"] + regime["matched"], regime["match_rate_pct"])
+
+    cdd = cuda_data["deduplication"]
+    check_sum("CUDA whole_rig created", [cdd["swarm_named"]["created"], cdd["non_swarm_named"]["created"]],
+              cdd["whole_rig"]["created"])
+    check_sum("CUDA whole_rig matched", [cdd["swarm_named"]["matched"], cdd["non_swarm_named"]["matched"]],
+              cdd["whole_rig"]["matched"])
+    for key in ("whole_rig", "swarm_named", "non_swarm_named"):
+        check_dedup(f"CUDA {key} match rate", cdd[key])
+
+    mdd = metal_data["deduplication"]["temporal_regimes"]
+    check_sum("Metal whole_period created",
+              [mdd["review_swarm_window"]["created"], mdd["single_agent_window"]["created"]],
+              mdd["whole_period"]["created"])
+    check_sum("Metal whole_period matched",
+              [mdd["review_swarm_window"]["matched"], mdd["single_agent_window"]["matched"]],
+              mdd["whole_period"]["matched"])
+    for key in ("review_swarm_window", "single_agent_window", "whole_period"):
+        check_dedup(f"Metal {key} match rate", mdd[key])
+
+    if arith:
+        print(f"[FAIL] Found {len(arith)} within-file arithmetic inconsistencies:")
+        for msg in arith:
+            print(f"  {msg}")
+        failed = True
+    else:
+        print("[PASS] All within-file counts sum and all rates recompute in data/*.json.")
 
     # Read combined text for target corpora
     eval_mdx_file = os.path.join(SITE_DOCS_DIR, "05-evaluation.mdx")

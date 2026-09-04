@@ -14,12 +14,12 @@ We evaluated Lambo continuously during production development across two hardwar
 
 ## 5.1 System Reliability and Tool Execution
 
-We sampled system health via continuous 5-minute daemon heartbeats over a 12.7-day window on CUDA (2,494 snapshots) and 16.0 days on Metal (3,429 snapshots).
+We sampled system health via continuous 5-minute daemon heartbeats over a 12.7-day window on CUDA (2,495 snapshots) and 16.0 days on Metal (3,429 snapshots).
 
 | Reliability Metric | CUDA Production Rig | Metal Companion Rig |
 | :--- | :--- | :--- |
 | **Monitoring Window** | 12.7 days | 16.0 days |
-| **Heartbeat Snapshots (300 s)** | 2,494 | 3,429 |
+| **Heartbeat Snapshots (300 s)** | 2,495 | 3,429 |
 | **Total Concepts in Store** | 1,819 | 889 |
 | **Total Directed Edges** | 4,552 | 2,198 |
 | **Daemon Process Restarts** | 52 | launchd managed |
@@ -28,15 +28,15 @@ We sampled system health via continuous 5-minute daemon heartbeats over a 12.7-d
 | **Dead-Lettered Mutations** | **0** | **0** |
 | **Unresolved Replay Debt** | **0** | **0** |
 | **Degraded Episode Count** | **0** | **0** |
-| **Logged Tool Invocations** | 1,018 | 365 |
-| **Overall Tool Error Rate** | 2.5% (25 / 1,018) | 0.27% (1 / 365) |
-| `lambo_inspect` Miss Rate | **28.2%** (22 / 78) | **25.0%** (1 / 4) |
+| **Logged Tool Invocations** | 1,020 | 365 |
+| **Overall Tool Error Rate** | 2.45% (25 / 1,020) | 0.27% (1 / 365) |
+| `lambo_inspect` Miss Rate | **26.8%** (22 / 82) | **25.0%** (1 / 4) |
 | `lambo_reserve` Error Rate | 10.3% (3 / 29) | 0.0% (0 / 0) |
 | `lambo_recall` / `derive` Errors | 0.0% (0 / 797) | 0.0% (0 / 361) |
 
 <MdxNote>
 **Zero Infrastructure Faults vs. Tool Affordance Gap:**
-Every infrastructure-level failure counter recorded zero across both rigs. However, application-level telemetry revealed a consistent 25% to 28% failure rate on `lambo_inspect`. This failure rate is an affordance gap: `lambo_recall` renders text content without unique node UUIDs, forcing client models to type approximate substrings from memory rather than exact handles.
+Every infrastructure-level failure counter recorded zero across both rigs. However, application-level telemetry revealed a consistent 25% to 27% failure rate on `lambo_inspect`. This failure rate is an affordance gap: `lambo_recall` renders text content without unique node UUIDs, forcing client models to type approximate substrings from memory rather than exact handles.
 </MdxNote>
 
 ---

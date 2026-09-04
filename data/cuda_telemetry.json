@@ -10,7 +10,7 @@
   },
   "reliability": {
     "window_days": 12.7,
-    "heartbeat_snapshots": 2494,
+    "heartbeat_snapshots": 2495,
     "sampling_interval_seconds": 300,
     "process_startups": 52,
     "store": {
@@ -25,21 +25,21 @@
       "replay_debt_events": 0
     },
     "tool_calls": {
-      "total_calls": 1018,
+      "total_calls": 1020,
       "by_tool": {
         "lambo_stats": 106,
         "lambo_recall": 337,
         "lambo_derive": 225,
         "lambo_record_action": 235,
-        "lambo_inspect": 78,
+        "lambo_inspect": 82,
         "lambo_saints": 6,
         "lambo_reserve": 29
       },
       "total_errors": 25,
-      "total_error_rate_pct": 2.5,
-      "inspect_calls": 78,
+      "total_error_rate_pct": 2.45,
+      "inspect_calls": 82,
       "inspect_errors": 22,
-      "inspect_error_rate_pct": 28.2,
+      "inspect_error_rate_pct": 26.8,
       "reserve_calls": 29,
       "reserve_errors": 3,
       "reserve_error_rate_pct": 10.3,

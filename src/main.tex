@@ -57,10 +57,10 @@ Phase one merges lexical, recency, and dense vector signals.
 Phase two traverses structural dependency edges while respecting invalidation semantics.
 Phase three enforces canonical-first ranking and hot-list conflict preservation under token budgets.
 We evaluate Lambo across two production rigs using continuous 5-minute health sampling.
-This evaluation covers 2,494 heartbeat snapshots on CUDA and 3,429 on Metal over 12 to 16 days of deployment.
+This evaluation covers 2,495 heartbeat snapshots on CUDA and 3,429 on Metal over 12 to 16 days of deployment.
 Deduplication rates reached 12.0\% during synchronized review swarms on Metal (against 0.9\% in single-agent sessions) and 4.3\% among swarm-named agents on CUDA (against 1.7\% in non-swarm streams, 2.2\% aggregate).
 Zero infrastructure-level faults occurred across all checkpoints.
-Tool-level execution misses (25\% to 28\% on inspect) revealed a text-surface affordance gap that motivates rendering explicit node identifiers.
+Tool-level execution misses (25\% to 27\% on inspect) revealed a text-surface affordance gap that motivates rendering explicit node identifiers.
 We formulate the multi-repository dispersion effect to explain why consensus promotion requires namespace scoping.
 Finally, we characterize hardware-specific memory paging overheads on unified memory platforms.
 \end{abstract}
@@ -419,7 +419,7 @@ We evaluated Lambo across two distinct production environments.
 \textbf{Reliability Metric} & \textbf{CUDA Rig} & \textbf{Metal Rig} \\
 \midrule
 Monitoring Window & 12.7 days & 16.0 days \\
-Heartbeat Snapshots (300 s) & 2,494 & 3,429 \\
+Heartbeat Snapshots (300 s) & 2,495 & 3,429 \\
 Total Concepts in Store & 1,819 & 889 \\
 Total Directed Edges & 4,552 & 2,198 \\
 Daemon Process Restarts & 52 & launchd \\
@@ -432,9 +432,9 @@ Unresolved Replay Debt & \textbf{0} & \textbf{0} \\
 Degraded Episode Count & \textbf{0} & \textbf{0} \\
 \midrule
 \multicolumn{3}{l}{\textit{MCP Application Tool Execution}} \\
-Logged Tool Invocations & 1,018 & 365 \\
-Overall Tool Error Rate & 2.5\% (25 / 1,018) & 0.27\% (1 / 365) \\
-\texttt{inspect} Miss Rate & 28.2\% (22 / 78) & 25.0\% (1 / 4) \\
+Logged Tool Invocations & 1,020 & 365 \\
+Overall Tool Error Rate & 2.45\% (25 / 1,020) & 0.27\% (1 / 365) \\
+\texttt{inspect} Miss Rate & 26.8\% (22 / 82) & 25.0\% (1 / 4) \\
 \texttt{reserve} Error Rate & 10.3\% (3 / 29) & 0.0\% (0 / 0) \\
 \texttt{recall} / \texttt{derive} Errors & 0.0\% (0 / 797) & 0.0\% (0 / 361) \\
 \bottomrule
@@ -443,15 +443,15 @@ Overall Tool Error Rate & 2.5\% (25 / 1,018) & 0.27\% (1 / 365) \\
 
 \subsection{Telemetry and Infrastructure Reliability}
 Table \ref{tab:reliability} summarizes automated telemetry over the multi-rig evaluation.
-Across 2,494 continuous 5-minute heartbeat checks on the CUDA rig and 3,429 on the Metal rig, every infrastructure counter recorded zero.
+Across 2,495 continuous 5-minute heartbeat checks on the CUDA rig and 3,429 on the Metal rig, every infrastructure counter recorded zero.
 The write queue processed continuous concurrent writes without buffer saturation.
 Zero mutations were dead-lettered, and zero ledger lines were dropped.
 
 In contrast to infrastructure health, tool execution telemetry revealed application-level failures.
-Across 1,018 tool calls on the CUDA rig, 25 calls returned errors.
+Across 1,020 tool calls on the CUDA rig, 25 calls returned errors.
 Twenty-two errors were \texttt{lambo\_inspect} misses on approximate strings, and three were invalid reservation arguments.
 On the Metal rig, four inspect calls produced one miss.
-Both rigs exhibited a consistent 25\% to 28\% failure rate on \texttt{lambo\_inspect}.
+Both rigs exhibited a consistent 25\% to 27\% failure rate on \texttt{lambo\_inspect}.
 This failure rate stems from an affordance gap.
 The \texttt{lambo\_recall} tool renders text content without unique node identifiers.
 Consequently, client models type approximate substrings from memory rather than exact handles.
@@ -633,7 +633,7 @@ It eliminates distributed locking overheads through asynchronous monotonic write
 
 Lambo establishes an in-memory topological memory substrate for multi-agent software engineering.
 By combining typed multi-graph structures with an earned canonization lifecycle, it maintains architectural context across ephemeral agent executions.
-Production telemetry across 5,923 combined snapshots on both rigs demonstrated zero infrastructure data loss.
+Production telemetry across 5,924 combined snapshots on both rigs demonstrated zero infrastructure data loss.
 Write-time deduplication reached 12.0\% during review swarms on Metal and 4.3\% among swarm-named agents on CUDA.
 Our mathematical formulation of multi-repository dispersion explains why consensus promotion requires repository scoping.
 Lambo demonstrates that structured topological memory provides a dependable foundation for autonomous software development.

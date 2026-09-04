@@ -19,19 +19,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Install Tectonic
-        uses: willemvds/setup-tectonic@v1
-        with:
-          version: 0.15.0
+        run: |
+          set -euo pipefail
+          TECTONIC_URL="https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-unknown-linux-musl.tar.gz"
+          EXPECTED_SHA="8533d07f9ccbd7a65824b9e0459041bca34af1eb33daba48f59215593753a3b7"
+          curl -fsSL -o /tmp/tectonic.tar.gz "$TECTONIC_URL"
+          echo "${EXPECTED_SHA}  /tmp/tectonic.tar.gz" | sha256sum -c -
+          sudo tar -xzf /tmp/tectonic.tar.gz -C /usr/local/bin
+          tectonic -V
+
+      - name: Verify Constraints
+        run: python3 scripts/verify_constraints.py
 
       - name: Compile LaTeX Paper
         working-directory: src
         run: tectonic main.tex
 
       - name: Upload Compiled PDF
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: lambo-paper-pdf
           path: src/main.pdf
@@ -41,10 +49,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Download Compiled PDF
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: lambo-paper-pdf
           path: site/public
@@ -54,25 +62,23 @@ jobs:
           mv site/public/main.pdf site/public/lambo-paper.pdf || true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: site/package-lock.json
+          node-version: 24
 
       - name: Install dependencies
         working-directory: site
-        run: npm ci || npm install
+        run: npm install
 
       - name: Build Starlight Site
         working-directory: site
         run: npm run build
 
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: site/dist
 
@@ -84,4 +90,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

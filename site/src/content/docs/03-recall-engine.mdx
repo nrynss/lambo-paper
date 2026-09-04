@@ -1,0 +1,30 @@
+---
+title: "3. 3-Phase Recall Engine"
+description: "Hybrid candidate scoring, prioritized breadth-first expansion, and token assembly."
+---
+
+Lambo executes retrieval via a calibrated three-phase hybrid recall engine:
+
+## Phase 1: Candidate Generation and Max-Merge
+
+Given query $q$, candidate generation combines three orthogonal retrieval legs:
+1. **Lexical Leg:** Inverted BM25 keyword index matching.
+2. **Dense Vector Leg:** Exact cosine similarity over dense vector embeddings (BGE-M3 1024-dim).
+3. **Recency Leg:** Temporal recency bias over recently touched concepts.
+
+Phase 1 merges candidate scores using a maximum selection rule:
+$$S_1(q, c) = \max\left( S_{\text{lex}}(q, c), \quad S_{\text{vec}}(q, c), \quad S_{\text{rec}}(c) \right)$$
+
+## Phase 2: Prioritized Breadth-First Expansion
+
+The candidate set forms seeds for graph traversal up to depth $D_{\max} = 2$. At each frontier node, traversal follows edges according to strict priority:
+$$\text{Dependency} \succ \text{Causal} \succ \text{Hierarchical} \succ \text{CoOccurrence} \succ \text{Semantic}$$
+
+Concepts sharing a `chunk_group_id` with an expanded node are force-included as siblings.
+
+## Phase 3: Composite Scoring and Token Assembly
+
+Expanded concepts are evaluated using composite daemon scoring:
+$$S_{\text{final}}(c) = 0.4 \cdot S_{\text{daemon}}(c) + 0.6 \cdot S_1(q, c)$$
+
+The daemon score incorporates topological health, access frequency, recency, degree density, edge bonuses, and type modifiers. Finally, concepts are ordered by canonical priority and assembled into context blocks fitting within token budget $T_{\max}$.

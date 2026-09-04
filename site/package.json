@@ -1,0 +1,25 @@
+{
+  "name": "lambo-paper-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Interactive web edition of the research paper: Lambo: Scalable Attributed Graph Memory for Multi-Agent Software Engineering",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.41.7",
+    "astro": "^7.2.2",
+    "katex": "^0.18.4",
+    "mermaid": "^11.16.1",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

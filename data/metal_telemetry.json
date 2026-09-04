@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "rig": "Apple Silicon Metal Rig",
+    "source_issues": [
+      "Issue #8: Vector scan latency and memory compression tax",
+      "Issue #9 comment 5540126749: Inspect error replication (n=4)",
+      "Issue #10 comment 5540141420: Metal rig cross-check (dedup regimes and length)",
+      "Issue #16 comment 5540134512: Heartbeat snapshots and flush lag",
+      "Issue #17: Comprehensive dogfood review (365 calls, 889 concepts)"
+    ],
+    "verified_at": "2026-09-05T00:00:00Z",
+    "platform": "Apple MacBook Pro M3 Pro (12 CPU cores, 18 GPU cores), 18 GB Unified Memory",
+    "os": "macOS 15 (launchd daemon)",
+    "backend": "candle-metal backend, BGE-M3 1024-dim"
+  },
+  "reliability": {
+    "window_days": 16.0,
+    "heartbeat_snapshots": 3429,
+    "sampling_interval_seconds": 300,
+    "infrastructure_faults": {
+      "ledger_dropped_lines": 0,
+      "write_queue_drops": 0,
+      "dead_lettered_writes": 0,
+      "degraded_state_events": 0,
+      "replay_debt_events": 0
+    },
+    "tool_calls": {
+      "total_calls": 365,
+      "total_errors": 1,
+      "total_error_rate_pct": 0.27,
+      "inspect_calls": 4,
+      "inspect_errors": 1,
+      "inspect_error_rate_pct": 25.0,
+      "reserve_calls": 0,
+      "reserve_errors": 0,
+      "reserve_error_rate_pct": 0.0
+    }
+  },
+  "deduplication": {
+    "temporal_regimes": {
+      "review_swarm_window": {
+        "dates": "2026-08-19 to 2026-08-23 (pre-J3)",
+        "description": "Multi-agent review swarm: implementor, 3 reviewers, 2 remediators per track",
+        "created": 456,
+        "matched": 62,
+        "match_rate_pct": 12.0
+      },
+      "single_agent_window": {
+        "dates": "2026-08-24 to 2026-09-04 (post-J3)",
+        "description": "Single-operator interactive workflow",
+        "created": 324,
+        "matched": 3,
+        "match_rate_pct": 0.9
+      },
+      "whole_period": {
+        "dates": "2026-08-19 to 2026-09-04",
+        "created": 780,
+        "matched": 65,
+        "match_rate_pct": 7.7
+      }
+    }
+  },
+  "concept_lengths": {
+    "overall": {
+      "n": 837,
+      "p10": 25,
+      "p50": 299,
+      "p90": 950,
+      "p99": 1508,
+      "max": 2053,
+      "share_over_200": 53.0,
+      "share_over_500": 36.0
+    },
+    "claude_family": {
+      "n": 648,
+      "mean": 412.0,
+      "share_over_500": 42.0,
+      "key_agents": {
+        "claude-orchestrator": {
+          "n": 409,
+          "mean": 453.0,
+          "max": 2053,
+          "share_over_500": 45.0
+        },
+        "claude-fable-5-1": {
+          "n": 138,
+          "mean": 307.0,
+          "max": 1279,
+          "share_over_500": 22.0
+        },
+        "claude-fable-5": {
+          "n": 101,
+          "mean": 290.0,
+          "max": 1478,
+          "share_over_500": 28.0
+        }
+      }
+    },
+    "gpt_family": {
+      "key_agents": {
+        "gpt-5-codex": {
+          "n": 29,
+          "mean": 117.0,
+          "max": 366,
+          "share_over_500": 0.0
+        }
+      }
+    },
+    "grok_family": {
+      "key_agents": {
+        "cursor-grok-docs": {
+          "n": 16,
+          "mean": 48.0,
+          "max": 132,
+          "share_over_500": 0.0
+        }
+      }
+    },
+    "by_type": {
+      "logic": {
+        "mean": 722.0
+      },
+      "constraint": {
+        "mean": 718.0
+      },
+      "observation": {
+        "mean": 586.0
+      },
+      "resource": {
+        "mean": 231.0
+      },
+      "entity": {
+        "mean": 120.0
+      }
+    }
+  }
+}

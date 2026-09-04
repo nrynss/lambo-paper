@@ -1,0 +1,60 @@
+---
+title: "2. System Model & Topology"
+description: "Single-writer daemon topology, typed graph structure, and Level-B storage pluggability."
+---
+
+import Mermaid from '../../components/Mermaid.astro';
+
+## 2.1 Single-Writer Daemon Topology
+
+Lambo enforces a single-writer daemon topology. One supervised background daemon holds exclusive write authority over a durable session. Agents communicate with the daemon via Unix domain sockets or local HTTP streams. This eliminates multi-process locking contention on persistent database engines while permitting concurrent read-only analytics.
+
+<Mermaid
+  code={`flowchart TD
+    subgraph Clients["Agent Clients"]
+        C1["Claude Orchestrator"]
+        C2["GPT Codex"]
+        C3["Grok Remediator"]
+    end
+    subgraph Daemon["Lambo Daemon Process"]
+        WQ["Async Write Queue"]
+        MemCore["In-RAM Graph Core"]
+        Engine["3-Phase Recall Engine"]
+    end
+    subgraph Store["Level-B Storage Engine"]
+        DB[("SQLite / Postgres / CockroachDB")]
+    end
+    C1 -->|derive / record_action| WQ
+    C2 -->|derive / record_action| WQ
+    C3 -->|derive / record_action| WQ
+    WQ -->|coalesced batch| MemCore
+    C1 -->|recall| Engine
+    Engine --> MemCore
+    MemCore <-->|flush / load| DB
+`}
+/>
+
+## 2.2 Directed Typed Graph Model
+
+Lambo represents software state as a directed typed multigraph $\mathcal{G} = (\mathcal{V}, \mathcal{E})$.
+
+### Concept Nodes ($\mathcal{V}$)
+Each concept node $c \in \mathcal{V}$ possesses a type classification $\tau(c) \in \mathcal{T}$:
+* **Logic:** Structural invariants, algorithmic rules, and core protocol invariants.
+* **Constraint:** Guard rails, version bounds, and operational ceilings.
+* **Observation:** Empirical measurements, telemetry samples, and runtime logs.
+* **Resource:** Artifact handles, API endpoints, schema definitions, and file paths.
+* **Entity:** Stable named abstractions, actors, and subsystems.
+
+### Typed Edges ($\mathcal{E}$)
+Edges capture precise architectural semantics $\epsilon(e) \in \mathcal{R}$:
+* **Dependency:** Upstream structural prerequisite ($u \to v$).
+* **Causal:** Invariant $u$ was established as a direct consequence of $v$.
+* **Hierarchical:** Parent-child grouping ($u$ contains $v$).
+* **CoOccurrence:** Derived concurrently within interaction $i$.
+* **Semantic:** High cosine similarity connection between text embeddings.
+* **Provenance:** Audit link attributing $c$ to creating agent and interaction.
+
+## 2.3 Level-B Storage Pluggability
+
+To prevent tight coupling to a single persistence layer, Lambo enforces **Level-B storage pluggability**. Storage drivers are compiled as modular adapters behind a strict `GraphStore` trait contract. Drivers support SQLite (in-process embedded), PostgreSQL, and CockroachDB with identical transactional semantics.

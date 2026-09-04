@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "rig": "CUDA Production Desktop",
+    "extracted_at": "2026-09-04T19:57:05.677853Z",
+    "ledger_path": "/home/nryn/lambo-dogfood/calls.jsonl",
+    "db_path": "/home/nryn/lambo-dogfood/lambo-dev.db",
+    "platform": "AMD Ryzen 5 3600 (6C/12T), 78 GB RAM, NVIDIA RTX 4070 SUPER 12 GB",
+    "kernel": "Linux 7.2.2-1-cachyos",
+    "driver": "CUDA 12.8, candle-cuda backend"
+  },
+  "reliability": {
+    "window_days": 12.7,
+    "heartbeat_snapshots": 2495,
+    "sampling_interval_seconds": 300,
+    "process_startups": 52,
+    "infrastructure_faults": {
+      "ledger_dropped_lines": 0,
+      "write_queue_drops": 0,
+      "dead_lettered_writes": 0,
+      "degraded_state_events": 0,
+      "replay_debt_events": 0
+    },
+    "tool_calls": {
+      "total_calls": 1020,
+      "by_tool": {
+        "lambo_stats": 106,
+        "lambo_recall": 337,
+        "lambo_derive": 225,
+        "lambo_record_action": 235,
+        "lambo_inspect": 82,
+        "lambo_saints": 6,
+        "lambo_reserve": 29
+      },
+      "total_errors": 25,
+      "total_error_rate_pct": 2.45,
+      "inspect_calls": 82,
+      "inspect_errors": 22,
+      "inspect_error_rate_pct": 26.8,
+      "reserve_calls": 29,
+      "reserve_errors": 3,
+      "reserve_error_rate_pct": 10.3
+    }
+  },
+  "deduplication": {
+    "whole_rig": {
+      "created": 1748,
+      "matched": 39,
+      "match_rate_pct": 2.23
+    },
+    "swarm_named": {
+      "distinct_agents": 42,
+      "created": 358,
+      "matched": 14,
+      "match_rate_pct": 3.91
+    },
+    "non_swarm_named": {
+      "note": "Concurrent mixed workload with no single-agent control",
+      "distinct_agents": 25,
+      "created": 1390,
+      "matched": 25,
+      "match_rate_pct": 1.8
+    },
+    "active_agents_by_day": {
+      "2026-08-23": 23,
+      "2026-08-24": 2,
+      "2026-08-25": 10,
+      "2026-08-26": 3,
+      "2026-08-27": 1,
+      "2026-08-30": 2,
+      "2026-08-31": 12,
+      "2026-09-01": 5,
+      "2026-09-02": 13,
+      "2026-09-03": 6,
+      "2026-09-04": 16
+    }
+  },
+  "concept_lengths": {
+    "overall": {
+      "n": 1819,
+      "mean": 218.19461242440903,
+      "p50": 90.0,
+      "p90": 584.6000000000001,
+      "share_over_500": 15.667949422759758
+    },
+    "claude_family": {
+      "n": 620,
+      "mean": 325.3048387096774,
+      "p50": 319.0,
+      "p90": 705.7000000000002,
+      "share_over_500": 30.0
+    },
+    "gpt_family": {
+      "n": 319,
+      "mean": 152.35423197492162,
+      "p50": 67.0,
+      "p90": 432.9999999999999,
+      "share_over_500": 7.523510971786834
+    },
+    "grok_family": {
+      "n": 204,
+      "mean": 143.67156862745097,
+      "p50": 129.5,
+      "p90": 302.40000000000003,
+      "share_over_500": 0.9803921568627451
+    },
+    "top_agents": {
+      "claude-opus-5": {
+        "n": 561,
+        "mean": 341.4295900178253,
+        "p50": 361.0,
+        "p90": 718.0,
+        "share_over_500": 31.907308377896616
+      },
+      "gpt-5.6-terra": {
+        "n": 177,
+        "mean": 168.92655367231637,
+        "p50": 88.0,
+        "p90": 470.80000000000007,
+        "share_over_500": 8.47457627118644
+      },
+      "main-mooshik-led": {
+        "n": 86,
+        "mean": 85.0813953488372,
+        "p50": 25.5,
+        "p90": 280.0,
+        "share_over_500": 4.651162790697675
+      },
+      "gpt-5.6-sol": {
+        "n": 82,
+        "mean": 137.4512195121951,
+        "p50": 54.5,
+        "p90": 416.10000000000014,
+        "share_over_500": 8.536585365853659
+      },
+      "omp-agent": {
+        "n": 69,
+        "mean": 410.0289855072464,
+        "p50": 475.0,
+        "p90": 668.4000000000001,
+        "share_over_500": 44.927536231884055
+      }
+    }
+  }
+}

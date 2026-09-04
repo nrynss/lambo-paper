@@ -1,0 +1,41 @@
+---
+title: "Replication Guide"
+description: "Step-by-step instructions to reproduce all figures, tables, and compile the manuscript."
+---
+
+## Prerequisites
+* Python 3.10+ with `numpy` and `matplotlib`
+* [Tectonic](https://tectonic-typesetting.github.io/) LaTeX compiler
+* Node.js v20+ with `npm` (for the web documentation site)
+
+## 1. Extract Multi-Rig Telemetry
+To extract live telemetry from the production rig and generate stamped JSON datasets:
+```bash
+python3 scripts/extract_telemetry.py
+```
+
+## 2. Re-generate Figures
+To produce high-resolution vector PDF and web PNG figures:
+```bash
+python3 scripts/plot_figures.py
+```
+
+## 3. Verify Writing Constraints
+To audit compliance with writing constraints (zero semicolons, zero em dashes, at most 30 words per sentence, 15 citations):
+```bash
+python3 scripts/verify_constraints.py
+```
+
+## 4. Compile Manuscript PDF
+To compile `src/main.tex` into `src/main.pdf`:
+```bash
+tectonic src/main.tex
+```
+
+## 5. Build Web Edition
+To build the Astro Starlight documentation site:
+```bash
+cd site
+npm install
+npm run build
+```

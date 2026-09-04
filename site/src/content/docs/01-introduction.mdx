@@ -1,0 +1,22 @@
+---
+title: "1. Introduction"
+description: "The architectural motivation behind Lambo and the challenges of multi-agent memory."
+---
+
+Autonomous software engineering agents increasingly collaborate in swarms. Modern workflows deploy concurrent agents to refactor code, run tests, and remediate review findings. However, each agent invocation is fundamentally ephemeral. When an agent session terminates, its internal reasoning context disappears. Subsequent agents must re-derive architectural decisions from scratch.
+
+## Limitations of Existing Paradigms
+
+Existing memory paradigms fail to maintain coherent state in software engineering projects:
+* **Flat markdown scratchpads** lack structural relationships. They cannot express multi-hop dependency chains or track invalidated decisions.
+* **Flat vector retrieval stores** (RAG, MemoryBank) evaluate pairwise cosine similarity between query text and isolated text chunks. In technical codebases, flat vector search suffers from semantic drift: it fails to distinguish between active constraints and superseded implementations.
+* **Static graph retrieval frameworks** (GraphRAG, HippoRAG) require batch corpus indexing. They cannot ingest continuous mutations from concurrent agent processes.
+
+## The Lambo Approach
+
+To resolve these challenges, we present **Lambo**. Lambo is an in-memory topological memory daemon designed for multi-agent development. Lambo runs as a local supervised daemon exposing a Model Context Protocol (MCP) interface. Agents record typed architectural concepts and directed relationships during execution. Concepts represent logic invariants, structural constraints, and runtime observations.
+
+Lambo coordinates concurrent agents without distributed locking:
+1. Mutations enter an asynchronous write queue that returns monotonic integer receipts within one millisecond.
+2. Agents verify write completion through receipt barriers, guaranteeing read-your-writes consistency.
+3. Retrieval operates via a three-phase hybrid topological pipeline that combines lexical, recency, and vector signals with prioritized breadth-first search across dependency edges.

@@ -1,0 +1,104 @@
+---
+title: "5. Empirical Evaluation"
+description: "Multi-rig production telemetry across CUDA discrete GPU and Apple Silicon Metal platforms."
+---
+
+import MdxNote from '../../components/MdxNote.astro';
+import MdxWarning from '../../components/MdxWarning.astro';
+
+We evaluated Lambo continuously during production development across two hardware rigs:
+* **CUDA Production Rig:** AMD Ryzen 5 3600 CPU (6 cores, 12 threads), 78 GB DDR4 RAM, NVIDIA GeForce RTX 4070 SUPER GPU (12 GB dedicated VRAM), and CachyOS Linux kernel 7.2.2. The daemon runs as a systemd unit using the `candle-cuda` backend with BGE-M3 (1024 dimensions).
+* **Metal Companion Rig:** Apple MacBook Pro with M3 Pro processor (12 CPU cores, 18 GPU cores), 18 GB Unified Memory, and macOS 15. The daemon runs under `launchd` using the `candle-metal` backend.
+
+---
+
+## 5.1 System Reliability and Tool Execution
+
+We sampled system health via continuous 5-minute daemon heartbeats over a 12.7-day window on CUDA (2,494 snapshots) and 16.0 days on Metal (3,429 snapshots).
+
+| Reliability Metric | CUDA Production Rig | Metal Companion Rig |
+| :--- | :--- | :--- |
+| **Monitoring Window** | 12.7 days | 16.0 days |
+| **Heartbeat Snapshots (300 s)** | 2,494 | 3,429 |
+| **Total Concepts in Store** | 1,819 | 889 |
+| **Total Directed Edges** | 4,552 | 2,198 |
+| **Daemon Process Restarts** | 52 | launchd managed |
+| **Dropped Ledger Lines** | **0** | **0** |
+| **Write Queue Buffer Drops** | **0** | **0** |
+| **Dead-Lettered Mutations** | **0** | **0** |
+| **Unresolved Replay Debt** | **0** | **0** |
+| **Degraded Episode Count** | **0** | **0** |
+| **Logged Tool Invocations** | 1,018 | 365 |
+| **Overall Tool Error Rate** | 2.5% (25 / 1,018) | 0.27% (1 / 365) |
+| `lambo_inspect` Miss Rate | **28.2%** (22 / 78) | **25.0%** (1 / 4) |
+| `lambo_reserve` Error Rate | 10.3% (3 / 29) | 0.0% (0 / 0) |
+| `lambo_recall` / `derive` Errors | 0.0% (0 / 797) | 0.0% (0 / 361) |
+
+<MdxNote>
+**Zero Infrastructure Faults vs. Tool Affordance Gap:**
+Every infrastructure-level failure counter recorded zero across both rigs. However, application-level telemetry revealed a consistent 25% to 28% failure rate on `lambo_inspect`. This failure rate is an affordance gap: `lambo_recall` renders text content without unique node UUIDs, forcing client models to type approximate substrings from memory rather than exact handles.
+</MdxNote>
+
+---
+
+## 5.2 Deduplication Dynamics: Swarms vs. Streams
+
+Lambo evaluates semantic deduplication at write time. If an incoming concept matches an existing node with cosine similarity exceeding 0.92, the nodes merge.
+
+<div style="text-align: center; margin: 2rem 0;">
+  <img src="/lambo-paper/fig3_dedup_regimes.png" alt="Deduplication Dynamics" style="max-width: 90%; border-radius: 8px; border: 1px solid #e5e7eb;" />
+  <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Figure 3: Empirical write-time deduplication rates across deployment regimes on Metal and CUDA.</p>
+</div>
+
+| Deployment Regime | Concepts Created | Concepts Matched | Deduplication Rate |
+| :--- | :--- | :--- | :--- |
+| **Metal: Review Swarm (Aug 19–23)** | 456 | 62 | **12.0%** |
+| **Metal: Single-Agent Stream (Aug 24–Sep 4)** | 324 | 3 | **0.9%** |
+| **Metal Rig Aggregate** | 780 | 65 | **7.7%** |
+| **CUDA: Swarm-Named Agent IDs** | 309 | 14 | **4.3%** |
+| **CUDA: Non-Swarm Agent IDs** | 1,285 | 22 | **1.7%** |
+| **CUDA Rig Aggregate** | 1,594 | 36 | **2.2%** |
+
+On the Metal rig, work followed a sharp temporal shift. During the multi-agent review swarm (J1-J3 tracks), multiple agents audited identical code changes simultaneously, yielding a 12.0% deduplication rate. In contrast, during single-agent development, deduplication dropped to 0.9%.
+
+On the CUDA rig, development operated under continuous concurrency (five to 23 active agents daily). Swarm-named task agents matched at 4.3%, whereas non-swarm agents matched at 1.7%. This telemetry is consistent with the hypothesis that write-time deduplication correlates with concurrent task overlap rather than store consolidation.
+
+---
+
+## 5.3 Model Verbal Drift and Concept Lengths
+
+Payload length distributions across frontier language model families reveal a striking divergence:
+
+| Model Group | Store | $n$ | Mean Length | Median (p50) | p90 | Share $>$500 B |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Claude family** | CUDA | 620 | 325 B | 319 B | 706 B | **30.0%** |
+| **GPT family** | CUDA | 319 | 152 B | 67 B | 433 B | **7.5%** |
+| **Grok family** | CUDA | 204 | 144 B | 130 B | 302 B | **1.0%** |
+| *CUDA Aggregate* | *CUDA* | *1,819* | *232 B* | *90 B* | *585 B* | *15.7%* |
+| **Claude family** | Metal | 648 | 412 B | 299 B | 950 B | **42.0%** |
+| **GPT-5 Codex** | Metal | 29 | 117 B | 85 B | 240 B | **0.0%** |
+| **Cursor Grok Docs** | Metal | 16 | 48 B | 42 B | 95 B | **0.0%** |
+| *Metal Aggregate* | *Metal* | *837* | *348 B* | *299 B* | *950 B* | *36.0%* |
+
+Across both independent stores, the Claude family generated verbose multi-sentence paragraphs (30% to 42% exceeding 500 bytes), whereas GPT and Grok agents generated concise atomic statements (fewer than 8% exceeding 500 bytes).
+
+---
+
+## 5.4 Coordination Telemetry: Advisory Locks vs. Receipts
+
+Early agent memory designs proposed distributed advisory locks via `lambo_reserve`. Production telemetry showed that agents rarely acquired advisory locks:
+* On the Metal rig, **zero calls** were made to `lambo_reserve` across 230 writes.
+* On the CUDA rig, only **27 of 422 writes (6.4%)** utilized soft locks. Twenty-two of those 27 calls came from a single agent (`gpt-5.6-terra`), and only 5 of 63 agents ever invoked reservations.
+
+This low adoption reflects discoverability hurdles and identifier fragmentation across 63 ephemeral identities rather than structural obsolescence. Instead, agents relied on the asynchronous write queue with monotonic receipts, which return in sub-millisecond time (0.1 ms median for derive) without synchronous blocking.
+
+---
+
+## 5.5 Retrieval Latency Scaling
+
+<div style="text-align: center; margin: 2rem 0;">
+  <img src="/lambo-paper/fig2_latency.png" alt="Vector Scan Latency" style="max-width: 90%; border-radius: 8px; border: 1px solid #e5e7eb;" />
+  <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Figure 2: Recall Phase-1 vector scan latency across concept count $N$. Solid lines show measured decimal text deserialization on CUDA and Metal. Dotted line indicates analytical projection for packed binary BLOBs (20–30 ms floor).</p>
+</div>
+
+At 1,500 concepts, vector scan latency reaches 130.1 ms on CUDA and 71.0 ms on Metal due to decimal ASCII text deserialization. An analytical model indicates that migrating to packed binary BLOB vectors reduces this bottleneck to 20–30 ms.

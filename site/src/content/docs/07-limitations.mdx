@@ -1,0 +1,29 @@
+---
+title: "7. Limitations & Open Problems"
+description: "Multi-repository dispersion effect, text-surface affordance gaps, and vector serialization bottlenecks."
+---
+
+import MdxWarning from '../../components/MdxWarning.astro';
+
+## 7.1 Multi-Repository Dispersion Effect
+
+During longitudinal evaluation across 15,000 canonization cycles, zero concepts achieved Canonical status under the Swarm consensus policy. We formalized this as the **Multi-Repository Dispersion Effect**: when an operator works across $R$ independent repositories, corroborating citations are diluted across disjoint problem domains:
+$$\mathbb{E}[\delta_r(c)] = \frac{\delta_{\text{base}}(c)}{R}$$
+
+<div style="text-align: center; margin: 2rem 0;">
+  <img src="/lambo-paper/fig1_dispersion.png" alt="Multi-Repository Dispersion Effect" style="max-width: 90%; border-radius: 8px; border: 1px solid #e5e7eb;" />
+  <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Figure 1: The Multi-Repository Dispersion Effect. As repository count $R$ grows, corroboration density $\delta_r$ collapses below promotion thresholds.</p>
+</div>
+
+<MdxWarning>
+**Design Recommendation:**
+Consensus-based promotion must be scoped to individual repository namespaces rather than global daemon sessions.
+</MdxWarning>
+
+## 7.2 Text-Surface Affordance Gap
+
+Telemetry revealed a 28.2% error rate on `lambo_inspect` on CUDA and 25.0% on Metal. The tool requires an exact UUID or substring. Because `lambo_recall` renders text content without node UUIDs, client models type approximate substrings from memory that fail to match. Future versions must surface explicit UUID handles in rendered context blocks.
+
+## 7.3 Memory Compression on Unified Platforms
+
+On Apple Silicon platforms under `launchd`, idle daemon processes experience aggressive memory compression (up to 1,417 MB compressed). Subsequent calls pay decompression penalties up to 9 seconds. Periodic lightweight heartbeat probes prevent aggressive OS paging.

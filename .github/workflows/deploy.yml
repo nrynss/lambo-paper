@@ -1,0 +1,87 @@
+name: Deploy Paper & Web Edition
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-paper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Tectonic
+        uses: willemvds/setup-tectonic@v1
+        with:
+          version: 0.15.0
+
+      - name: Compile LaTeX Paper
+        working-directory: src
+        run: tectonic main.tex
+
+      - name: Upload Compiled PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambo-paper-pdf
+          path: src/main.pdf
+
+  build-site:
+    needs: build-paper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Compiled PDF
+        uses: actions/download-artifact@v4
+        with:
+          name: lambo-paper-pdf
+          path: site/public
+
+      - name: Rename PDF to lambo-paper.pdf
+        run: |
+          mv site/public/main.pdf site/public/lambo-paper.pdf || true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site
+        run: npm ci || npm install
+
+      - name: Build Starlight Site
+        working-directory: site
+        run: npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    needs: build-site
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,6 +1,11 @@
 {
   "metadata": {
     "rig": "Apple Silicon Metal Rig",
+    "extracted_at": "2026-09-04T19:16:00Z",
+    "ledger_file": "calls.jsonl",
+    "db_file": "lambo-dev.db",
+    "ledger_first_record": "2026-08-19T19:06:25.491082Z",
+    "ledger_last_record": "2026-09-04T19:15:58.636522Z",
     "source_issues": [
       "Issue #8: Vector scan latency and memory compression tax",
       "Issue #9 comment 5540126749: Inspect error replication (n=4)",
@@ -8,15 +13,20 @@
       "Issue #16 comment 5540134512: Heartbeat snapshots and flush lag",
       "Issue #17: Comprehensive dogfood review (365 calls, 889 concepts)"
     ],
-    "verified_at": "2026-09-05T00:00:00Z",
     "platform": "Apple MacBook Pro M3 Pro (12 CPU cores, 18 GPU cores), 18 GB Unified Memory",
-    "os": "macOS 15 (launchd daemon)",
+    "os": "macOS Tahoe 26.6.2 (launchd daemon)",
     "backend": "candle-metal backend, BGE-M3 1024-dim"
   },
   "reliability": {
     "window_days": 16.0,
     "heartbeat_snapshots": 3429,
     "sampling_interval_seconds": 300,
+    "process_startups": 12,
+    "process_startups_by_transport": {
+      "http": 7,
+      "stdio": 5
+    },
+    "lease_refusals": 1,
     "store": {
       "concepts": 889,
       "directed_edges": 2198
@@ -30,6 +40,14 @@
     },
     "tool_calls": {
       "total_calls": 365,
+      "by_tool": {
+        "lambo_derive": 149,
+        "lambo_inspect": 4,
+        "lambo_recall": 99,
+        "lambo_record_action": 98,
+        "lambo_saints": 1,
+        "lambo_stats": 14
+      },
       "total_errors": 1,
       "total_error_rate_pct": 0.27,
       "inspect_calls": 4,
@@ -37,7 +55,11 @@
       "inspect_error_rate_pct": 25.0,
       "reserve_calls": 0,
       "reserve_errors": 0,
-      "reserve_error_rate_pct": 0.0
+      "reserve_error_rate_pct": 0.0,
+      "recall_derive_calls": 346,
+      "recall_derive_errors": 0,
+      "recall_derive_error_rate_pct": 0.0,
+      "write_calls": 247
     }
   },
   "deduplication": {
@@ -45,6 +67,7 @@
       "review_swarm_window": {
         "dates": "2026-08-19 to 2026-08-23 (pre-J3)",
         "description": "Multi-agent review swarm: implementor, 3 reviewers, 2 remediators per track",
+        "distinct_agents": 25,
         "created": 456,
         "matched": 62,
         "match_rate_pct": 12.0
@@ -52,89 +75,256 @@
       "single_agent_window": {
         "dates": "2026-08-24 to 2026-09-04 (post-J3)",
         "description": "Single-operator interactive workflow",
-        "created": 324,
+        "distinct_agents": 14,
+        "created": 376,
         "matched": 3,
-        "match_rate_pct": 0.9
+        "match_rate_pct": 0.8
       },
       "whole_period": {
         "dates": "2026-08-19 to 2026-09-04",
-        "created": 780,
+        "created": 832,
         "matched": 65,
-        "match_rate_pct": 7.7
+        "match_rate_pct": 7.2
       }
+    },
+    "store_reconciliation": {
+      "note": "concepts_before_ledger + ledger_created must equal store concepts",
+      "concepts_before_ledger": 57,
+      "ledger_created": 832,
+      "store_concepts": 889
+    },
+    "active_agents_by_day": {
+      "2026-08-19": 1,
+      "2026-08-20": 19,
+      "2026-08-21": 7,
+      "2026-08-22": 1,
+      "2026-08-23": 1,
+      "2026-08-24": 1,
+      "2026-08-25": 1,
+      "2026-08-27": 5,
+      "2026-08-31": 1,
+      "2026-09-01": 2,
+      "2026-09-02": 1,
+      "2026-09-03": 4,
+      "2026-09-04": 6
     }
   },
   "concept_lengths": {
     "overall": {
-      "n": 837,
-      "p10": 25,
-      "p50": 299,
-      "p90": 950,
-      "p99": 1508,
+      "n": 889,
+      "mean": 392.3,
+      "p10": 25.8,
+      "p50": 315.0,
+      "p90": 932.2,
+      "p99": 1499.2,
       "max": 2053,
-      "share_over_200": 53.0,
-      "share_over_500": 36.0
+      "share_over_500": 35.9,
+      "share_over_200": 54.1
     },
     "claude_family": {
-      "n": 648,
-      "mean": 412.0,
-      "share_over_500": 42.0,
+      "n": 713,
+      "mean": 406.5,
+      "p50": 356.0,
+      "p90": 918.4,
+      "max": 2053,
+      "share_over_500": 38.7,
       "key_agents": {
         "claude-orchestrator": {
           "n": 409,
-          "mean": 453.0,
+          "mean": 453.4,
+          "p50": 439.0,
+          "p90": 1000.6,
           "max": 2053,
           "share_over_500": 45.0
         },
         "claude-fable-5-1": {
-          "n": 138,
-          "mean": 307.0,
+          "n": 183,
+          "mean": 318.6,
+          "p50": 318.0,
+          "p90": 686.8,
           "max": 1279,
-          "share_over_500": 22.0
+          "share_over_500": 24.6
         },
         "claude-fable-5": {
           "n": 101,
           "mean": 290.0,
+          "p50": 67.0,
+          "p90": 749.0,
           "max": 1478,
-          "share_over_500": 28.0
+          "share_over_500": 27.7
+        },
+        "claude-code-opus5": {
+          "n": 12,
+          "mean": 891.8,
+          "p50": 854.0,
+          "p90": 981.9,
+          "max": 1199,
+          "share_over_500": 100.0
+        },
+        "claude-opus-5": {
+          "n": 8,
+          "mean": 759.9,
+          "p50": 755.0,
+          "p90": 920.4,
+          "max": 968,
+          "share_over_500": 87.5
         }
       }
     },
     "gpt_family": {
+      "n": 43,
+      "mean": 196.0,
+      "p50": 164.0,
+      "p90": 394.8,
+      "max": 548,
+      "share_over_500": 4.7,
       "key_agents": {
         "gpt-5-codex": {
-          "n": 29,
-          "mean": 117.0,
+          "n": 32,
+          "mean": 131.4,
+          "p50": 58.5,
+          "p90": 324.7,
           "max": 366,
           "share_over_500": 0.0
+        },
+        "gpt-5.6-sol": {
+          "n": 4,
+          "mean": 337.2,
+          "p50": 327.5,
+          "p90": 397.3,
+          "max": 421,
+          "share_over_500": 0.0
+        },
+        "gpt-5.4": {
+          "n": 4,
+          "mean": 405.0,
+          "p50": 381.5,
+          "p90": 504.2,
+          "max": 548,
+          "share_over_500": 25.0
+        },
+        "gpt-5": {
+          "n": 2,
+          "mean": 370.5,
+          "p50": 370.5,
+          "p90": 396.5,
+          "max": 403,
+          "share_over_500": 0.0
+        },
+        "gpt-6-astra": {
+          "n": 1,
+          "mean": 514.0,
+          "p50": 514.0,
+          "p90": 514.0,
+          "max": 514,
+          "share_over_500": 100.0
         }
       }
     },
     "grok_family": {
+      "n": 29,
+      "mean": 62.0,
+      "p50": 44.0,
+      "p90": 134.8,
+      "max": 190,
+      "share_over_500": 0.0,
       "key_agents": {
         "cursor-grok-docs": {
           "n": 16,
-          "mean": 48.0,
+          "mean": 47.9,
+          "p50": 44.5,
+          "p90": 82.0,
           "max": 132,
+          "share_over_500": 0.0
+        },
+        "cursor-grok-passport-compress": {
+          "n": 7,
+          "mean": 82.9,
+          "p50": 93.0,
+          "p90": 149.6,
+          "max": 155,
+          "share_over_500": 0.0
+        },
+        "cursor-grok-4.6-docs": {
+          "n": 3,
+          "mean": 89.0,
+          "p50": 42.0,
+          "p90": 160.4,
+          "max": 190,
+          "share_over_500": 0.0
+        },
+        "cursor-grok-docs-changelog": {
+          "n": 3,
+          "mean": 62.0,
+          "p50": 39.0,
+          "p90": 106.2,
+          "max": 123,
           "share_over_500": 0.0
         }
       }
     },
     "by_type": {
-      "logic": {
-        "mean": 722.0
-      },
-      "constraint": {
-        "mean": 718.0
-      },
-      "observation": {
-        "mean": 586.0
-      },
       "resource": {
-        "mean": 231.0
+        "n": 405,
+        "mean": 228.5
+      },
+      "logic": {
+        "n": 164,
+        "mean": 702.9
       },
       "entity": {
+        "n": 125,
         "mean": 120.0
+      },
+      "constraint": {
+        "n": 102,
+        "mean": 707.3
+      },
+      "observation": {
+        "n": 93,
+        "mean": 578.6
+      }
+    },
+    "top_agents": {
+      "claude-orchestrator": {
+        "n": 409,
+        "mean": 453.4,
+        "p50": 439.0,
+        "p90": 1000.6,
+        "max": 2053,
+        "share_over_500": 45.0
+      },
+      "claude-fable-5-1": {
+        "n": 183,
+        "mean": 318.6,
+        "p50": 318.0,
+        "p90": 686.8,
+        "max": 1279,
+        "share_over_500": 24.6
+      },
+      "claude-fable-5": {
+        "n": 101,
+        "mean": 290.0,
+        "p50": 67.0,
+        "p90": 749.0,
+        "max": 1478,
+        "share_over_500": 27.7
+      },
+      "gpt-5-codex": {
+        "n": 32,
+        "mean": 131.4,
+        "p50": 58.5,
+        "p90": 324.7,
+        "max": 366,
+        "share_over_500": 0.0
+      },
+      "j3-redesign-remediation-r1": {
+        "n": 28,
+        "mean": 239.8,
+        "p50": 28.0,
+        "p90": 1129.4,
+        "max": 1411,
+        "share_over_500": 17.9
       }
     }
   }

@@ -8,10 +8,12 @@ Outputs:
 """
 
 import os
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "src")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 plt.rcParams.update({
@@ -113,7 +115,20 @@ def generate_fig3_dedup():
         "CUDA: Non-Swarm\n(Concurrent mixed)",
         "CUDA: Whole Period\n(Aggregate)"
     ]
-    rates = [12.0, 0.9, 7.7, 4.3, 1.7, 2.2]
+    # Rates come from the stamped datasets so the figure cannot drift from the
+    # tables. Order matches `labels` above.
+    with open(os.path.join(DATA_DIR, "metal_telemetry.json"), "r", encoding="utf-8") as f:
+        metal = json.load(f)["deduplication"]["temporal_regimes"]
+    with open(os.path.join(DATA_DIR, "cuda_telemetry.json"), "r", encoding="utf-8") as f:
+        cuda = json.load(f)["deduplication"]
+    rates = [
+        metal["review_swarm_window"]["match_rate_pct"],
+        metal["single_agent_window"]["match_rate_pct"],
+        metal["whole_period"]["match_rate_pct"],
+        cuda["swarm_named"]["match_rate_pct"],
+        cuda["non_swarm_named"]["match_rate_pct"],
+        cuda["whole_rig"]["match_rate_pct"],
+    ]
     colors = ["#9467bd", "#c5b0d5", "#7f7f7f", "#1f77b4", "#aec7e8", "#333333"]
 
     bars = ax.bar(range(len(rates)), rates, color=colors, width=0.6, edgecolor="black", linewidth=0.8)

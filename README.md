@@ -17,7 +17,7 @@ We present **Lambo**, an in-memory topological memory daemon for multi-agent sof
 2. **Phase 2:** Traverses structural dependency edges while respecting invalidation semantics.
 3. **Phase 3:** Enforces canonical-first ranking and hot-list conflict preservation under token budgets.
 
-We evaluate Lambo using continuous 5-minute health sampling (2,486 heartbeat snapshots) over a 12-day live production deployment. Deduplication rates reached 12.0% during synchronized review swarms on Metal (against 0.9% in single-agent sessions) and 4.3% among swarm-named agents on CUDA (against 1.7% in non-swarm streams, 2.2% aggregate). Zero infrastructure-level faults occurred across all checkpoints. Tool-level execution misses (25% to 28% on inspect) revealed a text-surface affordance gap that motivates rendering explicit node identifiers. Finally, we formulate the multi-repository dispersion effect to explain why consensus promotion requires namespace scoping, and characterize hardware-specific memory paging overheads on unified memory platforms.
+We evaluate Lambo across two production rigs using continuous 5-minute health sampling (2,495 heartbeat snapshots on CUDA and 3,429 on Metal) over live production deployments. Deduplication rates reached 12.0% during synchronized review swarms on Metal (against 0.8% in single-agent sessions) and 4.3% among swarm-named agents on CUDA (against 1.7% in non-swarm streams, 2.2% aggregate). Zero infrastructure-level faults occurred across all checkpoints. Tool-level execution misses (25% to 27% on inspect) revealed a text-surface affordance gap that motivates rendering explicit node identifiers. Finally, we formulate the multi-repository dispersion effect to explain why consensus promotion requires namespace scoping, and characterize hardware-specific memory paging overheads on unified memory platforms.
 
 ---
 
@@ -30,9 +30,9 @@ lambo-paper/
 │       └── deploy.yml          # GitHub Actions workflow (compiles PDF & deploys site)
 ├── data/
 │   ├── cuda_telemetry.json     # Stamped extract from live production dogfooding logs
-│   └── metal_telemetry.json    # Stamped extract from signed Apple Silicon reviews
+│   └── metal_telemetry.json    # Stamped replay of the Metal rig ledger and store
 ├── scripts/
-│   ├── extract_telemetry.py    # Reads live rig logs and writes stamped JSON datasets
+│   ├── extract_telemetry.py    # Replays rig ledgers and stores into stamped JSON datasets
 │   ├── plot_figures.py         # Reproduces vector PDF and web PNG figures
 │   └── verify_constraints.py   # Linter auditing zero em dashes, zero semicolons, sentence limits
 ├── site/                       # Astro + Starlight web edition
@@ -57,9 +57,17 @@ lambo-paper/
 ## Reproduction and Building
 
 ### 1. Extract Stamped Telemetry
+The default invocation emits the frozen benchmark datasets in `data/`:
 ```bash
 python3 scripts/extract_telemetry.py
 ```
+
+Each frozen dataset is a live replay cut at a fixed stamp (CUDA `2026-09-04T19:57:05.677853Z`, Metal `2026-09-04T19:16:00Z`). On a rig that holds the ledger and store, the replay reproduces the frozen file byte for byte:
+```bash
+python3 scripts/extract_telemetry.py --live --rig metal --until 2026-09-04T19:16:00Z
+```
+
+Drop `--until` to extract the current state of a rig, or `--rig` to replay both. Source paths default to the dogfood locations and can be overridden with `LAMBO_CALLS_PATH` / `LAMBO_DB_PATH` (CUDA) and `LAMBO_METAL_CALLS_PATH` / `LAMBO_METAL_DB_PATH` (Metal).
 
 ### 2. Generate Vector Figures
 ```bash

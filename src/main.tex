@@ -58,7 +58,7 @@ Phase two traverses structural dependency edges while respecting invalidation se
 Phase three enforces canonical-first ranking and hot-list conflict preservation under token budgets.
 We evaluate Lambo across two production rigs using continuous 5-minute health sampling.
 This evaluation covers 2,495 heartbeat snapshots on CUDA and 3,429 on Metal over 12 to 16 days of deployment.
-Deduplication rates reached 12.0\% during synchronized review swarms on Metal (against 0.9\% in single-agent sessions) and 4.3\% among swarm-named agents on CUDA (against 1.7\% in non-swarm streams, 2.2\% aggregate).
+Deduplication rates reached 12.0\% during synchronized review swarms on Metal (against 0.8\% in single-agent sessions) and 4.3\% among swarm-named agents on CUDA (against 1.7\% in non-swarm streams, 2.2\% aggregate).
 Zero infrastructure-level faults occurred across all checkpoints.
 Tool-level execution misses (25\% to 27\% on inspect) revealed a text-surface affordance gap that motivates rendering explicit node identifiers.
 We formulate the multi-repository dispersion effect to explain why consensus promotion requires namespace scoping.
@@ -406,7 +406,7 @@ This mathematical proof establishes that consensus-based memory promotion must b
 We evaluated Lambo across two distinct production environments.
 \begin{itemize}
     \item \textbf{CUDA Rig:} AMD Ryzen 5 3600 CPU (6 cores, 12 threads) and 78 GB DDR4 RAM. It includes an NVIDIA GeForce RTX 4070 SUPER GPU (12 GB VRAM) running CachyOS Linux kernel 7.2.2. The daemon runs as a systemd unit using candle-cuda with BGE-M3 (1024 dimensions).
-    \item \textbf{Metal Rig:} Apple MacBook Pro with M3 Pro processor (12 CPU cores, 18 GPU cores), 18 GB Unified Memory, and macOS 15. The daemon runs under launchd using the candle-metal backend.
+    \item \textbf{Metal Rig:} Apple MacBook Pro with M3 Pro processor (12 CPU cores, 18 GPU cores), 18 GB Unified Memory, and macOS 26. The daemon runs under launchd using the candle-metal backend.
 \end{itemize}
 
 \begin{table}[t]
@@ -422,7 +422,7 @@ Monitoring Window & 12.7 days & 16.0 days \\
 Heartbeat Snapshots (300 s) & 2,495 & 3,429 \\
 Total Concepts in Store & 1,819 & 889 \\
 Total Directed Edges & 4,552 & 2,198 \\
-Daemon Process Restarts & 52 & launchd \\
+Daemon Process Restarts & 52 & 12 \\
 \midrule
 \multicolumn{3}{l}{\textit{Infrastructure Health Counters}} \\
 Dropped Ledger Lines & \textbf{0} & \textbf{0} \\
@@ -436,7 +436,7 @@ Logged Tool Invocations & 1,020 & 365 \\
 Overall Tool Error Rate & 2.45\% (25 / 1,020) & 0.27\% (1 / 365) \\
 \texttt{inspect} Miss Rate & 26.8\% (22 / 82) & 25.0\% (1 / 4) \\
 \texttt{reserve} Error Rate & 10.3\% (3 / 29) & 0.0\% (0 / 0) \\
-\texttt{recall} / \texttt{derive} Errors & 0.0\% (0 / 797) & 0.0\% (0 / 361) \\
+\texttt{recall} / \texttt{derive} Errors & 0.0\% (0 / 797) & 0.0\% (0 / 346) \\
 \bottomrule
 \end{tabular*}
 \end{table}
@@ -479,8 +479,8 @@ Figure \ref{fig:dedup} and Table \ref{tab:dedup} detail observed match rates acr
 \midrule
 \multicolumn{4}{l}{\textit{Metal Rig (Temporal Regime Shift)}} \\
 Review Swarm (Aug 19--23) & 456 & 62 & 12.0\% \\
-Single Stream (Aug 24--Sep 4) & 324 & 3 & 0.9\% \\
-Metal Rig Aggregate & 780 & 65 & 7.7\% \\
+Single Stream (Aug 24--Sep 4) & 376 & 3 & 0.8\% \\
+Metal Rig Aggregate & 832 & 65 & 7.2\% \\
 \midrule
 \multicolumn{4}{l}{\textit{CUDA Rig (Continuous Concurrency)}} \\
 Swarm-Named Agent IDs & 309 & 14 & 4.3\% \\
@@ -493,7 +493,7 @@ CUDA Rig Aggregate & 1,594 & 36 & 2.2\% \\
 On the Metal rig, work followed a sharp temporal shift.
 During the multi-agent review swarm, multiple agents audited identical code changes simultaneously.
 In this overlapping regime, deduplication reached 12.0\%.
-When development transitioned to a single operator, deduplication dropped to 0.9\%.
+When development transitioned to a single operator, deduplication dropped to 0.8\%.
 On the CUDA rig, development operated under continuous concurrency with five to 23 active agents daily.
 Swarm-named task agents matched at 4.3\%, whereas non-swarm agents matched at 1.7\%.
 This telemetry is consistent with the hypothesis that write-time deduplication correlates with concurrent task overlap rather than store consolidation.
@@ -513,11 +513,11 @@ GPT family & 319 & 152 B & 67 B & 433 B & 7.5\% \\
 Grok family & 204 & 144 B & 130 B & 302 B & 1.0\% \\
 CUDA Rig Aggregate & 1,819 & 232 B & 90 B & 585 B & 15.7\% \\
 \midrule
-\multicolumn{6}{l}{\textit{Metal Rig Store (837 concepts)}} \\
-Claude family & 648 & 412 B & 299 B & 950 B & 42.0\% \\
-GPT-5 Codex & 29 & 117 B & 85 B & 240 B & 0.0\% \\
-Cursor Grok Docs & 16 & 48 B & 42 B & 95 B & 0.0\% \\
-Metal Rig Aggregate & 837 & 348 B & 299 B & 950 B & 36.0\% \\
+\multicolumn{6}{l}{\textit{Metal Rig Store (889 concepts)}} \\
+Claude family & 713 & 407 B & 356 B & 918 B & 38.7\% \\
+GPT family & 43 & 196 B & 164 B & 395 B & 4.7\% \\
+Grok family & 29 & 62 B & 44 B & 135 B & 0.0\% \\
+Metal Rig Aggregate & 889 & 392 B & 315 B & 932 B & 35.9\% \\
 \bottomrule
 \end{tabular*}
 \end{table}
@@ -527,11 +527,11 @@ Table \ref{tab:length} presents concept payload lengths across frontier language
 Both production stores exhibit an identical model-specific divergence.
 Across both platforms, the Claude family generated verbose multi-sentence paragraphs.
 On CUDA, Claude median concept length was 319 bytes, with 30.0\% of concepts exceeding 500 bytes.
-On Metal, Claude concepts averaged 412 bytes, with 42.0\% exceeding 500 bytes.
-Reasoning concepts for Logic and Constraint reached mean lengths of 722 bytes and 718 bytes.
+On Metal, Claude concepts averaged 407 bytes, with 38.7\% exceeding 500 bytes.
+Reasoning concepts for Logic and Constraint reached mean lengths of 703 bytes and 707 bytes.
 Conversely, GPT and Grok agents generated concise atomic statements.
 On CUDA, GPT median length was 67 bytes, with only 7.5\% exceeding 500 bytes.
-Grok concepts averaged 144 bytes on CUDA and 48 bytes on Metal.
+Grok concepts averaged 144 bytes on CUDA and 62 bytes on Metal.
 
 Long descriptive paragraphs dilute dense embedding representations.
 In flat vector stores, this verbal drift increases retrieval false positives.
@@ -541,7 +541,7 @@ Lambo mitigates this drift through its directed topological graph structure.
 Early agent memory designs proposed distributed advisory locks via $\mathtt{lambo\_reserve}$.
 Under that proposal, agents acquire temporary reservations before editing shared code.
 Our production telemetry demonstrated that agents rarely acquired advisory locks.
-Across 230 writes on the Metal rig, zero calls were made to $\mathtt{lambo\_reserve}$.
+Across 247 writes on the Metal rig, zero calls were made to $\mathtt{lambo\_reserve}$.
 On the CUDA rig, only 27 of 422 writes (6.4\%) utilized soft locks.
 Furthermore, 22 of those 27 calls originated from a single agent.
 Only five of 63 distinct agents ever invoked reservations.

@@ -8,7 +8,7 @@ import MdxWarning from '../../components/MdxWarning.astro';
 
 We evaluated Lambo continuously during production development across two hardware rigs:
 * **CUDA Production Rig:** AMD Ryzen 5 3600 CPU (6 cores, 12 threads), 78 GB DDR4 RAM, NVIDIA GeForce RTX 4070 SUPER GPU (12 GB dedicated VRAM), and CachyOS Linux kernel 7.2.2. The daemon runs as a systemd unit using the `candle-cuda` backend with BGE-M3 (1024 dimensions).
-* **Metal Companion Rig:** Apple MacBook Pro with M3 Pro processor (12 CPU cores, 18 GPU cores), 18 GB Unified Memory, and macOS 15. The daemon runs under `launchd` using the `candle-metal` backend.
+* **Metal Companion Rig:** Apple MacBook Pro with M3 Pro processor (12 CPU cores, 18 GPU cores), 18 GB Unified Memory, and macOS 26. The daemon runs under `launchd` using the `candle-metal` backend.
 
 ---
 
@@ -22,7 +22,7 @@ We sampled system health via continuous 5-minute daemon heartbeats over a 12.7-d
 | **Heartbeat Snapshots (300 s)** | 2,495 | 3,429 |
 | **Total Concepts in Store** | 1,819 | 889 |
 | **Total Directed Edges** | 4,552 | 2,198 |
-| **Daemon Process Restarts** | 52 | launchd managed |
+| **Daemon Process Restarts** | 52 | 12 |
 | **Dropped Ledger Lines** | **0** | **0** |
 | **Write Queue Buffer Drops** | **0** | **0** |
 | **Dead-Lettered Mutations** | **0** | **0** |
@@ -32,7 +32,7 @@ We sampled system health via continuous 5-minute daemon heartbeats over a 12.7-d
 | **Overall Tool Error Rate** | 2.45% (25 / 1,020) | 0.27% (1 / 365) |
 | `lambo_inspect` Miss Rate | **26.8%** (22 / 82) | **25.0%** (1 / 4) |
 | `lambo_reserve` Error Rate | 10.3% (3 / 29) | 0.0% (0 / 0) |
-| `lambo_recall` / `derive` Errors | 0.0% (0 / 797) | 0.0% (0 / 361) |
+| `lambo_recall` / `derive` Errors | 0.0% (0 / 797) | 0.0% (0 / 346) |
 
 <MdxNote>
 **Zero Infrastructure Faults vs. Tool Affordance Gap:**
@@ -53,13 +53,13 @@ Lambo evaluates semantic deduplication at write time. If an incoming concept mat
 | Deployment Regime | Concepts Created | Concepts Matched | Deduplication Rate |
 | :--- | :--- | :--- | :--- |
 | **Metal: Review Swarm (Aug 19–23)** | 456 | 62 | **12.0%** |
-| **Metal: Single-Agent Stream (Aug 24–Sep 4)** | 324 | 3 | **0.9%** |
-| **Metal Rig Aggregate** | 780 | 65 | **7.7%** |
+| **Metal: Single-Agent Stream (Aug 24–Sep 4)** | 376 | 3 | **0.8%** |
+| **Metal Rig Aggregate** | 832 | 65 | **7.2%** |
 | **CUDA: Swarm-Named Agent IDs** | 309 | 14 | **4.3%** |
 | **CUDA: Non-Swarm Agent IDs** | 1,285 | 22 | **1.7%** |
 | **CUDA Rig Aggregate** | 1,594 | 36 | **2.2%** |
 
-On the Metal rig, work followed a sharp temporal shift. During the multi-agent review swarm (J1-J3 tracks), multiple agents audited identical code changes simultaneously, yielding a 12.0% deduplication rate. In contrast, during single-agent development, deduplication dropped to 0.9%.
+On the Metal rig, work followed a sharp temporal shift. During the multi-agent review swarm (J1-J3 tracks), multiple agents audited identical code changes simultaneously, yielding a 12.0% deduplication rate. In contrast, during single-agent development, deduplication dropped to 0.8%.
 
 On the CUDA rig, development operated under continuous concurrency (five to 23 active agents daily). Swarm-named task agents matched at 4.3%, whereas non-swarm agents matched at 1.7%. This telemetry is consistent with the hypothesis that write-time deduplication correlates with concurrent task overlap rather than store consolidation.
 
@@ -75,19 +75,19 @@ Payload length distributions across frontier language model families reveal a st
 | **GPT family** | CUDA | 319 | 152 B | 67 B | 433 B | **7.5%** |
 | **Grok family** | CUDA | 204 | 144 B | 130 B | 302 B | **1.0%** |
 | *CUDA Aggregate* | *CUDA* | *1,819* | *232 B* | *90 B* | *585 B* | *15.7%* |
-| **Claude family** | Metal | 648 | 412 B | 299 B | 950 B | **42.0%** |
-| **GPT-5 Codex** | Metal | 29 | 117 B | 85 B | 240 B | **0.0%** |
-| **Cursor Grok Docs** | Metal | 16 | 48 B | 42 B | 95 B | **0.0%** |
-| *Metal Aggregate* | *Metal* | *837* | *348 B* | *299 B* | *950 B* | *36.0%* |
+| **Claude family** | Metal | 713 | 407 B | 356 B | 918 B | **38.7%** |
+| **GPT family** | Metal | 43 | 196 B | 164 B | 395 B | **4.7%** |
+| **Grok family** | Metal | 29 | 62 B | 44 B | 135 B | **0.0%** |
+| *Metal Aggregate* | *Metal* | *889* | *392 B* | *315 B* | *932 B* | *35.9%* |
 
-Across both independent stores, the Claude family generated verbose multi-sentence paragraphs (30% to 42% exceeding 500 bytes), whereas GPT and Grok agents generated concise atomic statements (fewer than 8% exceeding 500 bytes).
+Across both independent stores, the Claude family generated verbose multi-sentence paragraphs (30% to 39% exceeding 500 bytes), whereas GPT and Grok agents generated concise atomic statements (fewer than 8% exceeding 500 bytes).
 
 ---
 
 ## 5.4 Coordination Telemetry: Advisory Locks vs. Receipts
 
 Early agent memory designs proposed distributed advisory locks via `lambo_reserve`. Production telemetry showed that agents rarely acquired advisory locks:
-* On the Metal rig, **zero calls** were made to `lambo_reserve` across 230 writes.
+* On the Metal rig, **zero calls** were made to `lambo_reserve` across 247 writes.
 * On the CUDA rig, only **27 of 422 writes (6.4%)** utilized soft locks. Twenty-two of those 27 calls came from a single agent (`gpt-5.6-terra`), and only 5 of 63 agents ever invoked reservations.
 
 This low adoption reflects discoverability hurdles and identifier fragmentation across 63 ephemeral identities rather than structural obsolescence. Instead, agents relied on the asynchronous write queue with monotonic receipts, which return in sub-millisecond time (0.1 ms median for derive) without synchronous blocking.

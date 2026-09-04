@@ -153,6 +153,15 @@ def verify():
         (r"22\s*/\s*78", "Stale inspect denominator 78 (ledger replay at the frozen stamp gives 82)"),
         (r"28\.2", "Stale inspect miss rate 28.2% (recomputed as 26.8% on 22 / 82)"),
         (r"under\s+15\s*ms", "Unqualified vector scan claim 'under 15 ms' (measured 130.1 ms on CUDA, 71.0 ms on Metal)"),
+        # Metal figures superseded by the ledger replay at METAL_FROZEN_STAMP (2026-09-04T19:16:00Z).
+        (r"\b324\b\s*[&|]\s*3\b", "Stale Metal single-stream created count 324 (replay at the frozen stamp gives 376)"),
+        (r"\b780\b\s*[&|]\s*65\b", "Stale Metal aggregate created count 780 (replay at the frozen stamp gives 832)"),
+        (r"\b0\.9\\?%", "Stale Metal single-stream dedup rate 0.9% (recomputed as 0.8% on 3 / 379)"),
+        (r"\b7\.7\\?%", "Stale Metal aggregate dedup rate 7.7% (recomputed as 7.2% on 65 / 897)"),
+        (r"0\s*/\s*361", "Stale Metal recall/derive denominator 361 (recall + derive + record_action at the stamp is 346)"),
+        (r"230\s+writes", "Stale Metal write count 230 (derive + record_action calls at the stamp is 247)"),
+        (r"837\s+concepts\)", "Stale Metal store size 837 in the length table (store at the stamp holds 889 concepts)"),
+        (r"macOS\s+15", "Stale Metal OS version macOS 15 (the rig ran macOS Tahoe 26.6 for the whole window)"),
     ]
     stale_found = []
     # Check in main.tex
@@ -223,10 +232,33 @@ def verify():
     check_rate("CUDA total error rate", ctc["total_errors"], ctc["total_calls"], ctc["total_error_rate_pct"], places=2)
 
     mtc = metal_data["reliability"]["tool_calls"]
+    m_by_tool = mtc["by_tool"]
+    check_sum("Metal by_tool vs total_calls", list(m_by_tool.values()), mtc["total_calls"])
+    check_sum("Metal inspect_calls vs by_tool", [m_by_tool.get("lambo_inspect", 0)], mtc["inspect_calls"])
+    check_sum("Metal reserve_calls vs by_tool", [m_by_tool.get("lambo_reserve", 0)], mtc["reserve_calls"])
+    check_sum("Metal recall_derive_calls vs by_tool",
+              [m_by_tool["lambo_recall"], m_by_tool["lambo_derive"], m_by_tool["lambo_record_action"]],
+              mtc["recall_derive_calls"])
+    check_sum("Metal write_calls vs by_tool",
+              [m_by_tool["lambo_derive"], m_by_tool["lambo_record_action"]], mtc["write_calls"])
     check_sum("Metal total_errors vs components",
-              [mtc["inspect_errors"], mtc["reserve_errors"]], mtc["total_errors"])
+              [mtc["inspect_errors"], mtc["reserve_errors"], mtc["recall_derive_errors"]], mtc["total_errors"])
     check_rate("Metal inspect error rate", mtc["inspect_errors"], mtc["inspect_calls"], mtc["inspect_error_rate_pct"])
+    check_rate("Metal reserve error rate", mtc["reserve_errors"], mtc["reserve_calls"], mtc["reserve_error_rate_pct"])
+    check_rate("Metal recall/derive error rate", mtc["recall_derive_errors"], mtc["recall_derive_calls"],
+               mtc["recall_derive_error_rate_pct"])
     check_rate("Metal total error rate", mtc["total_errors"], mtc["total_calls"], mtc["total_error_rate_pct"], places=2)
+
+    # The store must equal the concepts written before the ledger existed plus
+    # every creation the ledger recorded. This ties the dedup denominators to
+    # the store row in the reliability table.
+    mrec = metal_data["deduplication"]["store_reconciliation"]
+    check_sum("Metal store reconciliation (pre-ledger + ledger created vs store)",
+              [mrec["concepts_before_ledger"], mrec["ledger_created"]], mrec["store_concepts"])
+    check_sum("Metal store_reconciliation vs reliability.store.concepts",
+              [mrec["store_concepts"]], metal_data["reliability"]["store"]["concepts"])
+    check_sum("Metal store_reconciliation ledger_created vs whole_period.created",
+              [mrec["ledger_created"]], metal_data["deduplication"]["temporal_regimes"]["whole_period"]["created"])
 
     # Match rate denominator is ingestion attempts (created plus matched), not creations.
     def check_dedup(label, regime):
@@ -280,6 +312,10 @@ def verify():
     metal_swarm_dedup = metal_data["deduplication"]["temporal_regimes"]["review_swarm_window"]["match_rate_pct"]
     metal_single_dedup = metal_data["deduplication"]["temporal_regimes"]["single_agent_window"]["match_rate_pct"]
     metal_agg_dedup = metal_data["deduplication"]["temporal_regimes"]["whole_period"]["match_rate_pct"]
+    metal_rd_calls = metal_data["reliability"]["tool_calls"]["recall_derive_calls"]
+    metal_writes = metal_data["reliability"]["tool_calls"]["write_calls"]
+    metal_concepts = metal_data["reliability"]["store"]["concepts"]
+    metal_edges = metal_data["reliability"]["store"]["directed_edges"]
 
     cuda_swarm_dedup = cuda_data["deduplication"]["swarm_named"]["match_rate_pct"]
     cuda_non_swarm_dedup = cuda_data["deduplication"]["non_swarm_named"]["match_rate_pct"]
@@ -297,6 +333,10 @@ def verify():
         ("Metal Swarm Dedup Rate", f"{metal_swarm_dedup:.1f}%", True, True, True),
         ("Metal Single Stream Dedup Rate", f"{metal_single_dedup:.1f}%", True, True, True),
         ("Metal Aggregate Dedup Rate", f"{metal_agg_dedup:.1f}%", True, True, False),
+        ("Metal Recall/Derive Denominator", f"0 / {metal_rd_calls:,}", True, True, False),
+        ("Metal Write Calls", f"{metal_writes} writes", True, True, False),
+        ("Metal Store Concepts", f"{metal_concepts:,}", True, True, True),
+        ("Metal Store Edges", f"{metal_edges:,}", True, True, True),
         ("CUDA Swarm Dedup Rate", f"{cuda_swarm_dedup:.1f}%", True, True, False),
         ("CUDA Non-Swarm Dedup Rate", f"{cuda_non_swarm_dedup:.1f}%", True, True, False),
         ("CUDA Aggregate Dedup Rate", f"{cuda_agg_dedup:.1f}%", True, True, False),

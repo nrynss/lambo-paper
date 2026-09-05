@@ -9,8 +9,10 @@ Outputs:
 
 import os
 import json
+import shutil
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.patches import FancyBboxPatch
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "src")
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
@@ -33,73 +35,85 @@ plt.rcParams.update({
 
 def generate_fig1_dispersion():
     R = np.arange(1, 13)
-    k_repo = 3.0
-    delta_r = 1.0 / (1.0 + np.exp(0.45 * (R - k_repo)))
-    tau_sync = 12.0 + 8.5 * np.log2(R)
+    # Illustrative model only.  It plots the inverse-R relationship derived
+    # under uniform allocation across independent repositories.  It is not a
+    # fitted deployment curve and makes no timing claim.
+    delta_r = 1.0 / R
 
     fig, ax1 = plt.subplots(figsize=(4.8, 3.2), dpi=300)
 
     color = "#1f77b4"
-    ax1.set_xlabel("Track Count $R$ Across Repositories")
-    ax1.set_ylabel("Cross-Repository Citation Density $\\delta_r$", color=color)
-    line1 = ax1.plot(R, delta_r, color=color, marker="o", label="Citation Density $\\delta_r$")
+    ax1.set_xlabel("Repository Count $R$")
+    ax1.set_ylabel("Expected Citations / Baseline", color=color)
+    line1 = ax1.plot(R, delta_r, color=color, marker="o", label="Illustrative ratio $1/R$")
     ax1.tick_params(axis="y", labelcolor=color)
     ax1.set_ylim(-0.05, 1.05)
 
-    ax2 = ax1.twinx()
-    color = "#d62728"
-    ax2.set_ylabel("Barrier Synchronization $\\tau_{\\mathrm{sync}}$ (ms)", color=color)
-    line2 = ax2.plot(R, tau_sync, color=color, marker="s", linestyle="--", label="Barrier Sync $\\tau_{\\mathrm{sync}}$")
-    ax2.tick_params(axis="y", labelcolor=color)
-    ax2.set_ylim(0, 50)
-    ax2.grid(False)
-
-    lines = line1 + line2
-    labels = [l.get_label() for l in lines]
-    ax1.legend(lines, labels, loc="center right")
+    ax1.legend(line1, [l.get_label() for l in line1], loc="upper right")
+    ax1.text(0.04, 0.08, "Assumptions: uniform allocation\nindependent repository graphs",
+             transform=ax1.transAxes, fontsize=8, va="bottom")
 
     plt.tight_layout()
     out_path = os.path.join(OUTPUT_DIR, "fig1_dispersion.pdf")
     plt.savefig(out_path)
+    plt.savefig(out_path.replace(".pdf", ".png"), dpi=300)
+    plt.close()
+    print(f"Generated {out_path}")
+
+def generate_fig0_architecture():
+    """Schematic matching the inspected receipt and persistence boundaries."""
+    fig, ax = plt.subplots(figsize=(9.4, 3.3), dpi=300)
+    ax.set_axis_off()
+    def box(x, y, w, h, label, color):
+        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.02",
+                                    facecolor=color, edgecolor="#334155", linewidth=1.1))
+        ax.text(x+w/2, y+h/2, label, ha="center", va="center", fontsize=8)
+    def arrow(a, b, label=""):
+        ax.annotate("", b, a, arrowprops=dict(arrowstyle="->", lw=1.15, color="#334155"))
+        if label:
+            ax.text((a[0]+b[0])/2, (a[1]+b[1])/2+0.035, label, ha="center", fontsize=7)
+    box(0.03, .57, .17, .24, "Agent clients\nderive / action", "#e0f2fe")
+    box(.29, .57, .19, .24, "Validation +\ninteraction opening", "#fef3c7")
+    box(.57, .57, .17, .24, "Per-agent FIFO\nadmission lanes", "#dcfce7")
+    box(.80, .57, .17, .24, "Background graph\napply + receipt state", "#ede9fe")
+    box(.80, .13, .17, .22, "Write-behind store\nand clean-close intents", "#fee2e2")
+    arrow((.20,.69),(.29,.69),"request")
+    arrow((.48,.69),(.57,.69),"accepted job")
+    arrow((.74,.69),(.80,.69),"dequeued job")
+    arrow((.29,.59),(.20,.59),"receipt / status")
+    arrow((.885,.57),(.885,.35),"separate persistence boundary")
+    ax.set_xlim(0,1); ax.set_ylim(0,1)
+    plt.tight_layout()
+    out_path = os.path.join(OUTPUT_DIR, "fig0_architecture.pdf")
+    plt.savefig(out_path)
+    plt.savefig(out_path.replace(".pdf", ".png"), dpi=300)
     plt.close()
     print(f"Generated {out_path}")
 
 def generate_fig2_latency():
-    # Number of concepts
-    N = np.linspace(100, 5000, 100)
-    
-    # Measured Decimal ASCII Scan Latency from Issue #8:
-    # CUDA: 8.7 ms fixed + 0.081 ms per concept
-    # Metal: 17.6 ms fixed + 0.064 ms per concept
+    # End-to-end recall p50 observations from lambo Issue #8. The fitted
+    # lines summarize those observations; they are not isolated Phase-1 scans.
+    N = np.linspace(100, 1600, 100)
     cuda_decimal = 8.7 + 0.081 * N
     metal_decimal = 17.6 + 0.064 * N
-    
-    # Analytical projection for packed binary BLOB (no decimal parsing):
-    # Fixed overhead ~8.7 ms (query embed + CUDA overhead) + ~0.003 ms per concept (pure f32 memcpy/SIMD)
-    # Projected latency at 1500 concepts is ~13-25 ms
-    projected_binary = 8.7 + 0.0035 * N
+    cuda_n, cuda_y = np.array([100, 1500]), np.array([16.8, 130.1])
+    metal_n, metal_y = np.array([100, 400, 837]), np.array([24.0, 43.7, 71.0])
 
     fig, ax = plt.subplots(figsize=(4.8, 3.2), dpi=300)
-    ax.plot(N, cuda_decimal, label="Measured CUDA (Decimal ASCII)", color="#2ca02c", linestyle="-")
-    ax.plot(N, metal_decimal, label="Measured Metal (Decimal ASCII)", color="#ff7f0e", linestyle="-")
-    ax.plot(N, projected_binary, label="Projected Binary BLOB (Analytical)", color="#1f77b4", linestyle=":")
+    ax.plot(N, cuda_decimal, label="CUDA fit to observations", color="#2ca02c", linestyle="--")
+    ax.plot(N, metal_decimal, label="Metal fit to observations", color="#ff7f0e", linestyle="--")
+    ax.scatter(cuda_n, cuda_y, label="CUDA observed p50", color="#2ca02c", zorder=5)
+    ax.scatter(metal_n, metal_y, label="Metal observed p50", color="#ff7f0e", zorder=5)
 
-    # Highlight dogfood operating point (~1,500 concepts)
-    ax.scatter([1500], [8.7 + 0.081 * 1500], color="#2ca02c", zorder=5)
-    ax.scatter([837], [17.6 + 0.064 * 837], color="#ff7f0e", zorder=5)
-    ax.annotate("CUDA 1,500 concepts\n(130.1 ms p50)", (1500, 130.1), textcoords="offset points", xytext=(-75, 15),
-                arrowprops=dict(arrowstyle="->", color="#2ca02c"))
-    ax.annotate("Metal 837 concepts\n(71.0 ms p50)", (837, 71.0), textcoords="offset points", xytext=(15, -25),
-                arrowprops=dict(arrowstyle="->", color="#ff7f0e"))
-
-    ax.set_xlabel("Session Concept Count $N$")
-    ax.set_ylabel("Recall Phase-1 Vector Scan Latency (ms)")
-    ax.set_ylim(0, 450)
+    ax.set_xlabel("Concepts Retaining Embeddings $N$")
+    ax.set_ylabel("End-to-End Recall Latency p50 (ms)")
+    ax.set_ylim(0, 160)
     ax.legend(loc="upper left")
 
     plt.tight_layout()
     out_path = os.path.join(OUTPUT_DIR, "fig2_latency.pdf")
     plt.savefig(out_path)
+    plt.savefig(out_path.replace(".pdf", ".png"), dpi=300)
     plt.close()
     print(f"Generated {out_path}")
 
@@ -149,10 +163,18 @@ def generate_fig3_dedup():
     plt.tight_layout()
     out_path = os.path.join(OUTPUT_DIR, "fig3_dedup_regimes.pdf")
     plt.savefig(out_path)
+    plt.savefig(out_path.replace(".pdf", ".png"), dpi=300)
     plt.close()
     print(f"Generated {out_path}")
 
 if __name__ == "__main__":
+    generate_fig0_architecture()
     generate_fig1_dispersion()
     generate_fig2_latency()
     generate_fig3_dedup()
+    public_dir = os.path.join(OUTPUT_DIR, "..", "site", "public")
+    os.makedirs(public_dir, exist_ok=True)
+    for stem in ("fig0_architecture", "fig1_dispersion", "fig2_latency", "fig3_dedup_regimes"):
+        for extension in ("pdf", "png"):
+            name = f"{stem}.{extension}"
+            shutil.copy2(os.path.join(OUTPUT_DIR, name), os.path.join(public_dir, name))

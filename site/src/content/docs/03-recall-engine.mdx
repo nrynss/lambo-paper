@@ -12,8 +12,10 @@ Given query $q$, candidate generation combines three orthogonal retrieval legs:
 2. **Dense Vector Leg:** Exact cosine similarity over dense vector embeddings (BGE-M3 1024-dim).
 3. **Recency Leg:** Temporal recency bias over recently touched concepts.
 
-Phase 1 merges candidate scores using a maximum selection rule:
+Phase 1 max-merges raw leg scores:
 $$S_1(q, c) = \max\left( S_{\text{lex}}(q, c), \quad S_{\text{vec}}(q, c), \quad S_{\text{rec}}(c) \right)$$
+
+The implementation returns the over-fetched union without Phase-1 top-$K$ truncation. Final selection occurs during assembly. Raw BM25, cosine, and recency values are not normalized, so this is a heuristic whose cross-leg scale effects need ablation.
 
 ## Phase 2: Prioritized Breadth-First Expansion
 
@@ -24,7 +26,7 @@ Concepts sharing a `chunk_group_id` with an expanded node are force-included as 
 
 ## Phase 3: Composite Scoring and Token Assembly
 
-Expanded concepts are evaluated using composite daemon scoring:
-$$S_{\text{final}}(c) = 0.4 \cdot S_{\text{daemon}}(c) + 0.6 \cdot S_1(q, c)$$
+Expanded concepts are evaluated using composite daemon scoring. The inspected default uses equal 0.5 weights, although frozen telemetry does not retain a complete historical configuration:
+$$S_{\text{final}}(c) = 0.5 \cdot S_{\text{daemon}}(c) + 0.5 \cdot S_1(q, c)$$
 
-The daemon score incorporates topological health, access frequency, recency, degree density, edge bonuses, and type modifiers. Finally, concepts are ordered by canonical priority and assembled into context blocks fitting within token budget $T_{\max}$.
+The daemon score incorporates topological health, access frequency, recency, degree density, edge bonuses, and type modifiers. Warnings are rendered separately from budgeted context blocks, so a dropped block may still contribute a warning.

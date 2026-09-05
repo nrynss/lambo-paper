@@ -10,13 +10,10 @@ Autonomous software engineering agents increasingly collaborate in swarms. Moder
 Existing memory paradigms fail to maintain coherent state in software engineering projects:
 * **Flat markdown scratchpads** lack structural relationships. They cannot express multi-hop dependency chains or track invalidated decisions.
 * **Flat vector retrieval stores** (RAG, MemoryBank) evaluate pairwise cosine similarity between query text and isolated text chunks. In technical codebases, flat vector search suffers from semantic drift: it fails to distinguish between active constraints and superseded implementations.
-* **Static graph retrieval frameworks** (GraphRAG, HippoRAG) require batch corpus indexing. They cannot ingest continuous mutations from concurrent agent processes.
+* **Graph retrieval frameworks** (GraphRAG, HippoRAG) address graph-based retrieval in different document workloads. This report does not infer that they cannot support continuous mutation.
 
 ## The Lambo Approach
 
 To resolve these challenges, we present **Lambo**. Lambo is an in-memory topological memory daemon designed for multi-agent development. Lambo runs as a local supervised daemon exposing a Model Context Protocol (MCP) interface. Agents record typed architectural concepts and directed relationships during execution. Concepts represent logic invariants, structural constraints, and runtime observations.
 
-Lambo coordinates concurrent agents without distributed locking:
-1. Mutations enter an asynchronous write queue that returns monotonic integer receipts within one millisecond.
-2. Agents verify write completion through receipt barriers, guaranteeing read-your-writes consistency.
-3. Retrieval operates via a three-phase hybrid topological pipeline that combines lexical, recency, and vector signals with prioritized breadth-first search across dependency edges.
+Lambo uses a local daemon with per-agent FIFO admission lanes for qualifying asynchronous operations. `derive` and `record_action` receive composite receipt IDs, which a caller can query for individual applied or pending state. `reserve` remains synchronous. The report distinguishes applied receipt state from write-behind persistence.

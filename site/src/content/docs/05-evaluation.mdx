@@ -6,7 +6,7 @@ description: "Multi-rig production telemetry across CUDA discrete GPU and Apple 
 import MdxNote from '../../components/MdxNote.astro';
 import MdxWarning from '../../components/MdxWarning.astro';
 
-We evaluated Lambo continuously during production development across two hardware rigs:
+We observed Lambo during production development across two hardware rigs:
 * **CUDA Production Rig:** AMD Ryzen 5 3600 CPU (6 cores, 12 threads), 78 GB DDR4 RAM, NVIDIA GeForce RTX 4070 SUPER GPU (12 GB dedicated VRAM), and CachyOS Linux kernel 7.2.2. The daemon runs as a systemd unit using the `candle-cuda` backend with BGE-M3 (1024 dimensions).
 * **Metal Companion Rig:** Apple MacBook Pro with M3 Pro processor (12 CPU cores, 18 GPU cores), 18 GB Unified Memory, and macOS 26. The daemon runs under `launchd` using the `candle-metal` backend.
 
@@ -14,12 +14,13 @@ We evaluated Lambo continuously during production development across two hardwar
 
 ## 5.1 System Reliability and Tool Execution
 
-We sampled system health via continuous 5-minute daemon heartbeats over a 12.7-day window on CUDA (2,495 snapshots) and 16.0 days on Metal (3,429 snapshots).
+This is an operational experience report, not a controlled experiment. The Metal deployment changed binaries and embedders, and moved from per-session stdio to supervised HTTP on August 23. Snapshot counts of 2,495 and 3,429 equal 8.7 and 11.9 interval-equivalent days at five minutes, not measured uptime or continuous coverage.
 
 | Reliability Metric | CUDA Production Rig | Metal Companion Rig |
 | :--- | :--- | :--- |
 | **Monitoring Window** | 12.7 days | 16.0 days |
 | **Heartbeat Snapshots (300 s)** | 2,495 | 3,429 |
+| **Interval-Equivalent Snapshots** | 8.7 days | 11.9 days |
 | **Total Concepts in Store** | 1,819 | 889 |
 | **Total Directed Edges** | 4,552 | 2,198 |
 | **Daemon Process Restarts** | 52 | 12 |
@@ -31,19 +32,19 @@ We sampled system health via continuous 5-minute daemon heartbeats over a 12.7-d
 | **Logged Tool Invocations** | 1,020 | 365 |
 | **Overall Tool Error Rate** | 2.45% (25 / 1,020) | 0.27% (1 / 365) |
 | `lambo_inspect` Miss Rate | **26.8%** (22 / 82) | **25.0%** (1 / 4) |
-| `lambo_reserve` Error Rate | 10.3% (3 / 29) | 0.0% (0 / 0) |
+| `lambo_reserve` Error Rate | 10.3% (3 / 29) | N/A (0 calls) |
 | `lambo_recall` / `derive` Errors | 0.0% (0 / 797) | 0.0% (0 / 346) |
 
 <MdxNote>
-**Zero Infrastructure Faults vs. Tool Affordance Gap:**
-Every infrastructure-level failure counter recorded zero across both rigs. However, application-level telemetry revealed a consistent 25% to 27% failure rate on `lambo_inspect`. This failure rate is an affordance gap: `lambo_recall` renders text content without unique node UUIDs, forcing client models to type approximate substrings from memory rather than exact handles.
+**Counters and tool outcomes:**
+The listed infrastructure counters are zero in the frozen extracts. They do not establish zero failures or data loss outside the sampled records. CUDA had 22 inspect misses in 82 calls. Metal had one miss in four calls, which is too small for a rate comparison. The CUDA pattern is consistent with an identifier-surface affordance hypothesis that needs a controlled intervention.
 </MdxNote>
 
 ---
 
 ## 5.2 Deduplication Dynamics: Swarms vs. Streams
 
-Lambo evaluates semantic deduplication at write time. If an incoming concept matches an existing node with cosine similarity exceeding 0.92, the nodes merge.
+The inspected default configuration makes an incoming concept eligible for semantic matching at cosine similarity $\ge 0.85$. Frozen telemetry does not preserve every historical configuration override.
 
 <div style="text-align: center; margin: 2rem 0;">
   <img src="/lambo-paper/fig3_dedup_regimes.png" alt="Deduplication Dynamics" style="max-width: 90%; border-radius: 8px; border: 1px solid #e5e7eb;" />
@@ -80,7 +81,9 @@ Payload length distributions across frontier language model families reveal a st
 | **Grok family** | Metal | 29 | 62 B | 44 B | 135 B | **0.0%** |
 | *Metal Aggregate* | *Metal* | *889* | *392 B* | *315 B* | *932 B* | *35.9%* |
 
-Across both independent stores, the Claude family generated verbose multi-sentence paragraphs (30% to 39% exceeding 500 bytes), whereas GPT and Grok agents generated concise atomic statements (fewer than 8% exceeding 500 bytes).
+Across both stores, the Claude family generated verbose multi-sentence paragraphs (30% to 39% exceeding 500 bytes), whereas GPT and Grok agents generated concise atomic statements (fewer than 8% exceeding 500 bytes).
+
+The model-family groups differ in task mix, prompting, and deployment conditions. Payload length alone does not establish a causal effect on retrieval errors.
 
 ---
 
@@ -90,15 +93,22 @@ Early agent memory designs proposed distributed advisory locks via `lambo_reserv
 * On the Metal rig, **zero calls** were made to `lambo_reserve` across 247 writes.
 * On the CUDA rig, only **27 of 422 writes (6.4%)** utilized soft locks. Twenty-two of those 27 calls came from a single agent (`gpt-5.6-terra`), and only 5 of 63 agents ever invoked reservations.
 
-This low adoption reflects discoverability hurdles and identifier fragmentation across 63 ephemeral identities rather than structural obsolescence. Instead, agents relied on the asynchronous write queue with monotonic receipts, which return in sub-millisecond time (0.1 ms median for derive) without synchronous blocking.
+Discoverability and identifier fragmentation are possible explanations for low reservation use. Issue 8 reports a 0.1 ms median CUDA derive acknowledgement. Receipts report individual write outcomes; application and disk persistence are separate. The Metal window also includes earlier synchronous calls.
 
 ---
 
 ## 5.5 Retrieval Latency Scaling
 
 <div style="text-align: center; margin: 2rem 0;">
-  <img src="/lambo-paper/fig2_latency.png" alt="Vector Scan Latency" style="max-width: 90%; border-radius: 8px; border: 1px solid #e5e7eb;" />
-  <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Figure 2: Recall Phase-1 vector scan latency across concept count $N$. Solid lines show measured decimal text deserialization on CUDA and Metal. Dotted line indicates analytical projection for packed binary BLOBs (20–30 ms floor).</p>
+  <img src="/lambo-paper/fig2_latency.png" alt="End-to-end recall latency by embedded concept count" style="max-width: 90%; border-radius: 8px; border: 1px solid #e5e7eb;" />
+  <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Figure 4: End-to-end recall p50 observations and linear fits. Dashed lines extend the models beyond measured sizes.</p>
 </div>
 
-At 1,500 concepts, vector scan latency reaches 130.1 ms on CUDA and 71.0 ms on Metal due to decimal ASCII text deserialization. An analytical model indicates that migrating to packed binary BLOB vectors reduces this bottleneck to 20–30 ms.
+Issue 8 reports end-to-end recall p50 observations: CUDA was 16.8 ms at 100 concepts and 130.1 ms at 1,500. Metal was 24.0 ms at 100, 43.7 ms at 400, and 71.0 ms at 837. The plotted lines fit those points. The binary-BLOB target has not been measured.
+
+
+The [Issue 8 probe report](https://github.com/nrynss/lambo/issues/8) used isolated store copies with embeddings retained on only the indicated number of concepts. CUDA used 12 timed recalls per size after two warmups. Metal used 24 timed recalls per size, twelve distinct queries, and two warmups.
+
+## 5.6 Preliminary Operational Comparison
+
+The [Issue 17 report](https://github.com/nrynss/lambo/issues/17) describes Lambo answering four of five working questions against Claude Code file memory. The published artifacts omit the query set, prompts, model version, token budget, baseline construction, and grading protocol. This anecdotal result motivates a reproducible comparison.

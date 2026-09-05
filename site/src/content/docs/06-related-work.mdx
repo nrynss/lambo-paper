@@ -5,11 +5,11 @@ description: "Situating Lambo within agent memory, RAG, GraphRAG, and self-impro
 
 ## Dense Retrieval and RAG
 
-Standard Retrieval-Augmented Generation (Lewis et al., 2020) and memory-augmented systems (MemoryBank, Zhong et al., 2023) use dense vector representations. In software engineering tasks, these representations suffer from semantic drift when architectural constraints are updated or superseded.
+Standard Retrieval-Augmented Generation and memory-augmented systems use similarity-based retrieval. Lambo explores typed edges for architectural constraints and invalidation context in a different deployment setting.
 
 ## Graph-Augmented Retrieval
 
-GraphRAG (Edge et al., 2024) and HippoRAG (Gutierrez et al., 2024, 2025) use graph indices to connect knowledge entities. However, these systems rely on batch indexing over static documents and Personalized PageRank. Lambo introduces an in-memory dynamic daemon that accepts live concurrent mutations, enforces directed edge priority traversal, and tracks earned canonization lifecycles.
+GraphRAG and HippoRAG use graph indices for retrieval. Their document-retrieval evaluations provide context for Lambo's focus on typed development constraints and local mutation handling.
 
 ## Autonomous Agents and Memory Architectures
 

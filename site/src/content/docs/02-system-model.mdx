@@ -7,7 +7,7 @@ import Mermaid from '../../components/Mermaid.astro';
 
 ## 2.1 Single-Writer Daemon Topology
 
-Lambo enforces a single-writer daemon topology. One supervised background daemon holds exclusive write authority over a durable session. Agents communicate with the daemon via Unix domain sockets or local HTTP streams. This eliminates multi-process locking contention on persistent database engines while permitting concurrent read-only analytics.
+The inspected deployment uses a local daemon that centralizes graph mutation. Agents communicate through Unix sockets or local HTTP streams. The operational window also includes earlier per-session stdio deployments, so this is an architectural description rather than a constant experimental condition.
 
 <Mermaid
   code={`flowchart TD
@@ -17,7 +17,7 @@ Lambo enforces a single-writer daemon topology. One supervised background daemon
         C3["Grok Remediator"]
     end
     subgraph Daemon["Lambo Daemon Process"]
-        WQ["Async Write Queue"]
+        WQ["Per-agent FIFO lanes"]
         MemCore["In-RAM Graph Core"]
         Engine["3-Phase Recall Engine"]
     end
@@ -27,7 +27,7 @@ Lambo enforces a single-writer daemon topology. One supervised background daemon
     C1 -->|derive / record_action| WQ
     C2 -->|derive / record_action| WQ
     C3 -->|derive / record_action| WQ
-    WQ -->|coalesced batch| MemCore
+    WQ -->|admitted jobs| MemCore
     C1 -->|recall| Engine
     Engine --> MemCore
     MemCore <-->|flush / load| DB
@@ -57,4 +57,4 @@ Edges capture precise architectural semantics $\epsilon(e) \in \mathcal{R}$:
 
 ## 2.3 Level-B Storage Pluggability
 
-To prevent tight coupling to a single persistence layer, Lambo enforces **Level-B storage pluggability**. Storage drivers are compiled as modular adapters behind a strict `GraphStore` trait contract. Drivers support SQLite (in-process embedded), PostgreSQL, and CockroachDB with identical transactional semantics.
+Storage drivers are compiled as modular adapters behind a `GraphStore` trait. This report describes the inspected drivers and does not claim identical behavior across untested configurations.

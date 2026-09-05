@@ -1,17 +1,14 @@
 ---
 title: "4. Receipts & Write Queue"
-description: "Non-blocking mutation ingestion, monotonic receipt ordering, and barrier synchronization."
+description: "Receipt-bearing asynchronous operations, per-agent FIFO lanes, and persistence boundaries."
 ---
 
 ## Asynchronous Write Queue
 
-Lambo completely decouples agent MCP tool invocations from database transactions. When an agent calls `lambo_derive` or `lambo_record_action`:
-1. The mutation payload enters an in-memory bounded queue (`Crossbeam`).
-2. The daemon dispatches a monotonically increasing 64-bit integer receipt $r \in \mathbb{N}$.
-3. The MCP call returns immediately with receipt $r$ in sub-millisecond time ($0.1$ ms median).
+For `lambo_derive` and `lambo_record_action`, validation and interaction opening occur on the call path. An accepted background job receives a composite receipt ID containing epoch, time, and sequence fields. Receipt numbers are assigned before lane admission, so numeric order is not global drain order. Each agent has a FIFO lane for sequential submissions, while different lanes may run concurrently. `lambo_reserve` stays synchronous.
 
 ## Barrier Synchronization
 
-When subsequent agent steps depend on committed state, agents check receipt barriers:
-* An agent queries `lambo_stats` to verify that the daemon's applied receipt sequence has reached or exceeded $r$.
-* This guarantees read-your-writes consistency without requiring synchronous distributed database locks.
+When subsequent steps depend on applied state, agents check individual receipts:
+* An agent queries a specific receipt through `lambo_stats` when it needs an applied, failed, pending, or replay-related state.
+* Applied records graph-path completion. Write-behind persistence and clean-close durable intents are separate boundaries.

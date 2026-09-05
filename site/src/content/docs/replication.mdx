@@ -9,7 +9,7 @@ description: "Step-by-step instructions to reproduce all figures, tables, and co
 * Node.js v20+ with `npm` (for the web documentation site)
 
 ## 1. Extract Multi-Rig Telemetry
-To extract live telemetry from the production rig and generate stamped JSON datasets:
+The default command writes the frozen telemetry datasets. Replaying original ledgers and stores requires access to those source artifacts and the appropriate `--live --rig` options:
 ```bash
 python3 scripts/extract_telemetry.py
 ```
@@ -29,7 +29,7 @@ python3 scripts/verify_constraints.py
 ## 4. Compile Manuscript PDF
 To compile `src/main.tex` into `src/main.pdf`:
 ```bash
-tectonic src/main.tex
+make pdf
 ```
 
 ## 5. Build Web Edition

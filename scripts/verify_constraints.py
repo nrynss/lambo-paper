@@ -4,7 +4,8 @@ Automated verification script for Lambo research paper constraints:
 1. Zero semicolons (;) in prose, math, and code
 2. Zero em dashes (—, ---) and punctuation dashes (--)
 3. Zero sentences > 30 words in prose
-4. Exactly 15 citations matching peer-reviewed literature
+4. Exactly 15 bibliography entries, unique keys, and resolved LaTeX citations
+   (bibliographic accuracy and publication status require primary-source review)
 5. Zero unscrubbed local user paths (/home/) in public data and web docs
 6. Zero stale or conflated figures (e.g. 2,486 snapshots, 524 tool calls)
 7. Within-file arithmetic consistency of data/*.json (counts sum, rates recompute)
@@ -84,6 +85,29 @@ def verify():
         failed = True
     else:
         print(f"[PASS] Exactly 15 citations found: {entries}")
+
+    cited = {
+        key.strip()
+        for group in re.findall(r"\\cite(?:\[[^\]]*\])*\{([^}]+)\}", tex_text)
+        for key in group.split(",")
+    }
+    duplicate_keys = sorted({key for key in entries if entries.count(key) > 1})
+    missing_keys = sorted(cited - set(entries))
+    unused_keys = sorted(set(entries) - cited)
+    if duplicate_keys or missing_keys or unused_keys:
+        print(f"[FAIL] Duplicate bibliography keys: {duplicate_keys}; unresolved citations: {missing_keys}; uncited entries: {unused_keys}")
+        failed = True
+    else:
+        print("[PASS] Bibliography keys are unique and all LaTeX citations resolve.")
+    print("[NOTE] Citation metadata, publication status, and scientific claims require source review.")
+
+    with open(os.path.join(SITE_DOCS_DIR, "08-references.mdx"), encoding="utf-8") as f:
+        web_bib_blocks = re.findall(r"```bibtex\s*\n(.*?)\n```", f.read(), re.DOTALL)
+    if len(web_bib_blocks) != 1 or web_bib_blocks[0].strip() != bib.strip():
+        print("[FAIL] Web bibliography must contain one BibTeX block matching src/references.bib.")
+        failed = True
+    else:
+        print("[PASS] Web and manuscript bibliography sources match.")
 
     # 5. Sentence lengths in prose
     lines = [l for l in tex_text.splitlines() if not l.strip().startswith("%")]

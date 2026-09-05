@@ -1,10 +1,10 @@
 ---
-title: "Lambo: A Living Topological Memory Substrate"
-description: "Scalable Attributed Graph Memory for Multi-Agent Software Development"
+title: "Lambo: Shared Graph Memory"
+description: "A systems experience report on multi-agent software development"
 template: doc
 hero:
   title: "Lambo Paper"
-  tagline: "A Living Topological Memory Substrate for Multi-Agent Software Development"
+  tagline: "Shared graph memory for multi-agent software development"
   actions:
     - text: "Download PDF"
       link: "/lambo-paper/lambo-paper.pdf"
@@ -26,18 +26,7 @@ import { CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 ## Abstract
 
-Autonomous coding agents operate within ephemeral process lifecycles. When agents complete execution, their intermediate reasoning and architectural context vanish. Standard vector stores suffer from semantic drift and lack topological dependency awareness.
-
-We present **Lambo**, an in-memory topological memory daemon for multi-agent software engineering. Lambo models development state as a directed typed graph with an earned canonization lifecycle. Concurrent agents coordinate through an asynchronous write queue with monotonic integer receipts.
-
-Context retrieval uses three-leg hybrid candidate scoring and prioritized breadth-first topological expansion:
-1. **Phase 1:** Max-merges lexical (BM25), recency, and dense vector signals (BGE-M3 1024-dim).
-2. **Phase 2:** Traverses structural dependency edges while respecting invalidation semantics.
-3. **Phase 3:** Enforces canonical-first ranking and hot-list conflict preservation under token budgets.
-
-We evaluate Lambo across two production rigs using continuous 5-minute health sampling (2,495 heartbeat snapshots on CUDA and 3,429 on Metal) over live production deployments. Deduplication rates reached 12.0% during synchronized review swarms on Metal (against 0.8% in single-agent sessions) and 4.3% among swarm-named agents on CUDA (against 1.7% in non-swarm streams, 2.2% aggregate). Zero infrastructure-level faults occurred across all checkpoints. Tool-level execution misses (25% to 27% on inspect) revealed a text-surface affordance gap that motivates rendering explicit node identifiers.
-
-Finally, we formulate the multi-repository dispersion effect to explain why consensus promotion requires namespace scoping, and characterize hardware-specific memory paging overheads on unified memory platforms.
+Autonomous coding agents operate within ephemeral process lifecycles. When agents complete execution, their intermediate reasoning and architectural context vanish. Similarity retrieval alone does not explicitly encode dependency or invalidation relationships. We present Lambo, an in-memory topological memory daemon for multi-agent software engineering. Lambo models development state as a directed typed graph with an earned canonization lifecycle. Concurrent agents submit asynchronous writes through per-agent lanes with individual receipt states. Context retrieval uses three-leg hybrid candidate scoring and prioritized breadth-first topological expansion. Phase one merges lexical, recency, and dense vector signals. Phase two traverses structural dependency edges while respecting invalidation semantics. Phase three enforces canonical-first ranking and hot-list conflict preservation under token budgets. We report operational telemetry from two production rigs using nominal 5-minute health sampling. The extract contains 2,495 CUDA and 3,429 Metal heartbeat snapshots. At the nominal interval, those counts correspond to 8.7 and 11.9 interval-equivalent days within 12.7 and 16.0 day windows. Deduplication rates reached 12.0% during synchronized review swarms on Metal (against 0.8% in single-agent sessions) and 4.3% among swarm-named agents on CUDA (against 1.7% in non-swarm streams, 2.2% aggregate). The tracked infrastructure counters were zero in this extract, which does not establish zero failures or data loss. CUDA inspect misses were 22 of 82, while Metal had one miss in four calls and is too small for a cross-rig rate comparison. No concepts reached Canonical status, and the observed Metal store had no concepts eligible for the first promotion gate. We discuss citation dilution as a separate hypothesis and identify controlled retrieval evaluation as future work.
 
 ---
 
@@ -45,7 +34,7 @@ Finally, we formulate the multi-repository dispersion effect to explain why cons
 
 <div style="text-align: center; margin: 2rem 0;">
   <img src="/lambo-paper/fig0_architecture.png" alt="Lambo Architecture" style="max-width: 100%; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" />
-  <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Figure 1: The Lambo system architecture with asynchronous write queue, in-RAM core, 3-phase recall, and pluggable persistence.</p>
+  <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Architecture of per-agent FIFO lanes, receipt states, graph application, and separate write-behind persistence.</p>
 </div>
 
 ---
@@ -56,7 +45,7 @@ Finally, we formulate the multi-repository dispersion effect to explain why cons
   <LinkCard title="1. Introduction" description="Context fragmentation in coding swarms and topological graph memory." href="/lambo-paper/01-introduction/" />
   <LinkCard title="2. System Model & Topology" description="Directed typed graph representation and Level-B storage pluggability." href="/lambo-paper/02-system-model/" />
   <LinkCard title="3. 3-Phase Recall Engine" description="Lexical-vector max-merge and prioritized BFS neighborhood expansion." href="/lambo-paper/03-recall-engine/" />
-  <LinkCard title="4. Receipts & Write Queue" description="Non-blocking monotonic write queue and barrier coordination." href="/lambo-paper/04-receipts-queue/" />
+  <LinkCard title="4. Receipts & Write Queue" description="Per-agent write lanes, receipt states, and persistence boundaries." href="/lambo-paper/04-receipts-queue/" />
   <LinkCard title="5. Empirical Evaluation" description="Multi-rig production telemetry across CUDA and Apple Silicon Metal." href="/lambo-paper/05-evaluation/" />
   <LinkCard title="6. Related Work" description="Comparison with RAG, GraphRAG, HippoRAG, MemGPT, and Voyager." href="/lambo-paper/06-related-work/" />
   <LinkCard title="Multi-Rig Telemetry Data" description="Inspect raw stamped telemetry datasets and reproducibility artifacts." href="/lambo-paper/telemetry-data/" />
@@ -69,7 +58,7 @@ Finally, we formulate the multi-repository dispersion effect to explain why cons
 
 ```bibtex
 @article{narayan2026lambo,
-  title={Lambo: A Living Topological Memory Substrate for Multi-Agent Software Development},
+  title={Lambo: Shared Graph Memory for Multi-Agent Software Development},
   author={Narayan SS},
   journal={arXiv preprint},
   year={2026}

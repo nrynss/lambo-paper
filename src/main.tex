@@ -32,7 +32,7 @@
     hypertexnames=false
 }
 
-\title{\textbf{Lambo: A Living Topological Memory Substrate\\for Multi-Agent Software Development}}
+\title{\textbf{Lambo: Shared Graph Memory for Multi-Agent Software Development}}
 
 \author{
   \textbf{Narayan SS}\\
@@ -48,21 +48,21 @@
 \begin{abstract}
 Autonomous coding agents operate within ephemeral process lifecycles.
 When agents complete execution, their intermediate reasoning and architectural context vanish.
-Standard vector stores suffer from semantic drift and lack topological dependency awareness.
+Similarity retrieval alone does not explicitly encode dependency or invalidation relationships.
 We present Lambo, an in-memory topological memory daemon for multi-agent software engineering.
 Lambo models development state as a directed typed graph with an earned canonization lifecycle.
-Concurrent agents coordinate through an asynchronous write queue with monotonic receipts.
+Concurrent agents submit asynchronous writes through per-agent lanes with individual receipt states.
 Context retrieval uses three-leg hybrid candidate scoring and prioritized breadth-first topological expansion.
 Phase one merges lexical, recency, and dense vector signals.
 Phase two traverses structural dependency edges while respecting invalidation semantics.
 Phase three enforces canonical-first ranking and hot-list conflict preservation under token budgets.
-We evaluate Lambo across two production rigs using continuous 5-minute health sampling.
-This evaluation covers 2,495 heartbeat snapshots on CUDA and 3,429 on Metal over 12 to 16 days of deployment.
+We report operational telemetry from two production rigs using nominal 5-minute health sampling.
+The extract contains 2,495 CUDA and 3,429 Metal heartbeat snapshots. At the nominal interval, those counts correspond to 8.7 and 11.9 interval-equivalent days within 12.7 and 16.0 day windows.
 Deduplication rates reached 12.0\% during synchronized review swarms on Metal (against 0.8\% in single-agent sessions) and 4.3\% among swarm-named agents on CUDA (against 1.7\% in non-swarm streams, 2.2\% aggregate).
-Zero infrastructure-level faults occurred across all checkpoints.
-Tool-level execution misses (25\% to 27\% on inspect) revealed a text-surface affordance gap that motivates rendering explicit node identifiers.
-We formulate the multi-repository dispersion effect to explain why consensus promotion requires namespace scoping.
-Finally, we characterize hardware-specific memory paging overheads on unified memory platforms.
+The tracked infrastructure counters were zero in this extract, which does not establish zero failures or data loss.
+CUDA inspect misses were 22 of 82, while Metal had one miss in four calls and is too small for a cross-rig rate comparison.
+No concepts reached Canonical status, and the observed Metal store had no concepts eligible for the first promotion gate.
+We discuss citation dilution as a separate hypothesis and identify controlled retrieval evaluation as future work.
 \end{abstract}
 
 \section{Introduction}
@@ -73,14 +73,12 @@ However, each agent invocation is fundamentally ephemeral.
 When an agent session terminates, its internal reasoning context disappears.
 Subsequent agents must re-derive architectural decisions from scratch.
 
-Existing memory paradigms fail to maintain coherent state in software projects.
-Flat markdown scratchpads lack structural relationships.
-They cannot express multi-hop dependency chains or track invalidated decisions.
-Flat vector retrieval stores \cite{lewis2020rag, zhong2023memorybank, xiao2024survey} evaluate pairwise cosine similarity between query text and isolated text chunks.
-In technical codebases, flat vector search suffers from semantic drift.
-It fails to distinguish between active constraints and superseded implementations.
-Static graph retrieval frameworks \cite{edge2024graphrag, gutierrez2024hipporag, gutierrez2025hipporag2} require batch corpus indexing.
-They cannot ingest continuous mutations from concurrent agent processes.
+Maintaining coherent development context requires representing both decisions and their revisions.
+Flat markdown scratchpads and vector stores make different tradeoffs in representing relationships and supersession.
+Flat vector retrieval stores \cite{lewis2020rag, zhong2023memorybank, xiao2024survey} commonly rank text chunks with similarity signals.
+This daemon explores explicit typed edges for codebase constraints and invalidation context.
+Graph retrieval frameworks \cite{edge2024graphrag, gutierrez2024hipporag} emphasize graph-based retrieval over document collections.
+Lambo focuses on agent-written development state and local mutation handling.
 
 To resolve these challenges, we present Lambo.
 Lambo is an in-memory topological memory daemon designed for multi-agent development.
@@ -88,26 +86,22 @@ Lambo runs as a local supervised daemon exposing a Model Context Protocol (MCP) 
 Agents record typed architectural concepts and directed relationships during execution.
 Concepts represent logic invariants, structural constraints, and runtime observations.
 
-Lambo coordinates concurrent agents without distributed locking.
-Mutations enter an asynchronous write queue that returns monotonic integer receipts within one millisecond.
-Agents verify write completion through receipt barriers, guaranteeing read-your-writes consistency.
+Lambo uses per-agent admission lanes for asynchronous \texttt{derive} and \texttt{record\_action} work.
+These calls receive composite receipt identifiers and may be awaited by identifier when an agent needs applied state.
 Retrieval operates via a three-phase hybrid topological pipeline.
 Phase one computes the maximum merge across keyword, recency, and dense vector candidates.
 Phase two performs prioritized breadth-first search across architectural dependency edges.
 Phase three applies daemon composite scoring, hot-list conflict preservation, and canonical-first ordering.
 
-We evaluated Lambo continuously across discrete GPU and unified memory architectures.
-Our dataset covers continuous 5-minute daemon health sampling across 12 days on CUDA and 16 days on Metal.
-The telemetry confirms zero infrastructure failures, zero dropped ledger lines, and zero buffer saturations.
-We find that write-time deduplication correlates with concurrent task overlap across independent platforms.
-We identify contrasting verbal length signatures across frontier language models.
-We formalize why consensus promotion freezes under multi-repository development.
-Finally, we diagnose tool-level affordance errors and memory compression penalties on host platforms.
+We report a systems experience across discrete GPU and unified-memory rigs.
+The nominal windows are 12.7 and 16.0 days, with 8.7 and 11.9 interval-equivalent days of snapshots.
+The extract contains zero values for selected counters, observed deduplication regimes, and model-family content-length differences that are confounded by task and model mix.
+These observations motivate improvements to retrieval evaluation, promotion eligibility, and tool interfaces.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.92\textwidth]{fig0_architecture.pdf}
-\caption{The Lambo system architecture. Concurrent agents submit asynchronous mutations and receive monotonic receipts. The background daemon updates the in-memory graph and flushes state to pluggable Level-B persistence engines.}
+\caption{Lambo architecture as inspected at engine commit \texttt{e11fb06}. Qualifying asynchronous calls receive composite receipts. Applied receipt state and write-behind persistence are separate boundaries.}
 \label{fig:arch}
 \end{figure*}
 
@@ -118,24 +112,13 @@ Figure \ref{fig:arch} illustrates the system architecture of Lambo.
 Lambo enforces a single-writer daemon topology.
 One supervised background daemon holds exclusive write authority over a durable session.
 Agents communicate with the daemon via Unix domain sockets or local HTTP streams.
-This eliminates multi-process locking contention on persistent database engines.
-Simultaneously, read-only analytics query the shared memory graph concurrently without taking write locks.
+The design centralizes graph mutation in one daemon process while other callers may issue concurrent reads.
 
 \subsection{Asynchronous Write Queue and Receipts}
-Memory writes must never block the reasoning loop of an agent.
-In contrast to operating system interrupt paging in MemGPT \cite{packer2023memgpt}, Lambo uses an asynchronous ingestion model.
-All write operations enter a bounded asynchronous write queue.
-When an agent submits a mutation, the daemon immediately mints a monotonic integer receipt $r \in \mathbb{N}$.
-The daemon dispatches this receipt in sub-millisecond latency.
-The agent proceeds without awaiting vector embedding generation or disk serialization.
-
-Unlike centralized policy brokers in MemClaw \cite{memclaw2026governed}, Lambo enforces consistency through monotonic receipt barriers.
-An ingestion worker drains the queue in batches.
-Algorithm \ref{alg:ingest} specifies this ingestion process.
-The worker computes dense embeddings for novel concepts and commits graph mutations atomically.
-To enforce read-your-writes consistency, callers check receipt status with a bounded wait parameter.
-When subsequent operations depend on uncommitted writes, the agent waits on the specific receipt rung.
-Empirical production measurements demonstrate that this asynchronous receipt mechanism eliminates the need for advisory distributed locks.
+\texttt{derive} and \texttt{record\_action} may acknowledge after admission while embedding and insertion continue in the background. \texttt{reserve} remains synchronous because its result gates the caller's next action.
+Each admitted job receives a composite receipt identifier containing an epoch, time, and sequence component. Receipt numbers are assigned before lane admission, so their numeric order is not a global drain or commit order.
+Each agent has a FIFO admission lane for sequential submissions, while lanes from different agents may run concurrently. A caller can query an individual receipt for an applied, failed, pending, or replay-related state. An applied receipt records ordinary graph-path completion. It does not itself assert that a disk flush has completed.
+The inspected implementation uses write-behind persistence and durable intents at clean close. This report therefore separates application state from the persistence boundary.
 
 \begin{algorithm}[t]
 \caption{Asynchronous Ingestion and Receipt Scheduling}
@@ -143,29 +126,22 @@ Empirical production measurements demonstrate that this asynchronous receipt mec
 \small
 \begin{algorithmic}[1]
 \Require Queue $\mathcal{Q}_{\text{in}}$, In-Memory Graph $\mathcal{G}$, Persistent Store $\mathcal{S}$
-\Ensure Monotonic execution and durable transaction commitments
-\Function{SubmitMutation}{$m, \text{agent\_id}$}
-    \State $r \gets \text{AtomicFetchAdd}(\text{NextReceipt}, 1)$
-    \State $\mathcal{Q}_{\text{in}}.\text{Push}(\text{Job}(r, m, \text{agent\_id}, \text{Timestamp}()))$
+\Ensure Per-job receipt state and per-agent FIFO admission
+\Function{SubmitAsync}{$m, \text{agent\_id}$}
+    \State Validate and open the interaction synchronously
+    \State $r \gets \text{CompositeReceipt}(\text{epoch}, \text{time}, \text{sequence})$
+    \State Check admission bounds under graph and lane locks
+    \State Refuse admission if the lane or queue is full
+    \State Record an intent in the write-behind log and enqueue $\text{Job}(r,m)$
     \State \Return $r$
 \EndFunction
 \Statex
-\Function{IngestionWorkerLoop}{}
+\Function{AgentLaneWorker}{$\text{agent\_id}$}
     \While{$\text{DaemonIsRunning}()$}
-        \State $\mathcal{B} \gets \mathcal{Q}_{\text{in}}.\text{DrainBatch}(\text{MaxBatchSize})$
-        \State $\mathcal{C}_{\text{new}} \gets \{c \in m.\text{Concepts} \mid m \in \mathcal{B} \text{ and } c \notin \mathcal{G}\}$
-        \State $\mathbf{E}_{\text{new}} \gets \text{BatchEmbed}(\mathcal{C}_{\text{new}})$
-        \For{$c \in \mathcal{C}_{\text{new}}$}
-            \State $c.\text{embedding} \gets \mathbf{E}_{\text{new}}[c]$
-        \EndFor
-        \State $\mathcal{S}.\text{BeginTransaction}()$
-        \For{$\text{job} \in \mathcal{B}$}
-            \State $\mathcal{G}.\text{ApplyMutation}(\text{job}.m)$
-            \State $\mathcal{S}.\text{PersistMutation}(\text{job}.m)$
-            \State $\text{UpdateDurableReceipt}(\text{job}.r)$
-        \EndFor
-        \State $\mathcal{S}.\text{CommitTransaction}()$
-        \State $\text{NotifyWaiters}(\text{MaxDurableReceipt})$
+        \State Dequeue the next job from this agent's lane
+        \State Embed and apply the job through the ordinary graph path
+        \State Set its receipt to \textsc{Applied} or \textsc{Failed}
+        \State Write-behind persistence flushes separately from receipt application
     \EndWhile
 \EndFunction
 \end{algorithmic}
@@ -173,10 +149,10 @@ Empirical production measurements demonstrate that this asynchronous receipt mec
 
 \subsection{Level-B Storage Pluggability}
 Lambo implements Level-B storage pluggability via compile-time Cargo feature flags.
-The core graph engine remains completely decoupled from the underlying storage backend.
+The core graph engine accesses persistence through a shared storage interface.
 Supported engines include embedded SQLite, PostgreSQL, and CockroachDB.
-Every adapter satisfies a formal storage contract.
-This abstraction guarantees identical ranking outputs, topological consistency, and graph traversal logic across all backends.
+Adapters implement the same storage contract while retaining backend-specific transaction and vector-search implementations.
+The deployment evaluation reported here uses SQLite on both rigs.
 
 \subsection{The Embedding Contract Invariant}
 Vector spaces are fragile under encoder model migrations.
@@ -189,7 +165,7 @@ The contract is defined by a three-tuple:
 Here, $\kappa$ identifies the provider, $\mu$ defines the model name, and $d$ specifies the exact vector dimensionality.
 The storage engine records $\mathcal{C}$ at session initialization.
 Any subsequent process that attaches with a mismatched contract is rejected immediately.
-This structural invariant guarantees mathematical purity across all vector search operations.
+The check prevents mixing incompatible declared embedding configurations within a session.
 
 \section{Formal Memory Model}
 
@@ -212,7 +188,7 @@ Edges in $\mathcal{E}$ represent typed architectural dependencies:
                   &\text{CoOccurrence}, \text{Semantic}\}
 \end{align}
 In addition, bipartite provenance edges track agent actions.
-These include \textbf{Derives} edges from interactions to concepts, \textbf{Temporal} ordering edges, and explicit \textbf{Invalidates} edges.
+These include \textbf{Derives} edges from interactions to concepts and \textbf{Temporal} ordering edges. Invalidation is represented by edge polarity rather than a separate \textbf{Invalidates} edge type.
 
 \subsection{Three-Leg Hybrid Candidate Retrieval}
 Given a natural language query $q$, the recall engine retrieves candidate nodes from three orthogonal legs.
@@ -223,13 +199,14 @@ S_{\text{lex}}(q, c) = \text{BM25}(q, c)
 To prevent lexical candidates from being evicted by flat scores, the lexical search over-fetches with multiplier $M = 4$.
 
 Second, the recency leg retrieves concepts derived within the $N_{\text{recent}} = 3$ most recent interactions.
-In contrast to the unbounded forgetting curve in MemoryBank \cite{zhong2023memorybank} and linear recency in Generative Agents \cite{park2023generative}, Lambo enforces a calibrated floor.
+Lambo assigns these candidates a fixed recency score.
 Members of this leg receive a flat floor score:
 \begin{equation}
 S_{\text{rec}}(c) = \rho_{\text{floor}} = 0.35
 \end{equation}
-Calibration against BGE-M3 text embeddings \cite{chen2024bge} establishes that genuine semantic matches score above 0.3991.
-Setting $\rho_{\text{floor}} = 0.35$ provides recency awareness without corrupting semantic ranking.
+An internal calibration using BGE-M3 \cite{chen2024bge} contained a 0.3991 true-recall score.
+The \href{https://github.com/nrynss/lambo/tree/e11fb06ba61a480c8400d89ad6e40bbc39fc46c0/evidence/mooshik-g-recall-calibration}{calibration artifact} documents this fixture-specific observation and the floor adjustment.
+Setting $\rho_{\text{floor}} = 0.35$ is an implementation heuristic whose interaction with raw BM25 and cosine scales needs evaluation.
 
 Third, the vector leg projects query text into vector $\mathbf{e}_q \in \mathbb{R}^d$ and computes cosine similarity.
 \begin{equation}
@@ -240,7 +217,7 @@ Phase one merges candidate scores using a maximum selection rule.
 \begin{equation}
 S_1(q, c) = \max\left( S_{\text{lex}}(q, c), \quad S_{\text{vec}}(q, c), \quad S_{\text{rec}}(c) \right)
 \end{equation}
-The merged candidate list is sorted in descending score order and truncated to limit $K_1$.
+The implementation returns the over-fetched union without Phase-1 top-$K$ truncation. Final selection occurs downstream during Phase-3 assembly. Because BM25, cosine similarity, and the recency floor are max-merged without normalization, this is a heuristic candidate score whose cross-leg scale effects require controlled ablation.
 
 \subsection{Phase-2 Prioritized Breadth-First Expansion}
 The candidate set forms the frontier for Phase-2 graph traversal.
@@ -264,7 +241,7 @@ Phase three computes final composite scores for all expanded concepts:
 \begin{equation}
 S_{\text{final}}(c) = w_{\text{daemon}} \cdot S_{\text{daemon}}(c) + w_{\text{query}} \cdot S_1(q, c)
 \end{equation}
-Here, $w_{\text{daemon}} = 0.4$ and $w_{\text{query}} = 0.6$.
+In the inspected default configuration, $w_{\text{daemon}} = 0.5$ and $w_{\text{query}} = 0.5$. The frozen telemetry does not retain a complete configuration record.
 The daemon score $S_{\text{daemon}}(c) \in [0, 1 + B_{\max}]$ evaluates session-relative topological health:
 \begin{align}
 S_{\text{daemon}}(c) &= 0.25 \cdot R(c) + 0.20 \cdot F(c) + 0.20 \cdot A(c) \nonumber \\
@@ -280,24 +257,27 @@ The normalized component metrics are defined as follows:
     \item \textbf{Type Modifier:} $\mu_{\text{type}}(\text{Constraint}) = +0.15$, $\mu_{\text{type}}(\text{Entity}) = +0.05$, $\mu_{\text{type}}(\text{Logic}) = +0.05$, $\mu_{\text{type}}(\text{Resource}) = 0.0$, and $\mu_{\text{type}}(\text{Observation}) = -0.10$.
 \end{itemize}
 
+Each weighted component is clamped to $[0,1]$, and the composite is clamped to $[0,1.4]$ under these default weights.
+A zero-duration recency extent yields one. Empty interaction or degree denominators yield zero.
+The Metal deployment report records zero access counters, so the frequency term supplied no recall-usage signal in that store.
+
 \subsection{Canonical-First Ordering and Token Budgets}
 Hits are sorted by canonical priority and final score:
 \begin{equation}
 \text{RankKey}(c) = (\mathbb{I}_{\text{canonical}}(c), \quad S_{\text{final}}(c), \quad -\text{NodeId}(c))
 \end{equation}
 Here, $\mathbb{I}_{\text{canonical}}(c) \in \{0, 1\}$ guarantees that Canonical concepts appear ahead of non-canonical concepts.
-Active conflict warnings from the daemon hot-list are force-included regardless of score cuts.
-Finally, text context is assembled by taking the longest score-ordered prefix of concept blocks that fits within token budget $T_{\max}$.
-Blocks are never fragmented across budget boundaries.
+Active conflict warnings are rendered separately from budgeted context blocks. A block dropped by the token budget can still contribute a warning.
+Text context is assembled from a score-ordered prefix of whole concept blocks that fits within token budget $T_{\max}$.
 Algorithm \ref{alg:recall} formalizes this complete retrieval workflow.
 
 \begin{algorithm}[t]
-\caption{Two-Phase Calibrated Topological Recall}
+\caption{Three-Phase Topological Recall (Simplified)}
 \label{alg:recall}
 \small
 \begin{algorithmic}[1]
 \Require Query string $q$, Graph $\mathcal{G}$, Inverted Index $\mathcal{I}$, Limit $K$, Depth $D_{\max}$
-\Ensure Ranked concept hits $\mathcal{H}$ within token budget $T_{\max}$
+\Ensure Budgeted context and separately rendered warnings
 \State $\mathcal{C}_{\text{lex}} \gets \mathcal{I}.\text{Search}(q, K \times 4)$
 \State $\mathcal{C}_{\text{rec}} \gets \{c \in \mathcal{V} \mid c \text{ from } 3 \text{ most recent interactions}\}$
 \State $\mathbf{e}_q \gets \text{Embedder}.\text{Embed}(q)$
@@ -307,26 +287,31 @@ Algorithm \ref{alg:recall} formalizes this complete retrieval workflow.
     \State $s \gets \max(S_{\text{lex}}(q,c), \quad S_{\text{vec}}(q,c), \quad S_{\text{rec}}(c))$
     \State $\mathcal{C}_1 \gets \mathcal{C}_1 \cup \{(c, s)\}$
 \EndFor
-\State $\mathcal{S}_{\text{seeds}} \gets \text{TruncateTopK}(\mathcal{C}_1, K)$
-\State $\mathcal{V}_{\text{bfs}} \gets \mathcal{S}_{\text{seeds}}$, $\mathcal{Q} \gets \text{Queue}(\mathcal{S}_{\text{seeds}})$, $\text{Visited} \gets \text{Set}(\mathcal{S}_{\text{seeds}})$
-\While{$\mathcal{Q} \neq \emptyset$ and $\text{Depth} \le D_{\max}$}
-    \State $u \gets \mathcal{Q}.\text{Pop}()$
+\State $\mathcal{S}_{\text{seeds}} \gets \text{RankedUnion}(\mathcal{C}_1)$ \Comment{unreduced candidate over-approximation}
+\State $\mathcal{V}_{\text{bfs}} \gets \mathcal{S}_{\text{seeds}}$
+\State $\mathcal{Q} \gets \text{Queue}((c,0) \mid c \in \mathcal{S}_{\text{seeds}})$
+\State $\text{Visited} \gets \text{Set}(\mathcal{S}_{\text{seeds}})$
+\While{$\mathcal{Q} \neq \emptyset$}
+    \State $(u,d) \gets \mathcal{Q}.\text{Pop}()$
+    \If{$d \ge D_{\max}$} \State \textbf{continue} \EndIf
     \For{$e \in \text{SortedEdges}(u.\text{OutEdges})$}
         \State $v \gets e.\text{Target}$
         \If{$v \notin \text{Visited}$ and $\epsilon(e) \in \text{TraversableTypes}$}
             \State $\text{Visited}.\text{Add}(v)$
             \State $\mathcal{V}_{\text{bfs}} \gets \mathcal{V}_{\text{bfs}} \cup \{(v, 0.0)\}$
-            \State $\mathcal{Q}.\text{Push}(v)$
+            \State $\mathcal{Q}.\text{Push}((v,d+1))$
         \EndIf
     \EndFor
 \EndWhile
 \State $\mathcal{V}_{\text{all}} \gets \mathcal{V}_{\text{bfs}} \cup \text{ChunkGroupSiblings}(\mathcal{V}_{\text{bfs}})$
 \For{$c \in \mathcal{V}_{\text{all}}$}
-    \State $S_{\text{final}}(c) \gets 0.4 \cdot S_{\text{daemon}}(c) + 0.6 \cdot S_1(q, c)$
+    \State $S_{\text{final}}(c) \gets 0.5 \cdot S_{\text{daemon}}(c) + 0.5 \cdot S_1(q, c)$
 \EndFor
 \State $\mathcal{H}_{\text{sorted}} \gets \text{SortByCanonicalAndScore}(\mathcal{V}_{\text{all}})$
-\State $\mathcal{H} \gets \text{TruncateToTokenBudget}(\mathcal{H}_{\text{sorted}}, T_{\max})$
-\State \Return $\mathcal{H}$
+\State $\mathcal{H} \gets \text{TopKPlusRevalidatedHotMembers}(\mathcal{H}_{\text{sorted}}, K)$
+\State $\mathcal{W} \gets \text{Warnings}(\mathcal{H})$
+\State $\text{context} \gets \text{WholeBlockPrefix}(\mathcal{H}, T_{\max})$
+\State \Return $(\text{context},\mathcal{W})$
 \end{algorithmic}
 \end{algorithm}
 
@@ -369,14 +354,15 @@ Lambo supports two alternative promotion scorers:
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.48\textwidth]{fig1_dispersion.pdf}
-\caption{The Multi-Repository Dispersion Effect. As an operator distributes work across $R$ repositories, local concept reinforcement collapses below the consensus promotion threshold.}
+\caption{Illustrative inverse-$R$ citation-density model. It assumes uniform allocation across independent repository graphs and is not a fitted deployment curve.}
 \label{fig:dispersion}
 \end{figure}
 
 \subsection{The Multi-Repository Dispersion Formulation}
-During longitudinal evaluation across 15,000 canonization cycles, zero concepts achieved Canonical status under the Swarm policy.
-While Collaborative Memory \cite{zhang2025collaborative} assumes shared knowledge domains, software developers routinely divide attention across multiple projects.
-We formalize this phenomenon as the \textit{Multi-Repository Dispersion Effect}.
+The \href{https://github.com/nrynss/lambo/issues/17}{Metal operational report} records approximately 15,000 canonization cycles with zero Swarm-policy Canonical concepts.
+It also records \texttt{gc\_survived}=0 for every concept, so the first gate, \texttt{gc\_survived} $\ge 3$, already blocked promotion.
+This count cannot be attributed to repository dispersion. It is a workload and gate-state observation, not evidence that promotion permanently freezes or that namespace scoping supplies sufficient corroboration.
+We use the term \textit{Multi-Repository Dispersion Hypothesis} for the following simplified model.
 
 Let $M$ denote the total interaction volume generated by an agent swarm.
 Assume an operator works across $R$ independent repositories.
@@ -384,26 +370,28 @@ The total concept space partitions into $R$ disconnected subgraphs:
 \begin{equation}
 \mathcal{G} = \bigcup_{r=1}^R \mathcal{G}_r, \quad \mathcal{G}_i \cap \mathcal{G}_j = \emptyset \quad \forall i \neq j
 \end{equation}
+
 Assuming uniform interaction distribution across repositories, the expected interactions per repository equals:
 \begin{equation}
 \mathbb{E}[M_r] = \frac{M}{R}
 \end{equation}
-Let $\delta_r(c)$ denote the citation density for concept $c \in \mathcal{G}_r$.
-The expected arrival rate of corroborating agent citations scales inversely with repository count:
+
+Let $\delta_r(c)$ denote the citation count for concept $c$ over a fixed observation window.
+Assume the probability of citing $c$ per interaction within its repository stays constant as $R$ changes.
+Under these assumptions, the expected count scales inversely with repository count:
 \begin{equation}
 \mathbb{E}[\delta_r(c)] = \frac{\delta_{\text{base}}(c)}{R}
 \end{equation}
 Figure \ref{fig:dispersion} depicts this relationship.
-When $R = 1$, localized agent density satisfies the gate condition $\delta_1(c) \ge 3$.
-However, when an operator works across $R = 12$ distinct repositories, density collapses to $\delta_{12}(c) \approx 0.33$.
-Citations are diluted across disjoint problem domains.
-Consequently, consensus promotion freezes permanently.
-This mathematical proof establishes that consensus-based memory promotion must be scoped to individual repository namespaces.
+For a fixed baseline citation density, the model reduces the expected local density by a factor of $R$.
+Citations may be diluted across disjoint problem domains under these assumptions.
+The derivation does not model task distributions, cross-repository concepts, gate-level eligibility, or agent behavior. It therefore motivates a future evaluation of promotion gates and namespace policies rather than prescribing a universal policy.
 
 \section{Empirical Evaluation}
 
 \subsection{Experimental Setup}
-We evaluated Lambo across two distinct production environments.
+We observed Lambo across two production environments. The Metal window spans changing binaries and embedders, with per-session stdio processes preceding the August 23 transition to supervised HTTP.
+The architecture description follows the inspected Metal revision \href{https://github.com/nrynss/lambo/tree/e11fb06ba61a480c8400d89ad6e40bbc39fc46c0}{\texttt{e11fb06}}, deployed September 1. Earlier observations include different configurations.
 \begin{itemize}
     \item \textbf{CUDA Rig:} AMD Ryzen 5 3600 CPU (6 cores, 12 threads) and 78 GB DDR4 RAM. It includes an NVIDIA GeForce RTX 4070 SUPER GPU (12 GB VRAM) running CachyOS Linux kernel 7.2.2. The daemon runs as a systemd unit using candle-cuda with BGE-M3 (1024 dimensions).
     \item \textbf{Metal Rig:} Apple MacBook Pro with M3 Pro processor (12 CPU cores, 18 GPU cores), 18 GB Unified Memory, and macOS 26. The daemon runs under launchd using the candle-metal backend.
@@ -411,7 +399,7 @@ We evaluated Lambo across two distinct production environments.
 
 \begin{table}[t]
 \centering
-\caption{System reliability and tool execution telemetry across continuous 5-minute health sampling.}
+\caption{Operational telemetry. Nominal windows and interval-equivalent snapshot counts are reported separately. Zero counters are observations in the frozen extracts.}
 \label{tab:reliability}
 \scriptsize
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrr@{}}
@@ -420,6 +408,7 @@ We evaluated Lambo across two distinct production environments.
 \midrule
 Monitoring Window & 12.7 days & 16.0 days \\
 Heartbeat Snapshots (300 s) & 2,495 & 3,429 \\
+Snapshot Interval Equivalents & 8.7 days & 11.9 days \\
 Total Concepts in Store & 1,819 & 889 \\
 Total Directed Edges & 4,552 & 2,198 \\
 Daemon Process Restarts & 52 & 12 \\
@@ -435,7 +424,7 @@ Degraded Episode Count & \textbf{0} & \textbf{0} \\
 Logged Tool Invocations & 1,020 & 365 \\
 Overall Tool Error Rate & 2.45\% (25 / 1,020) & 0.27\% (1 / 365) \\
 \texttt{inspect} Miss Rate & 26.8\% (22 / 82) & 25.0\% (1 / 4) \\
-\texttt{reserve} Error Rate & 10.3\% (3 / 29) & 0.0\% (0 / 0) \\
+\texttt{reserve} Error Rate & 10.3\% (3 / 29) & N/A (0 calls) \\
 \texttt{recall} / \texttt{derive} Errors & 0.0\% (0 / 797) & 0.0\% (0 / 346) \\
 \bottomrule
 \end{tabular*}
@@ -443,28 +432,26 @@ Overall Tool Error Rate & 2.45\% (25 / 1,020) & 0.27\% (1 / 365) \\
 
 \subsection{Telemetry and Infrastructure Reliability}
 Table \ref{tab:reliability} summarizes automated telemetry over the multi-rig evaluation.
-Across 2,495 continuous 5-minute heartbeat checks on the CUDA rig and 3,429 on the Metal rig, every infrastructure counter recorded zero.
-The write queue processed continuous concurrent writes without buffer saturation.
-Zero mutations were dead-lettered, and zero ledger lines were dropped.
+The frozen extracts contain 2,495 CUDA and 3,429 Metal heartbeat snapshots. At the nominal five-minute interval, those are 8.7 and 11.9 interval-equivalent days, whereas the monitoring windows are 12.7 and 16.0 days. They do not measure uptime or continuous coverage.
+Every listed infrastructure counter is zero in these samples. These counters do not demonstrate zero daemon failures, restarts, or data loss outside their coverage. The 52 CUDA and 12 Metal process restarts require separate causal and recovery evidence.
 
 In contrast to infrastructure health, tool execution telemetry revealed application-level failures.
 Across 1,020 tool calls on the CUDA rig, 25 calls returned errors.
 Twenty-two errors were \texttt{lambo\_inspect} misses on approximate strings, and three were invalid reservation arguments.
-On the Metal rig, four inspect calls produced one miss.
-Both rigs exhibited a consistent 25\% to 27\% failure rate on \texttt{lambo\_inspect}.
-This failure rate stems from an affordance gap.
+On the Metal rig, four inspect calls produced one miss. This denominator is too small to estimate a stable cross-rig rate.
+The CUDA misses are consistent with an affordance gap, but the dataset does not establish its cause.
 The \texttt{lambo\_recall} tool renders text content without unique node identifiers.
-Consequently, client models type approximate substrings from memory rather than exact handles.
+Approximate-string inspect calls suggest that explicit handles could improve tool use.
 
 \subsection{Deduplication Dynamics: Swarms vs. Streams}
 Lambo evaluates semantic deduplication during ingestion.
-If an incoming concept matches an existing node with cosine similarity exceeding 0.92, the nodes merge.
+In the inspected default configuration, an incoming concept is eligible for semantic matching at cosine similarity $\ge 0.85$. The frozen telemetry does not preserve all historical configuration overrides.
 Figure \ref{fig:dedup} and Table \ref{tab:dedup} detail observed match rates across operational regimes.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.48\textwidth]{fig3_dedup_regimes.pdf}
-\caption{Empirical deduplication dynamics across deployment regimes. Review swarms and overlapping tasks drive higher write-time match rates across both hardware platforms.}
+\caption{Observed write-time match rates across deployment regimes. Workload overlap, model mix, and deployment changes were not independently controlled.}
 \label{fig:dedup}
 \end{figure}
 
@@ -524,7 +511,7 @@ Metal Rig Aggregate & 889 & 392 B & 315 B & 932 B & 35.9\% \\
 
 \subsection{Model Verbal Drift and Concept Lengths}
 Table \ref{tab:length} presents concept payload lengths across frontier language model families.
-Both production stores exhibit an identical model-specific divergence.
+Both stores show differences in payload length among the recorded model-family groups.
 Across both platforms, the Claude family generated verbose multi-sentence paragraphs.
 On CUDA, Claude median concept length was 319 bytes, with 30.0\% of concepts exceeding 500 bytes.
 On Metal, Claude concepts averaged 407 bytes, with 38.7\% exceeding 500 bytes.
@@ -533,9 +520,7 @@ Conversely, GPT and Grok agents generated concise atomic statements.
 On CUDA, GPT median length was 67 bytes, with only 7.5\% exceeding 500 bytes.
 Grok concepts averaged 144 bytes on CUDA and 62 bytes on Metal.
 
-Long descriptive paragraphs dilute dense embedding representations.
-In flat vector stores, this verbal drift increases retrieval false positives.
-Lambo mitigates this drift through its directed topological graph structure.
+The family labels are confounded with task mix, prompting, and deployment conditions. The telemetry does not identify a causal effect of length on false positives or show that graph topology mitigates one.
 
 \subsection{Coordination Telemetry: Advisory Locks vs. Receipts}
 Early agent memory designs proposed distributed advisory locks via $\mathtt{lambo\_reserve}$.
@@ -545,35 +530,30 @@ Across 247 writes on the Metal rig, zero calls were made to $\mathtt{lambo\_rese
 On the CUDA rig, only 27 of 422 writes (6.4\%) utilized soft locks.
 Furthermore, 22 of those 27 calls originated from a single agent.
 Only five of 63 distinct agents ever invoked reservations.
-This low adoption reflects discoverability hurdles and identifier fragmentation rather than structural obsolescence.
+Discoverability and identifier fragmentation are possible explanations for this low adoption.
 Ephemeral agent identifiers make lease coordination difficult to maintain across sessions.
-Instead, agents relied on the asynchronous write queue with monotonic receipts.
-Mutations return receipts in sub-millisecond time (0.1 ms median for derive).
+Instead, agents used asynchronous receipt-bearing writes.
+Issue 8 reports a 0.1 ms median CUDA derive acknowledgement. The Metal window also contains earlier synchronous calls.
 This allows agents to proceed without synchronous blocking.
 
-\subsection{Controlled Head-to-Head Evaluation}
-We evaluated Lambo against standard flat file memory architectures common in existing agent frameworks \cite{park2023generative, xiao2024survey}.
-In a controlled evaluation across five complex architectural queries, flat file memory answered three correctly.
-However, flat file memory failed on two architectural reasoning questions.
-First, it failed to identify the downstream blast radius of an API modification.
-Second, it failed to detect that an existing architectural invariant had been explicitly invalidated.
-Lambo answered four of the five questions correctly.
-By traversing directed dependency edges, Lambo identified all downstream dependents.
-Furthermore, Lambo suppressed the invalidated invariant through negative edge polarity.
+\subsection{Preliminary Operational Comparison}
+The \href{https://github.com/nrynss/lambo/issues/17}{Issue 17 deployment report} describes Lambo answering four of five working questions in a comparison against Claude Code file memory.
+The published artifacts omit the query set, prompts, model version, token budget, baseline construction, and grading protocol. This anecdotal result motivates a reproducible comparison.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.48\textwidth]{fig2_latency.pdf}
-\caption{Recall Phase-1 vector scan latency across concept count $N$. Solid lines show measured decimal text deserialization on CUDA and Metal rigs. The dotted line shows an analytical projection for packed binary BLOB vectors modeling a 20 to 30 ms floor.}
+\caption{End-to-end recall p50 observations from Issue 8 and linear fits. Each CUDA size has 12 timed recalls after two warmups. Each Metal size has 24 timed recalls after two warmups. Dashed lines extend the fitted models beyond the measured sizes.}
 \label{fig:latency}
 \end{figure}
 
 \section{Systems Overheads and Hardware Analysis}
 
 \subsection{The Vector Deserialization Bottleneck}
-Figure \ref{fig:latency} illustrates recall latency scaling on SQLite storage backends.
-On the CUDA platform, recall latency scaled from 16.8 ms at 100 concepts to 130.1 ms at 1,513 concepts.
-Linear regression models confirm strong scaling:
+Figure \ref{fig:latency} reports end-to-end recall p50 rather than an isolated Phase-1 vector scan. CUDA observations were 16.8 ms at 100 concepts and 130.1 ms at 1,500 concepts. Metal observations were 24.0 ms at 100, 43.7 ms at 400, and 71.0 ms at 837 concepts.
+The \href{https://github.com/nrynss/lambo/issues/8}{Issue 8 probe report} describes isolated store copies with embeddings retained on only $n$ concepts.
+CUDA used 12 timed recalls per size after two warmups. Metal used 24 timed recalls per size, twelve distinct queries, and two warmups.
+The following linear fits summarize those observations:
 \begin{equation}
 T_{\text{CUDA}}(n) = 8.7\,\text{ms} + 81\,\mu\text{s} \times n
 \end{equation}
@@ -582,29 +562,25 @@ T_{\text{Metal}}(n) = 17.6\,\text{ms} + 64\,\mu\text{s} \times n
 \end{equation}
 Profiling identified the primary bottleneck in text deserialization.
 The initial SQLite storage schema serialized dense vectors as decimal JSON arrays.
-At 1,513 concepts, each recall query parsed 19.1 MB of decimal strings.
+At 1,500 concepts, a CUDA recall query parsed approximately 19.1 MB of decimal strings.
 This triggered 1,540,000 invocations of floating-point string parsers per query.
-Vector deserialization consumed 87\% of total recall execution time.
+The report attributes approximately 87\% of recall time to the scan using the size-sweep slope and fixed-cost estimate.
 
-Serializing vectors as 4 KB binary BLOBs eliminates this deserialization overhead.
-As shown in Figure \ref{fig:latency}, binary storage reduces scan latency to 14.5 ms at 1,500 concepts.
-This provides fast exact-scan retrieval without requiring external C extensions.
+Packed binary BLOB storage is a proposed optimization. The 20 to 30 ms range is a design target and has not been measured, so the report makes no slope, floor, or achieved-latency claim for it.
 
 \subsection{Unified Memory Operating System Compression}
 On the Apple Silicon Metal platform, we discovered a hardware-specific latency degradation.
 When the Lambo daemon remained idle for extended intervals, macOS compressed idle process pages.
 Out of a 1,429 MB process footprint, the memory manager compressed 1,417 MB.
-Model weights and graph structures were swapped into compressed memory.
+The process-level compression observation does not identify which individual allocations were compressed.
 
-Consequently, recall latency scaled with idle duration:
+In the recorded idle-duration bins, recall latency varied as follows:
 \begin{itemize}
     \item \textbf{$<$2 minutes idle:} Recall latency p50 was 186 ms.
     \item \textbf{10 to 30 minutes idle:} Recall latency p50 rose to 567 ms.
     \item \textbf{$>$30 minutes idle:} Recall latency p50 reached 780 ms, with p90 reaching 9,059 ms.
 \end{itemize}
-Isolated queries on resident memory executed in 71 ms.
-The CUDA platform did not experience this paging tax because model weights resided in dedicated VRAM.
-Executing periodic heartbeat touches on resident weights eliminates this decompression penalty.
+These bins contain 19, 9, and 17 observations respectively and do not establish a causal operating-system mechanism. Periodic lightweight touches are a proposed mitigation that needs an intervention study.
 
 \section{Related Work}
 
@@ -612,31 +588,25 @@ Executing periodic heartbeat touches on resident weights eliminates this decompr
 Seminal architectures established linear episodic memory streams \cite{park2023generative}.
 Reflexion and Voyager explored iterative skill accumulation and verbal reinforcement learning \cite{shinn2023reflexion, wang2023voyager}.
 MemoryBank introduced forgetting curves inspired by psychological theories \cite{zhong2023memorybank}.
-These frameworks rely on subjective self-reflection prompts.
-Lambo replaces subjective prompting with mathematical topological graph invariants and earned canonization.
+These systems explore different memory representations and update policies. Lambo contributes a typed graph and promotion gates for a local multi-agent daemon.
 
 \textbf{Graph Retrieval Architectures.}
-GraphRAG and HippoRAG demonstrated that graph representations reduce hallucination \cite{edge2024graphrag, gutierrez2024hipporag, gutierrez2025hipporag2}.
-HippoRAG executes Personalized PageRank over static entity graphs.
-GraphRAG performs hierarchical community detection over text corpora.
-However, both systems target static document collections.
-Lambo supports live continuous mutation during real-time multi-agent execution.
+GraphRAG and HippoRAG use graph representations for retrieval \cite{edge2024graphrag, gutierrez2024hipporag}.
+HippoRAG uses Personalized PageRank and GraphRAG builds graph summaries over corpora. Lambo targets typed development constraints updated during agent execution.
 
 \textbf{Agent Operating Systems and Shared Memory.}
 MemGPT explored hierarchical memory paging for extended contexts \cite{packer2023memgpt}.
-A-Mem and Collaborative Memory investigated decentralized agent knowledge sharing \cite{xu2025amem, zhang2025collaborative}.
+A-MEM dynamically organizes linked memories, while Collaborative Memory addresses multi-user sharing and access control \cite{xu2025amem, zhang2025collaborative}.
 MemClaw formulated governed shared memory for agent fleets \cite{memclaw2026governed}.
-Lambo contributes a lightweight single-writer daemon architecture.
-It eliminates distributed locking overheads through asynchronous monotonic write lanes.
+Lambo contributes a local single-writer daemon architecture with per-agent FIFO admission lanes for qualifying asynchronous operations.
 
 \section{Conclusion}
 
-Lambo establishes an in-memory topological memory substrate for multi-agent software engineering.
-By combining typed multi-graph structures with an earned canonization lifecycle, it maintains architectural context across ephemeral agent executions.
-Production telemetry across 5,924 combined snapshots on both rigs demonstrated zero infrastructure data loss.
-Write-time deduplication reached 12.0\% during review swarms on Metal and 4.3\% among swarm-named agents on CUDA.
-Our mathematical formulation of multi-repository dispersion explains why consensus promotion requires repository scoping.
-Lambo demonstrates that structured topological memory provides a dependable foundation for autonomous software development.
+This systems experience documents a typed graph daemon, receipt-bearing asynchronous operations, and frozen operational telemetry.
+The extracts contain 5,924 heartbeat snapshots and zero values for selected counters, but do not prove absence of failures or data loss.
+Write-time deduplication was 12.0\% in one Metal review-swarm window and 4.3\% for CUDA swarm-named agent IDs.
+The inverse-$R$ model is a hypothesis motivating controlled study of promotion gates and namespace policies.
+Future evaluation should hold memories, reader model, prompts, and token budgets constant, compare flat and graph baselines, and ablate graph expansion and invalidation handling.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

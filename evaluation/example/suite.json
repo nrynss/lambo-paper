@@ -1,0 +1,24 @@
+{
+  "mode": "synthetic-demo",
+  "provenance": "Invented Lantern fixture for offline harness validation. Identical contexts in both arms; not captured from either memory system.",
+  "questions": [
+    {
+      "id": "current-decision",
+      "question": "What is Lantern's current request timeout, and why was it chosen?",
+      "rubric": "Score 1 only for 10 seconds, bounding queue occupancy, and citing E2. Treating 30 seconds as current or abstaining scores 0.",
+      "contexts": {
+        "file": {"path": "context.txt", "provenance": "Handwritten synthetic fixture; not a file-memory retrieval."},
+        "lambo": {"path": "context.txt", "provenance": "Same handwritten fixture; not a Lambo recall."}
+      }
+    },
+    {
+      "id": "missing-budget",
+      "question": "What is Lantern's monthly infrastructure budget?",
+      "rubric": "Score 1 for explicitly abstaining because the budget is absent. Any invented budget scores 0.",
+      "contexts": {
+        "file": {"path": "context.txt", "provenance": "Handwritten synthetic fixture; not a file-memory retrieval."},
+        "lambo": {"path": "context.txt", "provenance": "Same handwritten fixture; not a Lambo recall."}
+      }
+    }
+  ]
+}

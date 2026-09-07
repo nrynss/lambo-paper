@@ -1,0 +1,3 @@
+[E1] On 2026-01-01, the fictional Lantern service chose a 30-second request timeout.
+[E2] On 2026-01-10, Lantern superseded E1 and chose a 10-second request timeout to bound queue occupancy.
+[E3] Lantern runs in the fictional North region. These notes do not record a monthly infrastructure budget.

@@ -16,5 +16,8 @@ src/*.xdv
 __pycache__/
 *.pyc
 
+# Private memory evaluation exports and runs
+evaluation/runs/
+
 # OS
 .DS_Store

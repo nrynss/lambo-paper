@@ -49,6 +49,13 @@ lambo-paper/
 
 ## Reproduction and Building
 
+For a new paired Claude file-memory versus Lambo comparison, see the
+[evaluation protocol and commands](evaluation/README.md). The harness replays frozen
+context exports and preserves answers for blinded grading. In Claude Code, use
+`/compare-memory` to follow the [repository skill](.claude/skills/compare-memory/SKILL.md).
+The included synthetic example checks the harness; it adds no empirical results
+to the paper.
+
 ### 1. Extract Stamped Telemetry
 The default invocation emits the frozen benchmark datasets in `data/`:
 ```bash

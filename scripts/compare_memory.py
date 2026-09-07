@@ -56,8 +56,11 @@ def prepare(args):
         if not q.get("question") or not q.get("rubric"):
             raise ValueError("each question needs question and a predeclared rubric")
         contexts = {}
+        specs = q.get("contexts")
+        if not isinstance(specs, dict) or any(arm not in specs for arm in ARMS):
+            raise ValueError(f"{q['id']}: contexts must define both arms {ARMS}")
         for arm in ARMS:
-            spec = q["contexts"][arm]
+            spec = specs[arm]
             if not spec.get("provenance"):
                 raise ValueError(f"{q['id']}/{arm}: missing export provenance")
             raw = (source.parent / spec["path"]).read_bytes()
@@ -182,6 +185,8 @@ def report(args):
     bundle = read_json(folder / "bundle.json")
     if digest((folder / "bundle.json").read_bytes()) != metadata["bundle_sha256"]:
         raise ValueError("run bundle differs from the prepared bundle")
+    if metadata["harness_sha256"] != bundle["harness_sha256"]:
+        raise ValueError("harness changed between prepare and run; both stages must use the same harness")
     results = read_json(folder / "results.json")
     if digest((folder / "results.json").read_bytes()) != (folder / "results.sha256").read_text().strip():
         raise ValueError("results changed after execution")
@@ -198,8 +203,9 @@ def report(args):
     by_id = {r["answer_id"]: r for r in results}
     questions = {q["id"]: q for q in bundle["questions"]}
     pairs, totals, errors = {}, dict.fromkeys(ARMS, 0), dict.fromkeys(ARMS, 0)
+    model = metadata["model"] if metadata["model"] is not None else "n/a (smoke reader)"
     lines = ["# Frozen memory comparison", "",
-             f"Mode: {bundle['mode']}. Reader: {metadata['reader']}. Model: {metadata['model']}.", "",
+             f"Mode: {bundle['mode']}. Reader: {metadata['reader']}. Model: {model}.", "",
              "SMOKE/DEMO RESULTS ARE NOT EMPIRICAL EVIDENCE." if metadata["reader"] == "smoke" or bundle["mode"] == "synthetic-demo" else "Scores are manual rubric judgments; inspect their evidence and rationale.", "",
              "| Question | Repeat | File | Lambo | Lambo − file |", "|---|---:|---:|---:|---:|"]
     for job in bundle["jobs"]:

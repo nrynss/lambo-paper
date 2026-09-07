@@ -1,4 +1,4 @@
-.PHONY: all extract figures verify pdf site tectonic clean
+.PHONY: all extract figures verify test pdf site tectonic clean
 
 # Kept in lockstep with .github/workflows/deploy.yml. If you bump the version
 # here, bump it there too, or local and CI builds stop being the same build.
@@ -18,6 +18,9 @@ figures:
 
 verify:
 	python3 scripts/verify_constraints.py
+
+test:
+	python3 -m unittest discover -s tests -p 'test_compare_memory.py'
 
 pdf:
 	@command -v $(TECTONIC) >/dev/null 2>&1 || { \

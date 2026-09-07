@@ -34,6 +34,9 @@ jobs:
       - name: Verify Constraints
         run: python3 scripts/verify_constraints.py
 
+      - name: Run Harness Tests
+        run: python3 -m unittest discover -s tests -p 'test_compare_memory.py'
+
       - name: Compile LaTeX Paper
         working-directory: src
         run: tectonic main.tex

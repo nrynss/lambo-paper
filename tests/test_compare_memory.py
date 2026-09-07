@@ -99,6 +99,24 @@ class ComparisonTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must score zero"):
             m.report(args)
 
+    def test_harness_change_between_prepare_and_run_rejected(self):
+        self.prepare()
+        m.run(self.run_args())
+        args = self.grade()
+        metadata = m.read_json(self.output / "run.json")
+        metadata["harness_sha256"] = "0" * 64
+        m.write_json(self.output / "run.json", metadata)
+        with self.assertRaisesRegex(ValueError, "harness changed"):
+            m.report(args)
+
+    def test_missing_arm_reported_by_name(self):
+        suite = m.read_json(self.prep.suite)
+        del suite["questions"][0]["contexts"]["lambo"]
+        self.prep.suite = self.root / "partial-suite.json"
+        m.write_json(self.prep.suite, suite)
+        with self.assertRaisesRegex(ValueError, "current-decision: contexts must define both arms"):
+            m.prepare(self.prep)
+
     def test_answer_edits_rejected(self):
         self.prepare()
         m.run(self.run_args())

@@ -80,7 +80,15 @@ Audits writing and cross-file telemetry constraints:
 python3 scripts/verify_constraints.py
 ```
 
-### 4. Compile Manuscript PDF
+### 4. Run Harness Tests
+Checks the comparison harness for experimental integrity; no model or network calls:
+```bash
+make test
+# or directly:
+python3 -m unittest discover -s tests -p 'test_compare_memory.py'
+```
+
+### 5. Compile Manuscript PDF
 Using [Tectonic](https://tectonic-typesetting.github.io/):
 ```bash
 make pdf
@@ -96,7 +104,7 @@ make tectonic
 ```
 To use a copy you already have, pass its path: `make pdf TECTONIC=/path/to/tectonic`.
 
-### 5. Build Web Edition
+### 6. Build Web Edition
 ```bash
 cd site
 npm install

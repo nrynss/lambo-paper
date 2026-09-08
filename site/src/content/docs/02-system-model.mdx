@@ -58,3 +58,5 @@ Edges capture precise architectural semantics $\epsilon(e) \in \mathcal{R}$:
 ## 2.3 Level-B Storage Pluggability
 
 Storage drivers are compiled as modular adapters behind a `GraphStore` trait. This report describes the inspected drivers and does not claim identical behavior across untested configurations.
+
+Lambo ships a Postgres store adapter beside SQLite. Mooshik, an ambient local-first cowork partner ([github.com/nrynss/mooshik](https://github.com/nrynss/mooshik)), runs Lambo against a hosted Postgres store so that several machines share one memory.

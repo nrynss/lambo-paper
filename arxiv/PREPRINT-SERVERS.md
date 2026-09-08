@@ -3,7 +3,7 @@
 Everything below is copy-ready. Each service needs the account holder to sign in, accept its terms, and submit, so these steps are done by the author.
 
 ## Common fields
-- Title: Lambo: Shared Graph Memory for Multi-Agent Software Development
+- Title: Lambo: A Living Topological Memory Substrate for Multi-Agent Software Development
 - Author: Narayan SS (nryn@lambo.dev), independent
 - Abstract: `arxiv/abstract.txt` (1,892 characters, plain text)
 - Keywords: agent memory, multi-agent systems, software engineering agents, graph memory, retrieval, Model Context Protocol

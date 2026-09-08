@@ -32,7 +32,7 @@
     hypertexnames=false
 }
 
-\title{\textbf{Lambo: Shared Graph Memory for Multi-Agent Software Development}}
+\title{\textbf{Lambo: A Living Topological Memory Substrate for Multi-Agent Software Development}}
 
 \author{
   \textbf{Narayan SS}\\
@@ -73,6 +73,7 @@ Modern workflows deploy concurrent agents to refactor code, run tests, and remed
 However, each agent invocation is fundamentally ephemeral.
 When an agent session terminates, its internal reasoning context disappears.
 Subsequent agents must re-derive architectural decisions from scratch.
+We build a shared graph memory that outlives those sessions.
 
 Maintaining coherent development context requires representing both decisions and their revisions.
 Flat markdown scratchpads and vector stores make different tradeoffs in representing relationships and supersession.
@@ -154,6 +155,8 @@ The core graph engine accesses persistence through a shared storage interface.
 Supported engines include embedded SQLite, PostgreSQL, and CockroachDB.
 Adapters implement the same storage contract while retaining backend-specific transaction and vector-search implementations.
 The deployment evaluation reported here uses SQLite on both rigs.
+Lambo ships a Postgres store adapter beside SQLite.
+Mooshik, an ambient local-first cowork partner (\href{https://github.com/nrynss/mooshik}{github.com/nrynss/mooshik}), runs Lambo against a hosted Postgres store so that several machines share one memory.
 
 \subsection{The Embedding Contract Invariant}
 Vector spaces are fragile under encoder model migrations.

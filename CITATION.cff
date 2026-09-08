@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
 type: dataset
-title: "Lambo: Shared Graph Memory for Multi-Agent Software Development (paper, datasets, and evaluation harness)"
+title: "Lambo: A Living Topological Memory Substrate for Multi-Agent Software Development (paper, datasets, and evaluation harness)"
 authors:
   - family-names: "SS"
     given-names: "Narayan"
@@ -20,7 +20,7 @@ keywords:
   - Model Context Protocol
 preferred-citation:
   type: unpublished
-  title: "Lambo: Shared Graph Memory for Multi-Agent Software Development"
+  title: "Lambo: A Living Topological Memory Substrate for Multi-Agent Software Development"
   authors:
     - family-names: "SS"
       given-names: "Narayan"

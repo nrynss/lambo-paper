@@ -1,4 +1,4 @@
-# Lambo: Shared Graph Memory for Multi-Agent Software Development
+# Lambo: A Living Topological Memory Substrate for Multi-Agent Software Development
 
 [![Paper PDF](https://img.shields.io/badge/Paper-PDF-red.svg)](site/public/lambo-paper.pdf)
 [![Web Edition](https://img.shields.io/badge/Web-Edition-blue.svg)](https://nrynss.github.io/lambo-paper/)
@@ -136,7 +136,7 @@ npm run build
 
 ```bibtex
 @article{narayan2026lambo,
-  title={Lambo: Shared Graph Memory for Multi-Agent Software Development},
+  title={Lambo: A Living Topological Memory Substrate for Multi-Agent Software Development},
   author={Narayan SS},
   journal={arXiv preprint},
   year={2026}

@@ -1,0 +1,154 @@
+{
+ "run": "lambo-2026-09-07",
+ "id": "embedder-superseded",
+ "question": "Which embedder does the Mac dogfood rig use today, and what did it replace?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "28c15664-9d37-43f4-b4f2-c086daf00bd1",
+   "score": 6.765635244037848,
+   "type": "Logic",
+   "content": "J3 latency claim VERIFIED at the release binary over real stdio MCP (2026-08-20, SQLite store, 20 calls, median): agains"
+  },
+  {
+   "rank": 2,
+   "node_id": "23de3957-133f-4b5f-ad5e-3385b7a897c6",
+   "score": 6.008171609514648,
+   "type": "Constraint",
+   "content": "The dogfood embedder's capacity flags are LOAD-BEARING, not tuning (found by K1's NVIDIA leg 2026-08-22, reproduced and "
+  },
+  {
+   "rank": 3,
+   "node_id": "20b56bfa-1497-41a9-920c-153c7b36aad0",
+   "score": 5.725940106854616,
+   "type": "Logic",
+   "content": "K2 bundles the re-embed verb because they are ONE ACT, not two tasks: switching a session's embedder is a re-embed event"
+  },
+  {
+   "rank": 4,
+   "node_id": "670a3d3c-0960-42a7-88b2-40c90dbf2840",
+   "score": 5.691843451788552,
+   "type": "Observation",
+   "content": "24 of 93 recalls on the Mac rig (26%) carried a hot-list warning; 0 reservation warnings, 1 conflict line, 0 canonical m"
+  },
+  {
+   "rank": 5,
+   "node_id": "ea7e2885-2915-4a0e-b7b0-b173b06e57d3",
+   "score": 5.1582017891401835,
+   "type": "Constraint",
+   "content": "Dogfood rig client wiring 2026-09-01: every AI coding agent on the MacBook points at the one supervised HTTP writer http"
+  },
+  {
+   "rank": 6,
+   "node_id": "c4866abb-3882-4093-9e29-0f23134e4980",
+   "score": 4.604635949073598,
+   "type": "Observation",
+   "content": "The Metal paper rig ran macOS Tahoe 26.6.x for the whole evaluation window (26.6.2 installed 2026-08-19 09:26 IST, ledge"
+  },
+  {
+   "rank": 7,
+   "node_id": "382898fe-68a7-464c-b7c5-e0a64f690dfb",
+   "score": 4.578368360311213,
+   "type": "Logic",
+   "content": "Hot-list warnings on the Mac rig (24 of 93 recalls) are almost all the Stale condition: the daemon logged 26 Stale vs 5 "
+  },
+  {
+   "rank": 8,
+   "node_id": "560f1377-a2c5-4253-b0fb-842050637399",
+   "score": 4.5310463796500375,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 9,
+   "node_id": "ff6c5326-ebb7-415c-bd82-1bb436579281",
+   "score": 4.498331895227849,
+   "type": "Logic",
+   "content": "Recommended latency work order for the dogfood rig (2026-09-03), cheapest first: (1) keep the model resident: have the p"
+  },
+  {
+   "rank": 10,
+   "node_id": "e884eee7-6e5d-4473-a50c-1ce8a93db456",
+   "score": 4.444550535998566,
+   "type": "Constraint",
+   "content": "J3 redesign round-1 finding F3 (P2, source-verified, live confirmation unfinished): the reversed embed pin's blast radiu"
+  },
+  {
+   "rank": 11,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 4.401811312420364,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 12,
+   "node_id": "c8d25b0b-f274-489b-9d8c-0d22ad791f88",
+   "score": 4.38734238546249,
+   "type": "Logic",
+   "content": "G3's most valuable side-finding (2026-08-21): lambo's dogfood graph connects ARTIFACTS, not REASONING, and the Derives/T"
+  },
+  {
+   "rank": 13,
+   "node_id": "19a3bfa4-96fd-4b7f-a0b1-fd5d0596d94d",
+   "score": 4.327914847898581,
+   "type": "Constraint",
+   "content": "SWEEP-FAMILY LESSON from J2: the two sweeps the phase doc predicted (startup ordering, lease schema) were both necessary"
+  },
+  {
+   "rank": 14,
+   "node_id": "d1b2c842-9767-4050-a489-94dfd011e7f3",
+   "score": 4.298864057967118,
+   "type": "Entity",
+   "content": "CORRECTION to the same-day claim that the 512-token clamp was a plausible contributor to the unembedded-concept damage \u2014"
+  },
+  {
+   "rank": 15,
+   "node_id": "fa7eeb5f-29ca-4cef-a51d-8f2a9ef92773",
+   "score": 4.212358099821245,
+   "type": "Observation",
+   "content": "CORRECTION to the same-day claim that the 512-token clamp was a plausible contributor to the unembedded-concept damage \u2014"
+  },
+  {
+   "rank": 16,
+   "node_id": "09339441-fc9d-461c-ab81-6725c275c568",
+   "score": 4.120227804716397,
+   "type": "Resource",
+   "content": "Workstream K exists (e70ec46, operator decision 2026-08-21): local-native embedder \u2014 candle in-crate BGE-M3 bypassing ll"
+  },
+  {
+   "rank": 17,
+   "node_id": "d80505b3-cd77-485c-bf8f-5222b0cdc31c",
+   "score": 4.012739291737876,
+   "type": "Constraint",
+   "content": "J2 round-1 review P2 (J2-R1-2): store_identity is the store's SPELLING, not its identity. src/mcp/endpoint.rs:314-320 ha"
+  },
+  {
+   "rank": 18,
+   "node_id": "c0c976ed-ed17-4d20-bbce-03ebe06ea3a7",
+   "score": 4.010923321263443,
+   "type": "Resource",
+   "content": "Re-pinned the dogfood binary to lambo-e11fb06 (lambo-for-mooshik @ e11fb06, clean tree, LAMBO_GIT_SHA set, features stor"
+  },
+  {
+   "rank": 19,
+   "node_id": "3f6de603-9aa9-4044-a133-d6f7ffa3baf8",
+   "score": 3.9964082951339828,
+   "type": "Resource",
+   "content": "J3-R2-1 design decision, taken against a NEW measurement that rules out the cheap fix: this rig's llama-server REFUSES i"
+  },
+  {
+   "rank": 20,
+   "node_id": "6493a584-aebe-48ef-8d82-151b6e68805d",
+   "score": 3.8577797026457974,
+   "type": "Observation",
+   "content": "flush_lag_ms on the Mac rig peaked at 173,400,018 ms (48 h, idle weekend Aug 29-31) with log_depth 0 in all 3,429 snapsh"
+  },
+  {
+   "rank": 21,
+   "node_id": "09359559-7acd-4faf-b87c-630358806547",
+   "score": 3.840472366695325,
+   "type": "Observation",
+   "content": "J1 review correction to a stated expectation: docs/reference/mcp.mdx and site/src/content/docs/mcp.mdx are NOT byte-iden"
+  }
+ ]
+}

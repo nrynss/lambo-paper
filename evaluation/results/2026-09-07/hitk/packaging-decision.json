@@ -1,0 +1,154 @@
+{
+ "run": "vimanam-2026-09-07",
+ "id": "packaging-decision",
+ "question": "Which release-automation tool did vimanam adopt to resolve issue #32, which alternative was rejected and why, and what is the status of the Astral fork of the chosen tool?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "dca6ce1a-729d-422d-ac7d-17544e5bb1eb",
+   "score": 5.9225880659836,
+   "type": "Observation",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 2,
+   "node_id": "533a1063-e38a-4680-9891-f3f9207163f5",
+   "score": 5.808644434877205,
+   "type": "Resource",
+   "content": "Committed J2 stage 5 as 40791e2 on wt/j2 \u2014 the \u00a7J2 status note (design decisions with why, both J0 catches, the wedge in"
+  },
+  {
+   "rank": 3,
+   "node_id": "af0b4f0c-5286-4315-95ce-2df6169582ad",
+   "score": 5.568367655196141,
+   "type": "Observation",
+   "content": "vimanam open-issue difficulty ranking (2026-09-05): tier 1 = #41 completions, #44 hygiene report, #42 --stats; tier 2 = "
+  },
+  {
+   "rank": 4,
+   "node_id": "2f98dc5a-c42e-4505-a9c0-bc540c944684",
+   "score": 5.174261053669197,
+   "type": "Logic",
+   "content": "Decision 2026-09-05: reconcile the paper's Metal figures to the single 19:16Z stamp rather than keep two stamps in one f"
+  },
+  {
+   "rank": 5,
+   "node_id": "28c15664-9d37-43f4-b4f2-c086daf00bd1",
+   "score": 4.887047656069011,
+   "type": "Logic",
+   "content": "J3 latency claim VERIFIED at the release binary over real stdio MCP (2026-08-20, SQLite store, 20 calls, median): agains"
+  },
+  {
+   "rank": 6,
+   "node_id": "6ee7b879-78d3-44c0-a06d-c8573311c016",
+   "score": 4.782880673843968,
+   "type": "Logic",
+   "content": "J3 round-1 verdict: REQUEST_CHANGES \u2014 1 P1, 4 P2, 8 P3. The design is right and none of the findings question it: the ac"
+  },
+  {
+   "rank": 7,
+   "node_id": "43f6206e-6512-416f-b29f-31c6226134ac",
+   "score": 4.716656350735639,
+   "type": "Logic",
+   "content": "J2-R2-1 decision, made at the true number (2026-08-20): the reconnect hoist stays DECLINED, but for a reason independent"
+  },
+  {
+   "rank": 8,
+   "node_id": "07204b13-3d8e-413e-8e97-8113dba46562",
+   "score": 4.578315329650715,
+   "type": "Constraint",
+   "content": "J2 round-1 review P2 (J2-R1-3), a graph-vs-code DRIFT finding: the recorded socket-path decision said the fallback dirs "
+  },
+  {
+   "rank": 9,
+   "node_id": "422280b0-211a-418c-8d29-93d4f58f523a",
+   "score": 4.465301374582059,
+   "type": "Constraint",
+   "content": "J3 ledger re-derivation, done rather than assumed: the write queue keeps its OWN counters and never touches LedgerCounte"
+  },
+  {
+   "rank": 10,
+   "node_id": "fb70cdcb-2640-4297-8332-e7c9ec033499",
+   "score": 4.201135912821716,
+   "type": "Resource",
+   "content": "Implemented rustydocs #39 on branch feat/profiles-and-buildinfo via implement/review/remediate loop (3 review passes to "
+  },
+  {
+   "rank": 11,
+   "node_id": "aad37198-f922-45b3-8d68-b6e294cea550",
+   "score": 4.128259559822411,
+   "type": "Resource",
+   "content": "Fixed vimanam CI failure on PRs #91 and #92: CI stable had moved to Rust 1.98 whose clippy question_mark lint flagged th"
+  },
+  {
+   "rank": 12,
+   "node_id": "aec57b93-2c54-47cd-ac9e-0921c9b25628",
+   "score": 4.122401308579279,
+   "type": "Entity",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 13,
+   "node_id": "17e16aa6-9774-45a6-9353-b9772fff09c8",
+   "score": 4.0462886823547555,
+   "type": "Observation",
+   "content": "Real MCP client startup tolerances measured 2026-08-20: opencode 1.18.18 gives up on a slow-to-start stdio MCP server at"
+  },
+  {
+   "rank": 14,
+   "node_id": "f7d2a089-72df-4ee9-bd51-2cddf2c2b63b",
+   "score": 3.9515441725797245,
+   "type": "Observation",
+   "content": "J2 round-1 review: attacks that did NOT land, worth not re-running. build/build_attach cannot drift (build is a three-li"
+  },
+  {
+   "rank": 15,
+   "node_id": "0ccca893-af0f-4bae-9237-dbbe0ca8db70",
+   "score": 3.8918383554431086,
+   "type": "Constraint",
+   "content": "Prescribed fix for J3-R2R-1, recorded in J3-durability-redesign.md on wt/j3 (7c036f0): the P1 is a WILDCARD SWALLOWING S"
+  },
+  {
+   "rank": 16,
+   "node_id": "2a0258fe-a424-418e-b3f4-600fd6e4ba81",
+   "score": 3.866938444045059,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 17,
+   "node_id": "eb872380-140d-4d60-ac32-a5173148ca18",
+   "score": 3.794518785711279,
+   "type": "Resource",
+   "content": "vimanam PR feat/diff"
+  },
+  {
+   "rank": 18,
+   "node_id": "07c474bc-6b65-4253-8a6b-56ea1ee637c0",
+   "score": 3.765328514130573,
+   "type": "Resource",
+   "content": "vimanam main branch"
+  },
+  {
+   "rank": 19,
+   "node_id": "c71fa9c4-527d-4575-b4dd-c2a150fe65f1",
+   "score": 3.721096891795899,
+   "type": "Resource",
+   "content": "vimanam PR feat/completions-hygiene-stats"
+  },
+  {
+   "rank": 20,
+   "node_id": "910a6803-756f-4131-9106-8e6c2b48ed84",
+   "score": 3.606573711889791,
+   "type": "Logic",
+   "content": "lambo-paper Metal telemetry is a ledger replay frozen at METAL_FROZEN_STAMP = 2026-09-04T19:16:00Z. That stamp is the la"
+  },
+  {
+   "rank": 21,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 0.38263413242009126,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  }
+ ]
+}

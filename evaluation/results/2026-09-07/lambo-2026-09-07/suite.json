@@ -1,0 +1,60 @@
+{
+  "mode": "as-deployed",
+  "provenance": "Corpus: Narayan's open-source Lambo project (github.com/nrynss/lambo). Open-source material only. FILE ARM: Claude Code auto-memory directory ~/.claude/projects/-Users-narayan-Documents-work-lambo/memory (MEMORY.md index + 5 memory files, 11,767 bytes total, last modified 2026-09-04T17:02 IST), exported whole as one context for every question because that is the most generous reading of the deployed mechanism (index loaded at session start, files readable on demand); snapshot copied 2026-09-07 before any question was answered, sha256 recorded per export. LAMBO ARM: lambo_recall against an ISOLATED sqlite backup of the lambo-dev dogfood store taken 2026-09-07T07:03Z (990 concepts) via `sqlite3 .backup`, served by the pinned binary lambo-e11fb06 (serve --transport http --port 7701, candle BGE-M3 dim 1024 on Metal, promotion_policy Swarm) after deleting the copied session_leases row; the live store and ledger were not touched. Recall arguments: agent_id=memory-eval, query=the question text verbatim, default top_k; the export is the tool's full text result (context block plus hits) as an agent would see it. The isolated copy's ledger records every recall (exports/lambo/calls.jsonl). Questions were fixed and rubrics written from primary sources (launchd plist, lambo.toml comments, dev-diary/DOGFOOD.md, git commit bef53e6, the memory files) before any export was read or any model answer produced. Selection rule: one question per knowledge type the protocol asks for (direct recall, superseded decision, implementation change, policy, cross-document rationale, abstention), drawn from the operator's own artifacts, not from either memory's contents. Reader: Claude Code CLI 2.1.241, --print, no tools, no MCP, skills disabled, fixed system prompt, fresh temp cwd. Known confound: the user-scope SessionStart hook (~/lambo-dogfood/hooks/lambo-hook.sh) injects a short lambo-dogfood protocol reminder into every reader process, identically in both arms.",
+  "questions": [
+    {
+      "id": "dogfood-topology",
+      "question": "How is the Lambo dogfood writer deployed on the Mac, and how do agents on the machine connect to it?",
+      "rubric": "Score 1 only if the answer states BOTH (a) a single launchd-supervised `lambo serve` over HTTP on port 7700 (agent http-shared-writer) and (b) that every client connects to that URL (http://127.0.0.1:7700/mcp) rather than spawning its own serve, citing evidence identifiers. Missing either half, describing stdio-per-client as current, or abstaining scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/dogfood-topology.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "embedder-superseded",
+      "question": "Which embedder does the Mac dogfood rig use today, and what did it replace?",
+      "rubric": "Score 1 only if the answer gives the CURRENT embedder as in-process candle BGE-M3 on Metal (kind = candle, device = metal, 1024 dims) AND identifies the SUPERSEDED path as the llama-server bge_m3 embedder on 127.0.0.1:8080 (replaced by the K2 migration on 2026-08-23), citing evidence. Presenting llama-server as current, omitting what was replaced, or abstaining scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/embedder-superseded.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "record-action-embedding",
+      "question": "What defect did the record_action embedder fix (commit bef53e6) correct, and what effect had the defect had on the dogfood store?",
+      "rubric": "Score 1 only if the answer states that lambo_record_action created concepts with NULL embeddings (no embedder hop) so that action-derived Resource/Entity concepts were reachable only by keyword or graph traversal while derive-created concepts were vector-searchable (an inversion), citing evidence. Any mention of the scale (about 555 of 946 concepts, or 42 backfilled) is a bonus but not required. Wrong mechanism or abstention scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/record-action-embedding.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "model-roles",
+      "question": "Which Claude model runs Lambo remediation agents, and which model runs whole-workstream end-to-end review?",
+      "rubric": "Score 1 only if the answer states that ALL remediation runs on Opus and that whole-workstream E2E review runs on Fable (per-task review on Opus may also be mentioned), citing evidence. Swapping the roles, naming only one, or abstaining scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/model-roles.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "throttle-interval-why",
+      "question": "Why is the launchd ThrottleInterval for the dev.lambo.dogfood unit set to 60 seconds instead of the default?",
+      "rubric": "Score 1 only if the answer explains that the default 10 s restart falls inside the 45 s single-writer lease TTL, so a restarted serve would find the lease still held and exit, and that 60 s puts every retry after the lease has lapsed, citing evidence. A generic 'to avoid restart loops' without the lease TTL relationship, a wrong number, or abstention scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/throttle-interval-why.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "missing-cloud-cost",
+      "question": "What is the monthly cost of the lambo-pg Cloud SQL instance used for the hosted Postgres workstream?",
+      "rubric": "Score 1 only for an explicit abstention because no cost figure is present in the evidence. Any invented or inferred dollar amount, or a non-answer that does not say the information is absent, scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/missing-cloud-cost.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    }
+  ]
+}

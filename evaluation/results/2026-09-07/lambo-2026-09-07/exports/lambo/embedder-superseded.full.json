@@ -1,0 +1,55 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "J3 latency claim VERIFIED at the release binary over real stdio MCP (2026-08-20, SQLite store, 20 calls, median): against the rig's live llama.cpp BGE-M3 q8_0 on CPU, a lambo_derive ack went from 14.111 ms (base 166a3c8, synchronous) to 0.048 ms (J3). That 0.048 ms is at or BELOW the same binary's ack against FixtureEmbedder (0.076 ms), which is what 'the embedder is no longer in the call' means. Both runs applied all 21 concepts, so the fast number is not a fast no-op. The absolute figures differ from the doc's 27 ms warm derive because that was the dogfood client stack on pinned 3039b82; the delta is what J3 owns. [Logic] (score 6.77)\n\nThe dogfood embedder's capacity flags are LOAD-BEARING, not tuning (found by K1's NVIDIA leg 2026-08-22, reproduced and fixed live on the Mac rig the same day, DOGFOOD-SETUP.md updated). llama-server clamps n_batch = n_ubatch = 512 by default, so ANY input over ~512 tokens fails HTTP 500 'input too large to process' — the J3-R3-1 failure class reachable by plain input length, no network fault needed. BGE-M3 carries 8192-token capacity; the defaults throw away fifteen sixteenths of it. On a pre-J3 binary such a write applied with embedding = NULL while the receipt said 'applied', so this is a plausible contributor to the 92/100 unembedded dogfood concepts. Run with --batch-size 8192 --ubatch-size 8192 -c 8192 (long flags only; this build rejects -u), and verify with a >512-token embed, NOT /health — health passes either way, which is how it hid. [Constraint] (score 6.01)"
+    }
+  ],
+  "structuredContent": {
+    "context": "J3 latency claim VERIFIED at the release binary over real stdio MCP (2026-08-20, SQLite store, 20 calls, median): against the rig's live llama.cpp BGE-M3 q8_0 on CPU, a lambo_derive ack went from 14.111 ms (base 166a3c8, synchronous) to 0.048 ms (J3). That 0.048 ms is at or BELOW the same binary's ack against FixtureEmbedder (0.076 ms), which is what 'the embedder is no longer in the call' means. Both runs applied all 21 concepts, so the fast number is not a fast no-op. The absolute figures differ from the doc's 27 ms warm derive because that was the dogfood client stack on pinned 3039b82; the delta is what J3 owns. [Logic] (score 6.77)\n\nThe dogfood embedder's capacity flags are LOAD-BEARING, not tuning (found by K1's NVIDIA leg 2026-08-22, reproduced and fixed live on the Mac rig the same day, DOGFOOD-SETUP.md updated). llama-server clamps n_batch = n_ubatch = 512 by default, so ANY input over ~512 tokens fails HTTP 500 'input too large to process' — the J3-R3-1 failure class reachable by plain input length, no network fault needed. BGE-M3 carries 8192-token capacity; the defaults throw away fifteen sixteenths of it. On a pre-J3 binary such a write applied with embedding = NULL while the receipt said 'applied', so this is a plausible contributor to the 92/100 unembedded dogfood concepts. Run with --batch-size 8192 --ubatch-size 8192 -c 8192 (long flags only; this build rejects -u), and verify with a >512-token embed, NOT /health — health passes either way, which is how it hid. [Constraint] (score 6.01)",
+    "hits": [
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "J3 latency claim VERIFIED at the release binary over real stdio MCP (2026-08-20, SQLite store, 20 calls, median): against the rig's live llama.cpp BGE-M3 q8_0 on CPU, a lambo_derive ack went from 14.111 ms (base 166a3c8, synchronous) to 0.048 ms (J3). That 0.048 ms is at or BELOW the same binary's ack against FixtureEmbedder (0.076 ms), which is what 'the embedder is no longer in the call' means. Both runs applied all 21 concepts, so the fast number is not a fast no-op. The absolute figures differ from the doc's 27 ms warm derive because that was the dogfood client stack on pinned 3039b82; the delta is what J3 owns.",
+        "is_canonical": false,
+        "node_id": "28c15664-9d37-43f4-b4f2-c086daf00bd1",
+        "score": 6.765635244037848
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "The dogfood embedder's capacity flags are LOAD-BEARING, not tuning (found by K1's NVIDIA leg 2026-08-22, reproduced and fixed live on the Mac rig the same day, DOGFOOD-SETUP.md updated). llama-server clamps n_batch = n_ubatch = 512 by default, so ANY input over ~512 tokens fails HTTP 500 'input too large to process' — the J3-R3-1 failure class reachable by plain input length, no network fault needed. BGE-M3 carries 8192-token capacity; the defaults throw away fifteen sixteenths of it. On a pre-J3 binary such a write applied with embedding = NULL while the receipt said 'applied', so this is a plausible contributor to the 92/100 unembedded dogfood concepts. Run with --batch-size 8192 --ubatch-size 8192 -c 8192 (long flags only; this build rejects -u), and verify with a >512-token embed, NOT /health — health passes either way, which is how it hid.",
+        "is_canonical": false,
+        "node_id": "23de3957-133f-4b5f-ad5e-3385b7a897c6",
+        "score": 6.008171609514648
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "K2 bundles the re-embed verb because they are ONE ACT, not two tasks: switching a session's embedder is a re-embed event (EmbeddingContract forbids mixed spaces in one session), so migrating the dogfood rig to candle needs either a fresh session — discarding ~400 concepts that are also the test corpus for G3, the canonization fair test and the revision-rate watch — or a backfill; and the backfill is ALREADY owed for the 92/100 unembedded damage. Separately that is two re-embed passes; together it is one, and the store comes out fully embedded, in-process and continuous. K2 also stamps real model identity (bge_m3 stamps NULL today, so the store cannot tell two quantizations apart) and adds the embedding-coverage counter to lambo_stats that would have made the 92/100 damage visible on day one.",
+        "is_canonical": false,
+        "node_id": "20b56bfa-1497-41a9-920c-153c7b36aad0",
+        "score": 5.725940106854616
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Observation",
+        "content": "24 of 93 recalls on the Mac rig (26%) carried a hot-list warning; 0 reservation warnings, 1 conflict line, 0 canonical markers. Which hot kind (Conflict, HighRisk, Drift, Stale) is not in the ledger.",
+        "is_canonical": false,
+        "node_id": "670a3d3c-0960-42a7-88b2-40c90dbf2840",
+        "score": 5.691843451788552
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "Dogfood rig client wiring 2026-09-01: every AI coding agent on the MacBook points at the one supervised HTTP writer http://127.0.0.1:7700/mcp and none spawns its own serve. Wired surfaces: Claude Code (~/.claude.json), Codex (~/.codex/config.toml), Cursor (~/.cursor/mcp.json) — pre-existing; added this day: Gemini CLI (~/.gemini/settings.json, httpUrl), opencode (~/.config/opencode/opencode.json, type remote), Copilot CLI (~/.copilot/mcp-config.json, type http), Pi via generic ~/.config/mcp/mcp.json, Antigravity agent+IDE (~/.gemini/antigravity{,-ide}/mcp_config.json, serverUrl).",
+        "is_canonical": false,
+        "node_id": "ea7e2885-2915-4a0e-b7b0-b173b06e57d3",
+        "score": 5.1582017891401835
+      }
+    ],
+    "warnings": []
+  },
+  "isError": false
+}

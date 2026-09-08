@@ -1,0 +1,7 @@
+J2 proxy in-flight tracking is PER HUB CONNECTION (generation), not per pump: a response retires its id from any generation (a late answer from a superseded connection is still the holder's answer), but a Closed only answers the ids that went out on THAT connection, and only clears the writer if it was the current one. The pre-fix blanket 'if gen != generation { continue; }' dropped a superseded connection's Closed as well as its frames, which is why no drain could ever have fired for it. [Constraint] (score 7.11)
+
+[REDACTED: sensitive data, 483 bytes] [Observation] (score 5.62)
+
+[REDACTED: sensitive data, 56 bytes] [Entity] (score 5.52)
+warnings:
+- Session inactive 7427 seconds

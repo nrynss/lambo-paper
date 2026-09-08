@@ -1,0 +1,154 @@
+{
+ "run": "lambo-2026-09-07",
+ "id": "record-action-embedding",
+ "question": "What defect did the record_action embedder fix (commit bef53e6) correct, and what effect had the defect had on the dogfood store?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "c0c976ed-ed17-4d20-bbce-03ebe06ea3a7",
+   "score": 7.77062201766196,
+   "type": "Resource",
+   "content": "Re-pinned the dogfood binary to lambo-e11fb06 (lambo-for-mooshik @ e11fb06, clean tree, LAMBO_GIT_SHA set, features stor"
+  },
+  {
+   "rank": 2,
+   "node_id": "95c6f0a8-1eef-4942-b1f4-ced4f1bd0276",
+   "score": 6.903076377562165,
+   "type": "Entity",
+   "content": "Dogfood finding (2026-08-20, DOGFOOD-FINDINGS.md): 92 of 100 concepts in the lambo-dev store carry no durable embedding "
+  },
+  {
+   "rank": 3,
+   "node_id": "ee438234-ddfe-46f4-b272-52cf00273180",
+   "score": 6.844595924299843,
+   "type": "Observation",
+   "content": "Dogfood finding (2026-08-20, DOGFOOD-FINDINGS.md): 92 of 100 concepts in the lambo-dev store carry no durable embedding "
+  },
+  {
+   "rank": 4,
+   "node_id": "c8d25b0b-f274-489b-9d8c-0d22ad791f88",
+   "score": 5.910440329207774,
+   "type": "Logic",
+   "content": "G3's most valuable side-finding (2026-08-21): lambo's dogfood graph connects ARTIFACTS, not REASONING, and the Derives/T"
+  },
+  {
+   "rank": 5,
+   "node_id": "095941d8-69a5-4633-af2b-799240278ba3",
+   "score": 4.792859140272839,
+   "type": "Logic",
+   "content": "Solo policy simulation on the Mac store (2026-09-04, action term only, recurrence ignored): 12 concepts would be Canonic"
+  },
+  {
+   "rank": 6,
+   "node_id": "28c15664-9d37-43f4-b4f2-c086daf00bd1",
+   "score": 4.585825172866094,
+   "type": "Logic",
+   "content": "J3 latency claim VERIFIED at the release binary over real stdio MCP (2026-08-20, SQLite store, 20 calls, median): agains"
+  },
+  {
+   "rank": 7,
+   "node_id": "0d0f6137-b0b4-410c-8f84-317b0021f47e",
+   "score": 4.3172799136286475,
+   "type": "Logic",
+   "content": "J1 round-2 lesson: matching an error VARIANT is not matching a PATH. conflict_err matched LamboError::Conflict to surfac"
+  },
+  {
+   "rank": 8,
+   "node_id": "c72e782f-1781-4de0-930f-82c39175a398",
+   "score": 4.2672521072736656,
+   "type": "Resource",
+   "content": "Memory::derive_as / record_action_as / reserve_as / release_as / begin_interaction_as"
+  },
+  {
+   "rank": 9,
+   "node_id": "334d986f-964d-4571-acc4-a9f33ad44aff",
+   "score": 4.247375573504716,
+   "type": "Resource",
+   "content": "Ran the G3 Laplacian exploratory spike and committed it as 8c3ecb4 on wt/g3: H1 (recall phase-2 expansion as heat-kernel"
+  },
+  {
+   "rank": 10,
+   "node_id": "ba214afd-7983-4dd0-86fb-4e8501ee6b03",
+   "score": 4.196405660082122,
+   "type": "Observation",
+   "content": "Two J3 defects were found by MEASURING THE SHIPPED BINARY while the whole test suite was green, which is the transferabl"
+  },
+  {
+   "rank": 11,
+   "node_id": "8baad4e0-a943-4d1f-87c2-f9eefeb89dcb",
+   "score": 4.090361510809279,
+   "type": "Constraint",
+   "content": "J3 async-ack rule: a write may be acknowledged asynchronously only when its result does not gate the caller's next actio"
+  },
+  {
+   "rank": 12,
+   "node_id": "d1b2c842-9767-4050-a489-94dfd011e7f3",
+   "score": 4.029131733031851,
+   "type": "Entity",
+   "content": "CORRECTION to the same-day claim that the 512-token clamp was a plausible contributor to the unembedded-concept damage \u2014"
+  },
+  {
+   "rank": 13,
+   "node_id": "fa9c1bb3-92da-48e4-8d19-b6c52e424944",
+   "score": 3.9942582307086383,
+   "type": "Entity",
+   "content": "MCP event_time wire decision: lambo_derive and lambo_record_action accept optional RFC3339 event_time as historical abou"
+  },
+  {
+   "rank": 14,
+   "node_id": "fa7eeb5f-29ca-4cef-a51d-8f2a9ef92773",
+   "score": 3.942625774885977,
+   "type": "Observation",
+   "content": "CORRECTION to the same-day claim that the 512-token clamp was a plausible contributor to the unembedded-concept damage \u2014"
+  },
+  {
+   "rank": 15,
+   "node_id": "15e9191d-2871-4a01-a162-1d12f7aaec19",
+   "score": 3.7675913880360885,
+   "type": "Observation",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 16,
+   "node_id": "0db0c7a1-03e9-49a4-b9bc-df8251505f6c",
+   "score": 3.7410586695480648,
+   "type": "Logic",
+   "content": "J3 redesign round-2: BOTH argued push-backs UPHELD. The declined `attempts` column \u2014 upheld and stronger than argued: th"
+  },
+  {
+   "rank": 17,
+   "node_id": "9eb042ca-57e2-49c6-b442-aff5798c0e5f",
+   "score": 3.7208402831607996,
+   "type": "Constraint",
+   "content": "J3 round-1 (J3-R1-4, P2): Memory::derive_async_as's docstring asserts the pre-pass 'is crate::graph::derive::validate, t"
+  },
+  {
+   "rank": 18,
+   "node_id": "dd0f0d9b-3edc-4ff7-b08c-e0d580d2ae7d",
+   "score": 3.683748666180074,
+   "type": "Resource",
+   "content": "[REDACTED: sensitive data, 64 bytes]"
+  },
+  {
+   "rank": 19,
+   "node_id": "8b9044ee-063c-40ca-a3ac-ebfcbf060160",
+   "score": 3.674219130915947,
+   "type": "Logic",
+   "content": "Positioning thesis (operator, 2026-08-20): even with canonization never triggering, lambo beats RAG for WORKING SESSIONS"
+  },
+  {
+   "rank": 20,
+   "node_id": "f768b118-bed8-431a-b7d8-7e44bd63c657",
+   "score": 3.6537503654951213,
+   "type": "Resource",
+   "content": "G3 exists (969a03d, exploratory, unscheduled, operator-added 2026-08-21): a read-only Laplacian spike against the dogfoo"
+  },
+  {
+   "rank": 21,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 0.38263413242009126,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  }
+ ]
+}

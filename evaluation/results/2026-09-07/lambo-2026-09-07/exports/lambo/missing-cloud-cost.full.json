@@ -1,0 +1,55 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Workstream B is extract-then-extend, not copy-then-edit: B0 extracts PgStore<D: Dialect> from the hardened Cockroach adapter (move-only commit first, then carve), with postgres and cockroach as dialect files. A function enters the shared base only when its SQL is byte-identical across dialects — never forced together with a bool parameter. Copy-then-edit was rejected: it makes Postgres a second-class citizen and dual maintenance reliably fails (F-R2-2 demonstrated it). [Logic] (score 8.29)\n\nAlias split: config strings postgres/pg resolve to PgStore<PostgresDialect>, cockroach/crdb to PgStore<CockroachDialect> — nothing maps across the boundary. This is a recorded behaviour change that fails loud, never silently mis-ranks: the Postgres dialect's CREATE EXTENSION vector and <=> operator do not exist on Cockroach, so cross-misconfiguration dies at provision or first vector query. [Logic] (score 6.95)\n\nJ1 round-2 lesson: matching an error VARIANT is not matching a PATH. conflict_err matched LamboError::Conflict to surface §11 reserve conflicts, but lease_lost_error() is also a Conflict and interpolates OPERATOR_OVERRIDE (a SQL DELETE), so the fix disclosed to the model what the parent had flattened. When selectively unhiding an error class, discriminate structurally (distinct variant or typed payload, or match at the site where sources are distinguishable), never by variant alone — and probe every producer of that variant before shipping. [Logic] (score 4.60)"
+    }
+  ],
+  "structuredContent": {
+    "context": "Workstream B is extract-then-extend, not copy-then-edit: B0 extracts PgStore<D: Dialect> from the hardened Cockroach adapter (move-only commit first, then carve), with postgres and cockroach as dialect files. A function enters the shared base only when its SQL is byte-identical across dialects — never forced together with a bool parameter. Copy-then-edit was rejected: it makes Postgres a second-class citizen and dual maintenance reliably fails (F-R2-2 demonstrated it). [Logic] (score 8.29)\n\nAlias split: config strings postgres/pg resolve to PgStore<PostgresDialect>, cockroach/crdb to PgStore<CockroachDialect> — nothing maps across the boundary. This is a recorded behaviour change that fails loud, never silently mis-ranks: the Postgres dialect's CREATE EXTENSION vector and <=> operator do not exist on Cockroach, so cross-misconfiguration dies at provision or first vector query. [Logic] (score 6.95)\n\nJ1 round-2 lesson: matching an error VARIANT is not matching a PATH. conflict_err matched LamboError::Conflict to surface §11 reserve conflicts, but lease_lost_error() is also a Conflict and interpolates OPERATOR_OVERRIDE (a SQL DELETE), so the fix disclosed to the model what the parent had flattened. When selectively unhiding an error class, discriminate structurally (distinct variant or typed payload, or match at the site where sources are distinguishable), never by variant alone — and probe every producer of that variant before shipping. [Logic] (score 4.60)",
+    "hits": [
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Workstream B is extract-then-extend, not copy-then-edit: B0 extracts PgStore<D: Dialect> from the hardened Cockroach adapter (move-only commit first, then carve), with postgres and cockroach as dialect files. A function enters the shared base only when its SQL is byte-identical across dialects — never forced together with a bool parameter. Copy-then-edit was rejected: it makes Postgres a second-class citizen and dual maintenance reliably fails (F-R2-2 demonstrated it).",
+        "is_canonical": false,
+        "node_id": "330a20c7-a72b-477f-8ba3-f926778cb188",
+        "score": 8.293485679699618
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Alias split: config strings postgres/pg resolve to PgStore<PostgresDialect>, cockroach/crdb to PgStore<CockroachDialect> — nothing maps across the boundary. This is a recorded behaviour change that fails loud, never silently mis-ranks: the Postgres dialect's CREATE EXTENSION vector and <=> operator do not exist on Cockroach, so cross-misconfiguration dies at provision or first vector query.",
+        "is_canonical": false,
+        "node_id": "d8910fb8-01bb-44ae-a758-fc02252b324d",
+        "score": 6.951256452138509
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "J1 round-2 lesson: matching an error VARIANT is not matching a PATH. conflict_err matched LamboError::Conflict to surface §11 reserve conflicts, but lease_lost_error() is also a Conflict and interpolates OPERATOR_OVERRIDE (a SQL DELETE), so the fix disclosed to the model what the parent had flattened. When selectively unhiding an error class, discriminate structurally (distinct variant or typed payload, or match at the site where sources are distinguishable), never by variant alone — and probe every producer of that variant before shipping.",
+        "is_canonical": false,
+        "node_id": "0d0f6137-b0b4-410c-8f84-317b0021f47e",
+        "score": 4.595150114538282
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "Counter-argument that keeps J3's N1 fix necessary regardless of candle (2026-08-21): workstream A is a HOSTED Gemini embedder, so transport failure is not a legacy condition we escape by going in-process — it is a first-class future backend where network failure is guaranteed. The structural transport-vs-content failure classification and the liveness-before-burning-a-backlog fix are exactly what make a hosted embedder safe; skipping them because candle avoids the problem locally would ship A straight into the hole round 1 found. Also unaffected by in-process embedding: durability itself (a kill -9 still loses the tail, so the WAL, replay, idempotency and the receipt state machine all stay), Cockroach statement costs, and the estimator's fairness role. New A′ design question: weight-load latency becomes a per-serve-start cost on the stdio path where clients spawn a serve per session — lazy-load-on-first-embed would keep recall-only sessions free.",
+        "is_canonical": false,
+        "node_id": "a7563f80-0bcd-4a3c-aa26-fe8f7fc242d4",
+        "score": 4.5450143431125465
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Codex + Cursor enforcement layers 2026-09-01 (parity with the Claude Code hooks; user clarified 'Codex' means the ChatGPT desktop app, which hosts the codex engine and shares ~/.codex). Codex: ~/.codex/hooks.json reuses lambo-hook.sh verbatim because Codex's hook contract is a near-clone of Claude Code's (PascalCase events, permissionDecision/decision-block JSON, session_id field); SessionStart uses a session-start-json subcommand emitting the additionalContext JSON form; protocol text also appended to ~/.codex/AGENTS.md (global, outside any repo). Open verification: whether the ChatGPT app loads user-level ~/.codex/hooks.json (official hooks doc lists it; one migration-era blog claims project-only) and one-time hook trust may be required. Cursor: ~/.cursor/hooks.json drives cursor-lambo-hook.sh on a DIFFERENT contract (camelCase events, {permission} responses, conversation_id session key); no blockable before-edit event exists, so the recall gate sits on beforeShellExecution (deny with agentMessage, 2-denial bound), afterFileEdit/afterMCPExecution are markers, and stop cannot block but auto-submits a followup_message demanding the derive (loop_limit 1). Cursor cloud agents ignore user-level hooks and MCP hooks entirely - local binding only. [REDACTED: sensitive data, 216 bytes]",
+        "is_canonical": false,
+        "node_id": "50d32fd9-b72d-4ac9-92f6-808a69a7390c",
+        "score": 4.036049377475191
+      }
+    ],
+    "warnings": []
+  },
+  "isError": false
+}

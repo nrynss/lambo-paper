@@ -1,0 +1,69 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "vimanam main branch [Resource] (score 7.05)\n\nMerged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection, which is unsatisfiable on a solo repo since GitHub forbids self-approval). Sequence that matters for stacked PRs with squash merge: retarget #92 to main FIRST (deleteBranchOnMerge would auto-close it when #91's branch died), squash-merge #91 -> 7e0e336, then git rebase --onto origin/main <old-base-tip> feat/diff to drop the already-squashed commits, force-push, re-run CI, squash-merge #92 -> db42292. Also updated PR #92's body to remove the stale 'stacked on #91' line before merging, since squash uses the body as the commit message. Main verified green: fmt, clippy on 1.96 and 1.97.1, 175 tests, plus release-build smoke tests of all four features and diff exit codes 3/0/0. [Resource] (score 6.86)\n\n[REDACTED: sensitive data, 340 bytes] [Logic] (score 4.82)"
+    },
+    {
+      "type": "text",
+      "text": "warnings:\n- Session inactive 7426 seconds"
+    }
+  ],
+  "structuredContent": {
+    "context": "vimanam main branch [Resource] (score 7.05)\n\nMerged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection, which is unsatisfiable on a solo repo since GitHub forbids self-approval). Sequence that matters for stacked PRs with squash merge: retarget #92 to main FIRST (deleteBranchOnMerge would auto-close it when #91's branch died), squash-merge #91 -> 7e0e336, then git rebase --onto origin/main <old-base-tip> feat/diff to drop the already-squashed commits, force-push, re-run CI, squash-merge #92 -> db42292. Also updated PR #92's body to remove the stale 'stacked on #91' line before merging, since squash uses the body as the commit message. Main verified green: fmt, clippy on 1.96 and 1.97.1, 175 tests, plus release-build smoke tests of all four features and diff exit codes 3/0/0. [Resource] (score 6.86)\n\n[REDACTED: sensitive data, 340 bytes] [Logic] (score 4.82)",
+    "hits": [
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "vimanam main branch",
+        "is_canonical": false,
+        "node_id": "07c474bc-6b65-4253-8a6b-56ea1ee637c0",
+        "score": 7.049783502728397
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection, which is unsatisfiable on a solo repo since GitHub forbids self-approval). Sequence that matters for stacked PRs with squash merge: retarget #92 to main FIRST (deleteBranchOnMerge would auto-close it when #91's branch died), squash-merge #91 -> 7e0e336, then git rebase --onto origin/main <old-base-tip> feat/diff to drop the already-squashed commits, force-push, re-run CI, squash-merge #92 -> db42292. Also updated PR #92's body to remove the stale 'stacked on #91' line before merging, since squash uses the body as the commit message. Main verified green: fmt, clippy on 1.96 and 1.97.1, 175 tests, plus release-build smoke tests of all four features and diff exit codes 3/0/0.",
+        "is_canonical": false,
+        "node_id": "0d234b2e-386c-43a6-9d44-5e05cc0ea07f",
+        "score": 6.862275248157252
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "[REDACTED: sensitive data, 340 bytes]",
+        "is_canonical": false,
+        "node_id": "160bf787-17ed-4069-9457-52d4502bb086",
+        "score": 4.820363546854613
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "[REDACTED: sensitive data, 855 bytes]",
+        "is_canonical": false,
+        "node_id": "9aabb887-8e28-456c-bdaa-1ebce1cc4c78",
+        "score": 4.392419166010583
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Observation",
+        "content": "CI is a timing adversary local gates are not: a race with a microsecond window on a dev machine is a real defect on a loaded runner. Anything inserted into serve startup must re-verify the pre-handshake durability test's assumptions — and that test's matcher ('session attached') matches both the memory-level and serve-level log lines, which is how the widened window was caught.",
+        "is_canonical": false,
+        "node_id": "b6eeaf92-7398-4107-b6db-0d225196c7db",
+        "score": 4.359253749937355
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "Operator directive 2026-09-07 (standing): [REDACTED: sensitive data, 126 bytes]Use Narayan's open-source projects instead; for the paper's file-memory vs Lambo comparison the corpus is the nrynss/lambo repo: its Claude file-memory dir ~/.claude/projects/-Users-narayan-Documents-work-lambo/memory (6 files) versus the lambo-dev dogfood store on the same subject.",
+        "is_canonical": false,
+        "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+        "score": 0.38263413242009126
+      }
+    ],
+    "warnings": [
+      "Session inactive 7426 seconds"
+    ]
+  },
+  "isError": false
+}

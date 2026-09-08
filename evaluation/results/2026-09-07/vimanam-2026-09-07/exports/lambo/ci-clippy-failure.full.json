@@ -1,0 +1,69 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection, which is unsatisfiable on a solo repo since GitHub forbids self-approval). Sequence that matters for stacked PRs with squash merge: retarget #92 to main FIRST (deleteBranchOnMerge would auto-close it when #91's branch died), squash-merge #91 -> 7e0e336, then git rebase --onto origin/main <old-base-tip> feat/diff to drop the already-squashed commits, force-push, re-run CI, squash-merge #92 -> db42292. Also updated PR #92's body to remove the stale 'stacked on #91' line before merging, since squash uses the body as the commit message. Main verified green: fmt, clippy on 1.96 and 1.97.1, 175 tests, plus release-build smoke tests of all four features and diff exit codes 3/0/0. [Resource] (score 9.38)\n\nFixed vimanam CI failure on PRs #91 and #92: CI stable had moved to Rust 1.98 whose clippy question_mark lint flagged the pre-existing resolve_ref loop in src/utils.rs (local default toolchain 1.96 passed). Rewrote the loop with ? via match on Value::Object/Array, committed 1b06b71 on feat/completions-hygiene-stats, rebased feat/diff on it and force-pushed. All CI checks now green on both PRs. [Resource] (score 8.46)"
+    },
+    {
+      "type": "text",
+      "text": "warnings:\n- Session inactive 7426 seconds"
+    }
+  ],
+  "structuredContent": {
+    "context": "Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection, which is unsatisfiable on a solo repo since GitHub forbids self-approval). Sequence that matters for stacked PRs with squash merge: retarget #92 to main FIRST (deleteBranchOnMerge would auto-close it when #91's branch died), squash-merge #91 -> 7e0e336, then git rebase --onto origin/main <old-base-tip> feat/diff to drop the already-squashed commits, force-push, re-run CI, squash-merge #92 -> db42292. Also updated PR #92's body to remove the stale 'stacked on #91' line before merging, since squash uses the body as the commit message. Main verified green: fmt, clippy on 1.96 and 1.97.1, 175 tests, plus release-build smoke tests of all four features and diff exit codes 3/0/0. [Resource] (score 9.38)\n\nFixed vimanam CI failure on PRs #91 and #92: CI stable had moved to Rust 1.98 whose clippy question_mark lint flagged the pre-existing resolve_ref loop in src/utils.rs (local default toolchain 1.96 passed). Rewrote the loop with ? via match on Value::Object/Array, committed 1b06b71 on feat/completions-hygiene-stats, rebased feat/diff on it and force-pushed. All CI checks now green on both PRs. [Resource] (score 8.46)",
+    "hits": [
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection, which is unsatisfiable on a solo repo since GitHub forbids self-approval). Sequence that matters for stacked PRs with squash merge: retarget #92 to main FIRST (deleteBranchOnMerge would auto-close it when #91's branch died), squash-merge #91 -> 7e0e336, then git rebase --onto origin/main <old-base-tip> feat/diff to drop the already-squashed commits, force-push, re-run CI, squash-merge #92 -> db42292. Also updated PR #92's body to remove the stale 'stacked on #91' line before merging, since squash uses the body as the commit message. Main verified green: fmt, clippy on 1.96 and 1.97.1, 175 tests, plus release-build smoke tests of all four features and diff exit codes 3/0/0.",
+        "is_canonical": false,
+        "node_id": "0d234b2e-386c-43a6-9d44-5e05cc0ea07f",
+        "score": 9.38324334505035
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "Fixed vimanam CI failure on PRs #91 and #92: CI stable had moved to Rust 1.98 whose clippy question_mark lint flagged the pre-existing resolve_ref loop in src/utils.rs (local default toolchain 1.96 passed). Rewrote the loop with ? via match on Value::Object/Array, committed 1b06b71 on feat/completions-hygiene-stats, rebased feat/diff on it and force-pushed. All CI checks now green on both PRs.",
+        "is_canonical": false,
+        "node_id": "aad37198-f922-45b3-8d68-b6e294cea550",
+        "score": 8.455408869127247
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "[REDACTED: sensitive data, 855 bytes]",
+        "is_canonical": false,
+        "node_id": "9aabb887-8e28-456c-bdaa-1ebce1cc4c78",
+        "score": 7.299612415985307
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "[REDACTED: sensitive data, 481 bytes]",
+        "is_canonical": false,
+        "node_id": "65dff0f3-1949-4561-98ac-2d70623b2f71",
+        "score": 5.694646812612079
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "[REDACTED: sensitive data, 490 bytes]",
+        "is_canonical": false,
+        "node_id": "2a0258fe-a424-418e-b3f4-600fd6e4ba81",
+        "score": 5.683663312363285
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "Operator directive 2026-09-07 (standing): [REDACTED: sensitive data, 126 bytes]Use Narayan's open-source projects instead; for the paper's file-memory vs Lambo comparison the corpus is the nrynss/lambo repo: its Claude file-memory dir ~/.claude/projects/-Users-narayan-Documents-work-lambo/memory (6 files) versus the lambo-dev dogfood store on the same subject.",
+        "is_canonical": false,
+        "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+        "score": 0.38263413242009126
+      }
+    ],
+    "warnings": [
+      "Session inactive 7426 seconds"
+    ]
+  },
+  "isError": false
+}

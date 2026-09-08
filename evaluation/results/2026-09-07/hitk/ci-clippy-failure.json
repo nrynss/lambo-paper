@@ -1,0 +1,154 @@
+{
+ "run": "vimanam-2026-09-07",
+ "id": "ci-clippy-failure",
+ "question": "Why did CI fail on vimanam pull requests #91 and #92 on 2026-09-04, and what was done about it?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "0d234b2e-386c-43a6-9d44-5e05cc0ea07f",
+   "score": 9.38324334505035,
+   "type": "Resource",
+   "content": "Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection"
+  },
+  {
+   "rank": 2,
+   "node_id": "aad37198-f922-45b3-8d68-b6e294cea550",
+   "score": 8.455408869127247,
+   "type": "Resource",
+   "content": "Fixed vimanam CI failure on PRs #91 and #92: CI stable had moved to Rust 1.98 whose clippy question_mark lint flagged th"
+  },
+  {
+   "rank": 3,
+   "node_id": "9aabb887-8e28-456c-bdaa-1ebce1cc4c78",
+   "score": 7.299612415985307,
+   "type": "Resource",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 4,
+   "node_id": "65dff0f3-1949-4561-98ac-2d70623b2f71",
+   "score": 5.694646812612079,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 5,
+   "node_id": "2a0258fe-a424-418e-b3f4-600fd6e4ba81",
+   "score": 5.683663312363285,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 6,
+   "node_id": "63a6213d-ebe7-48d7-ad7d-5ce8d755efa8",
+   "score": 5.579106602385649,
+   "type": "Logic",
+   "content": "J2 outcome-consistency rule (J2-R1-5): 'this process cannot have an endpoint' must degrade the same way whichever road r"
+  },
+  {
+   "rank": 7,
+   "node_id": "4279f68a-e226-4b80-a3ab-229c445f21a9",
+   "score": 5.358054399576568,
+   "type": "Entity",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 8,
+   "node_id": "46769df4-d3c0-4615-a9a1-42b9a03ef156",
+   "score": 5.199049947352592,
+   "type": "Observation",
+   "content": "Correction 2026-09-03: lambo recall latency on the candle Metal rig (40 recalls since 2026-08-23) is p50 549 ms, p95 8.5"
+  },
+  {
+   "rank": 9,
+   "node_id": "15e9191d-2871-4a01-a162-1d12f7aaec19",
+   "score": 5.150198392070016,
+   "type": "Observation",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 10,
+   "node_id": "be9b437b-c5d1-49f8-b072-d469a2aee41e",
+   "score": 5.056660704004759,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 11,
+   "node_id": "a0881d03-4efd-40aa-b741-ca01c4d4f6bc",
+   "score": 5.00252552319137,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 12,
+   "node_id": "8b9044ee-063c-40ca-a3ac-ebfcbf060160",
+   "score": 4.967764616875234,
+   "type": "Logic",
+   "content": "Positioning thesis (operator, 2026-08-20): even with canonization never triggering, lambo beats RAG for WORKING SESSIONS"
+  },
+  {
+   "rank": 13,
+   "node_id": "03fcca77-f90b-4d84-aa25-7f4f1a4fff94",
+   "score": 4.860922154391035,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 14,
+   "node_id": "c51a8af1-76f5-4fca-a5bd-082c5b811be6",
+   "score": 4.709394689101113,
+   "type": "Logic",
+   "content": "vimanam #45 diff: user chose design option (b), JSON-canonicalisation diff (resolve $refs into serde_json::Value, canoni"
+  },
+  {
+   "rank": 15,
+   "node_id": "aec57b93-2c54-47cd-ac9e-0921c9b25628",
+   "score": 4.620673228124823,
+   "type": "Entity",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 16,
+   "node_id": "560f1377-a2c5-4253-b0fb-842050637399",
+   "score": 4.603792008454325,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 17,
+   "node_id": "dea0c087-6785-43b9-8772-1f8ac3d84ef8",
+   "score": 4.603426109775439,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 18,
+   "node_id": "94d9db8f-94c7-4c5c-a7b7-995b3e4ff888",
+   "score": 4.546808758310858,
+   "type": "Logic",
+   "content": "vimanam #67/#68 design confirmed 2026-09-05: in-memory Vec<Page> site model (option a) for multi-file output, and #68 sk"
+  },
+  {
+   "rank": 19,
+   "node_id": "d58ed10d-ca09-41b7-aa9e-84f962ce4188",
+   "score": 4.35490122232578,
+   "type": "Resource",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 20,
+   "node_id": "c75c39ae-93e9-4953-a9ee-b2f0f5283e46",
+   "score": 4.217791432238433,
+   "type": "Constraint",
+   "content": "Memory-tooling preference (operator, 2026-09-01, standing): record operator directives, standing style rules, and decisi"
+  },
+  {
+   "rank": 21,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 0.38263413242009126,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+vimanam main branch [Resource] (score 7.05)
+
+Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection, which is unsatisfiable on a solo repo since GitHub forbids self-approval). Sequence that matters for stacked PRs with squash merge: retarget #92 to main FIRST (deleteBranchOnMerge would auto-close it when #91's branch died), squash-merge #91 -> 7e0e336, then git rebase --onto origin/main <old-base-tip> feat/diff to drop the already-squashed commits, force-push, re-run CI, squash-merge #92 -> db42292. Also updated PR #92's body to remove the stale 'stacked on #91' line before merging, since squash uses the body as the commit message. Main verified green: fmt, clippy on 1.96 and 1.97.1, 175 tests, plus release-build smoke tests of all four features and diff exit codes 3/0/0. [Resource] (score 6.86)
+
+[REDACTED: sensitive data, 340 bytes] [Logic] (score 4.82)
+warnings:
+- Session inactive 7426 seconds

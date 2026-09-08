@@ -1,0 +1,55 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Post-J plan (operator, 2026-08-20): after J closes (J3 → J4 → J5 → phase close with rig re-pin + DOGFOOD-SETUP rewrite in one commit), run an END-TO-END adversarial review + remediation cycle over the whole branch — precedent: the adve-review-e2e-* and full-stack-sweep reviews — covering everything J landed as one system (identity + proxy + async acks + ledger states) rather than per-task. Then start workstream D (event-time clock, D1→D2), expected to run hours; D is the only remaining blocker of other work (C2) and carries the phase's built-in day-2 fallback decision point. Order after D: C (SoloPolicy; C1 may ride alongside D), the embedding-backfill/re-embed verb before A, H1 before B0, then B (pgvector service container, no cockroach), A parallel to B if attention allows, E last. H2 parked (no DSN); H3 runs sqlite/postgres/memory parity. [Logic] (score 6.19)\n\nWorkstream I (observability) runs before all further implementation cycles — decided 2026-08-19. Lambo is strong on state observability (canonization audit rows, stats, the store, serve-web) but has no flow record: recall scores vanish with the response and a fired blast-radius warning exists only in the conversation that saw it, which is unverifiable and therefore unclaimable. Every cycle run before I lands is dogfood data lost. [Logic] (score 5.70)"
+    }
+  ],
+  "structuredContent": {
+    "context": "Post-J plan (operator, 2026-08-20): after J closes (J3 → J4 → J5 → phase close with rig re-pin + DOGFOOD-SETUP rewrite in one commit), run an END-TO-END adversarial review + remediation cycle over the whole branch — precedent: the adve-review-e2e-* and full-stack-sweep reviews — covering everything J landed as one system (identity + proxy + async acks + ledger states) rather than per-task. Then start workstream D (event-time clock, D1→D2), expected to run hours; D is the only remaining blocker of other work (C2) and carries the phase's built-in day-2 fallback decision point. Order after D: C (SoloPolicy; C1 may ride alongside D), the embedding-backfill/re-embed verb before A, H1 before B0, then B (pgvector service container, no cockroach), A parallel to B if attention allows, E last. H2 parked (no DSN); H3 runs sqlite/postgres/memory parity. [Logic] (score 6.19)\n\nWorkstream I (observability) runs before all further implementation cycles — decided 2026-08-19. Lambo is strong on state observability (canonization audit rows, stats, the store, serve-web) but has no flow record: recall scores vanish with the response and a fired blast-radius warning exists only in the conversation that saw it, which is unverifiable and therefore unclaimable. Every cycle run before I lands is dogfood data lost. [Logic] (score 5.70)",
+    "hits": [
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Post-J plan (operator, 2026-08-20): after J closes (J3 → J4 → J5 → phase close with rig re-pin + DOGFOOD-SETUP rewrite in one commit), run an END-TO-END adversarial review + remediation cycle over the whole branch — precedent: the adve-review-e2e-* and full-stack-sweep reviews — covering everything J landed as one system (identity + proxy + async acks + ledger states) rather than per-task. Then start workstream D (event-time clock, D1→D2), expected to run hours; D is the only remaining blocker of other work (C2) and carries the phase's built-in day-2 fallback decision point. Order after D: C (SoloPolicy; C1 may ride alongside D), the embedding-backfill/re-embed verb before A, H1 before B0, then B (pgvector service container, no cockroach), A parallel to B if attention allows, E last. H2 parked (no DSN); H3 runs sqlite/postgres/memory parity.",
+        "is_canonical": false,
+        "node_id": "31786f8b-8f3e-411c-99e7-72f3f68307e2",
+        "score": 6.186041240569207
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Workstream I (observability) runs before all further implementation cycles — decided 2026-08-19. Lambo is strong on state observability (canonization audit rows, stats, the store, serve-web) but has no flow record: recall scores vanish with the response and a fired blast-radius warning exists only in the conversation that saw it, which is unverifiable and therefore unclaimable. Every cycle run before I lands is dogfood data lost.",
+        "is_canonical": false,
+        "node_id": "682bd2b0-a30a-4903-b96f-0a18b9c5ebc0",
+        "score": 5.698057988560191
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "Open GitHub issues on nrynss/lambo as of 2026-09-04: #2 recall tie-breaks on per-run random UUIDs (latent); #3 Bedrock embedder blocked on AWS model access since 2026-08-10; #4 serve-web is one session per process, parked pending design; #5 SQLite vector search, acceptance met on lambo-for-mooshik, held open until the end-of-September merge to main; #7 credential discovery never falls back to gcloud ADC; #8 recall is 87% text-vector scan; #9 lambo_inspect fails 28% (Focus::Missing, fuzzy cap 2,000 about to trip, failures logged as unclassified); #10 usage review: 2.2% match rate, paragraph-length concepts, 63 agent_ids, reserve used by 5 of 63 agents. main and lambo-for-mooshik are both frozen for hackathons; fixes land on lambo-for-mooshik and merge together at end of September 2026.",
+        "is_canonical": false,
+        "node_id": "a43853d5-3a72-451b-a88a-fd7232e5b403",
+        "score": 5.595671858185236
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "Operator ruling 2026-09-01 (follow-up): the lambo repo is NOT updated with the agent_id ruling or the Claude Code hook layer for now. Reverted the uncommitted AGENTS.md and DOGFOOD-SETUP.md edits (tree clean at 4c6fc93) and moved the doc of record to ~/Documents/work/lambo-dogfood-setup.md — the full runbook with the updated section 4 (agent_id = model name) and 4b (Claude Code enforcement hooks), plus an appendix carrying the pending AGENTS.md edit verbatim, to be folded back into the repo when the user says to land it. Consequence until then: AGENTS.md readers keep sending harness-name agent_ids (valid fallback); Claude Code follows the model-name rule via its user-scope hooks.",
+        "is_canonical": false,
+        "node_id": "02d1a5a9-1065-43f4-85b2-0427e1ddfd20",
+        "score": 5.193664318899646
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Claude Code enforcement layer 2026-09-01: instructions alone do not make Claude Code follow the lambo-dogfood protocol (operator observation: other harnesses comply from AGENTS.md text; Claude Code is notorious for skipping it). Fix is mechanical, at user scope so it covers every project: ~/.claude/settings.json hooks driving ~/lambo-dogfood/hooks/lambo-hook.sh. SessionStart injects the protocol + writer health; PreToolUse denies Edit/Write/NotebookEdit until the session has made one lambo_recall (bounded at 2 denials so restricted-toolset agents cannot deadlock); PostToolUse markers track recall/derive/edit per session_id under ~/lambo-dogfood/hooks/state; Stop blocks ending a turn that edited files without a derive or record_action, once per session, honoring stop_hook_active. Every gate fails open when the writer is down. Verified live: a Write was denied, lambo_recall lifted the gate, the retry succeeded.",
+        "is_canonical": false,
+        "node_id": "1c92eb6d-f8e4-4362-9ef6-f9de3eb091f4",
+        "score": 5.11595349589771
+      }
+    ],
+    "warnings": []
+  },
+  "isError": false
+}

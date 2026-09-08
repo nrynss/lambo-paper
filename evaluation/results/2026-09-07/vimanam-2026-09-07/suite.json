@@ -1,0 +1,60 @@
+{
+  "mode": "as-deployed",
+  "provenance": "Corpus: Narayan's open-source vimanam project (github.com/noemaforge/vimanam, public, OpenAPI-to-Markdown generator). Chosen 2026-09-07 because both memories were written in the same week: the Claude auto-memory notes were modified 2026-09-04/05 and the lambo-dev store holds 11 vimanam concepts created 2026-09-04/05. Open-source material only. FILE ARM: ~/.claude/projects/-Users-narayan-Documents-work-vimanam/memory (MEMORY.md + 5 notes, 7,879 bytes; export 8,222 bytes with headers), exported whole for every question as the most generous reading of the deployed mechanism; snapshot copied before any answer was produced. LAMBO ARM: lambo_recall on an ISOLATED sqlite backup of the lambo-dev store taken 2026-09-07T07:03Z (990 concepts, includes all vimanam concepts), served by lambo-e11fb06 (serve --transport http --port 7701, candle BGE-M3 dim 1024 on Metal) after deleting the copied session_leases row; the live store and ledger were not touched. Recall arguments: agent_id=memory-eval, query=question text verbatim, default top_k; export = the tool's text result (rendered context) as an MCP text-only client sees it, with the full JSON (hits, node_ids) kept beside it. The copy's ledger (exports/lambo/calls.jsonl) records every recall with per-hit legs. Questions and rubrics were fixed from primary sources (GitHub branch-protection API, PRs #91/#92 and their squash commits, issues #32/#45, dist-workspace.toml and release.yml, the archived astral-sh/cargo-dist repo, the noemaforge org) before any export was read or answer produced. A seventh candidate question on the #67/#68 site-model decision was dropped because no repo artifact records it. Selection rule: one question per knowledge type (policy with rationale, incident cause and fix, design decision, superseded alternative, cross-document rationale, abstention), all drawn from the operator's artifacts, not from either memory's contents. Reader: Claude Code CLI 2.1.241 --print, no tools, no MCP, skills disabled, fixed system prompt, fresh temp cwd. Known confound: the user-scope SessionStart hook injects a short lambo-dogfood protocol reminder into every reader process, identically in both arms.",
+  "questions": [
+    {
+      "id": "merge-workflow",
+      "question": "How are pull requests merged into vimanam's main branch, and why is that path used?",
+      "rubric": "Score 1 only if the answer states BOTH (a) that main's branch protection requires one approving review that cannot be satisfied on this effectively solo repo (GitHub forbids self-approval) while enforce_admins is off, AND (b) that merges therefore use `gh pr merge --squash --admin` (admin override, squash convention), citing evidence identifiers. Missing either the reason or the admin/squash path, or abstaining, scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/merge-workflow.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "ci-clippy-failure",
+      "question": "Why did CI fail on vimanam pull requests #91 and #92 on 2026-09-04, and what was done about it?",
+      "rubric": "Score 1 only if the answer states the cause as toolchain drift: CI's latest stable Rust (1.98) ran a newer clippy that emitted the `question_mark` lint while the older local toolchain passed, AND gives either the fix (rewriting the flagged resolve_ref code in src/utils.rs to satisfy the lint) or the prevention rule (run clippy with the newest installed toolchain before pushing), citing evidence. Blaming the new feature code, omitting the lint/toolchain cause, or abstaining scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/ci-clippy-failure.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "diff-design",
+      "question": "How does vimanam's `diff` subcommand (#45) compare two spec versions, and which design option was chosen for it?",
+      "rubric": "Score 1 only if the answer states that the diff operates on RESOLVED schemas (after inlining $refs), not on path sets or raw operation objects, AND describes the chosen approach as JSON canonicalisation (resolve $refs into serde_json::Value, canonicalise, then a generic Value differ reporting JSON-pointer paths), citing evidence. Naming only 'option (b)' without the mechanism, describing a path-set diff, or abstaining scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/diff-design.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "packaging-decision",
+      "question": "Which release-automation tool did vimanam adopt to resolve issue #32, which alternative was rejected and why, and what is the status of the Astral fork of the chosen tool?",
+      "rubric": "Score 1 only if the answer states ALL THREE: (a) upstream dist (axodotdev/cargo-dist) was adopted; (b) GoReleaser was rejected with at least one of its stated reasons (Go-centric, prebuilt builder is paid, Homebrew formula output deprecated); (c) the astral-sh/cargo-dist fork is archived (December 2025) and redirects to upstream, so there is no live fork to choose, citing evidence. Missing any part or abstaining scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/packaging-decision.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "brand-org",
+      "question": "Under which GitHub organization does vimanam ship its distribution, and why was the personal handle not used?",
+      "rubric": "Score 1 only if the answer names the `noemaforge` org (created 2026-06-26; repo moved from nrynss/vimanam) AND gives the stated reason: a brand identity rather than the personal handle, because the personal name looked odd on a Homebrew tap and for brand consistency across channels, citing evidence. Naming only the org, or abstaining, scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/brand-org.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    },
+    {
+      "id": "missing-downloads",
+      "question": "How many downloads has vimanam had to date on crates.io and through its Homebrew tap?",
+      "rubric": "Score 1 only for an explicit statement that no download figures are present in the evidence. Any invented, estimated, or inferred number, or a non-answer that does not say the information is absent, scores 0.",
+      "contexts": {
+        "file": {"path": "exports/file/all.md", "provenance": "Whole auto-memory directory export; see suite provenance."},
+        "lambo": {"path": "exports/lambo/missing-downloads.txt", "provenance": "lambo_recall(query=question) on the isolated copy; see suite provenance."}
+      }
+    }
+  ]
+}

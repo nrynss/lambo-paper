@@ -1,0 +1,69 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "J2 proxy in-flight tracking is PER HUB CONNECTION (generation), not per pump: a response retires its id from any generation (a late answer from a superseded connection is still the holder's answer), but a Closed only answers the ids that went out on THAT connection, and only clears the writer if it was the current one. The pre-fix blanket 'if gen != generation { continue; }' dropped a superseded connection's Closed as well as its frames, which is why no drain could ever have fired for it. [Constraint] (score 7.11)\n\n[REDACTED: sensitive data, 483 bytes] [Observation] (score 5.62)\n\n[REDACTED: sensitive data, 56 bytes] [Entity] (score 5.52)"
+    },
+    {
+      "type": "text",
+      "text": "warnings:\n- Session inactive 7427 seconds"
+    }
+  ],
+  "structuredContent": {
+    "context": "J2 proxy in-flight tracking is PER HUB CONNECTION (generation), not per pump: a response retires its id from any generation (a late answer from a superseded connection is still the holder's answer), but a Closed only answers the ids that went out on THAT connection, and only clears the writer if it was the current one. The pre-fix blanket 'if gen != generation { continue; }' dropped a superseded connection's Closed as well as its frames, which is why no drain could ever have fired for it. [Constraint] (score 7.11)\n\n[REDACTED: sensitive data, 483 bytes] [Observation] (score 5.62)\n\n[REDACTED: sensitive data, 56 bytes] [Entity] (score 5.52)",
+    "hits": [
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "J2 proxy in-flight tracking is PER HUB CONNECTION (generation), not per pump: a response retires its id from any generation (a late answer from a superseded connection is still the holder's answer), but a Closed only answers the ids that went out on THAT connection, and only clears the writer if it was the current one. The pre-fix blanket 'if gen != generation { continue; }' dropped a superseded connection's Closed as well as its frames, which is why no drain could ever have fired for it.",
+        "is_canonical": false,
+        "node_id": "510449ca-257d-46b9-8a8d-a5a792a22f54",
+        "score": 7.10629424571754
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Observation",
+        "content": "[REDACTED: sensitive data, 483 bytes]",
+        "is_canonical": false,
+        "node_id": "82324a5e-c7a1-4035-9612-84d54dfa970e",
+        "score": 5.617690823456007
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Entity",
+        "content": "[REDACTED: sensitive data, 56 bytes]",
+        "is_canonical": false,
+        "node_id": "56ef841d-a8dd-47f2-8bed-e78cb3bba667",
+        "score": 5.518026502989626
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection, which is unsatisfiable on a solo repo since GitHub forbids self-approval). Sequence that matters for stacked PRs with squash merge: retarget #92 to main FIRST (deleteBranchOnMerge would auto-close it when #91's branch died), squash-merge #91 -> 7e0e336, then git rebase --onto origin/main <old-base-tip> feat/diff to drop the already-squashed commits, force-push, re-run CI, squash-merge #92 -> db42292. Also updated PR #92's body to remove the stale 'stacked on #91' line before merging, since squash uses the body as the commit message. Main verified green: fmt, clippy on 1.96 and 1.97.1, 175 tests, plus release-build smoke tests of all four features and diff exit codes 3/0/0.",
+        "is_canonical": false,
+        "node_id": "0d234b2e-386c-43a6-9d44-5e05cc0ea07f",
+        "score": 5.495649019244168
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Refinement to the P3-handling delegation (operator, 2026-08-20): when a remediation round is running ANYWAY (any P1/P2 present), the remediation agent closes the round's P3s too — the orchestrator never holds P3s back for its own integration pass in that case. The orchestrator's fix-directly-at-integration judgement applies EXCLUSIVELY to rounds where no remediation is needed at all (verdict carries only P3/doc-precision findings). Supersedes the split made at J3 round 2, which was corrected mid-flight.",
+        "is_canonical": false,
+        "node_id": "92d992a2-f8ae-4003-95b4-8533d054ea22",
+        "score": 5.060388594044426
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "Operator directive 2026-09-07 (standing): [REDACTED: sensitive data, 126 bytes]Use Narayan's open-source projects instead; for the paper's file-memory vs Lambo comparison the corpus is the nrynss/lambo repo: its Claude file-memory dir ~/.claude/projects/-Users-narayan-Documents-work-lambo/memory (6 files) versus the lambo-dev dogfood store on the same subject.",
+        "is_canonical": false,
+        "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+        "score": 0.38263413242009126
+      }
+    ],
+    "warnings": [
+      "Session inactive 7427 seconds"
+    ]
+  },
+  "isError": false
+}

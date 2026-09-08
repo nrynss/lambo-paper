@@ -27,3 +27,17 @@ Extracted from the `launchd` daemon ledger (`calls.jsonl`) and database (`lambo-
 Both frozen datasets round-trip: the default `scripts/extract_telemetry.py` invocation and a live replay cut at each rig's stamp produce identical files.
 
 Snapshot counts correspond to 8.7 CUDA and 11.9 Metal nominal interval-equivalent days. They do not establish continuous coverage or uptime. The Metal inspect rate is based on four calls.
+
+## Paired Comparison Data (2026-09-07)
+
+Separate from the rig telemetry above, the repository publishes the first two graded file-memory versus Lambo runs under `evaluation/results/2026-09-07/`. That directory is produced by `scripts/compare_memory.py`, not by `scripts/extract_telemetry.py`, and it does not feed any figure in the telemetry tables.
+
+* **Runs:** two projects, six questions each, two repeats, 24 graded answers per run
+* **Reader:** Claude Code CLI 2.1.241 `--print`, pinned model `claude-sonnet-5`, no tools, no MCP
+* **Scores:** lambo project file 8/12 against Lambo 2/12, vimanam project file 10/12 against Lambo 8/12
+* **Strict grader readings:** vimanam project file 9/12 against Lambo 6/12
+* **Coverage by depth:** over 7 answerable questions, 6 of 7 are covered at depth 20 and 4 of 7 at depth 3
+* **Integrity:** 0 hallucinations in 48 answers
+* **Artifacts:** both suites, both frozen bundles, every answer and grade, grader provenance, `top_k=20` recalls, and `REDACTIONS.md`
+
+Two runs on one machine support no significance claim. Read `evaluation/results/2026-09-07/README.md` for the protocol and the full caveat list.

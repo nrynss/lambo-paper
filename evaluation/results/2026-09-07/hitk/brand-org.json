@@ -1,0 +1,154 @@
+{
+ "run": "vimanam-2026-09-07",
+ "id": "brand-org",
+ "question": "Under which GitHub organization does vimanam ship its distribution, and why was the personal handle not used?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "510449ca-257d-46b9-8a8d-a5a792a22f54",
+   "score": 7.10629424571754,
+   "type": "Constraint",
+   "content": "J2 proxy in-flight tracking is PER HUB CONNECTION (generation), not per pump: a response retires its id from any generat"
+  },
+  {
+   "rank": 2,
+   "node_id": "82324a5e-c7a1-4035-9612-84d54dfa970e",
+   "score": 5.617690823456007,
+   "type": "Observation",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 3,
+   "node_id": "56ef841d-a8dd-47f2-8bed-e78cb3bba667",
+   "score": 5.518026502989626,
+   "type": "Entity",
+   "content": "[REDACTED: sensitive data, 56 bytes]"
+  },
+  {
+   "rank": 4,
+   "node_id": "0d234b2e-386c-43a6-9d44-5e05cc0ea07f",
+   "score": 5.495649019244168,
+   "type": "Resource",
+   "content": "Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection"
+  },
+  {
+   "rank": 5,
+   "node_id": "92d992a2-f8ae-4003-95b4-8533d054ea22",
+   "score": 5.060388594044426,
+   "type": "Logic",
+   "content": "Refinement to the P3-handling delegation (operator, 2026-08-20): when a remediation round is running ANYWAY (any P1/P2 p"
+  },
+  {
+   "rank": 6,
+   "node_id": "f0043b91-7c23-43eb-8dc7-3ff4bc02c601",
+   "score": 5.059400651268701,
+   "type": "Logic",
+   "content": "J1: Memory::agent() keeps its name but changes meaning \u2014 it is the handle's DEFAULT writer id plus its process identity "
+  },
+  {
+   "rank": 7,
+   "node_id": "29403d37-f37b-497d-8c81-f1a9bb7e0cb0",
+   "score": 5.05683861990424,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 8,
+   "node_id": "98d9a58d-2257-4c37-968a-e2d97b1be0c7",
+   "score": 5.022075693035465,
+   "type": "Entity",
+   "content": "GitHub issue nrynss/rustydocs#10"
+  },
+  {
+   "rank": 9,
+   "node_id": "eeba2df6-e05e-42ac-8a3e-a06f1805c454",
+   "score": 5.009480059423367,
+   "type": "Entity",
+   "content": "GitHub issue nrynss/rustydocs#7"
+  },
+  {
+   "rank": 10,
+   "node_id": "ac0e7d6d-db5d-4414-88b9-9bdeef3d5750",
+   "score": 5.004784026368798,
+   "type": "Entity",
+   "content": "GitHub issue nrynss/rustydocs#11"
+  },
+  {
+   "rank": 11,
+   "node_id": "04cb31e7-f06c-4b4b-8651-245797385a8c",
+   "score": 5.000709827808998,
+   "type": "Entity",
+   "content": "GitHub issue nrynss/rustydocs#39"
+  },
+  {
+   "rank": 12,
+   "node_id": "3ce6aded-fe7b-46ca-bb9c-8dbb96345c32",
+   "score": 4.962646279472918,
+   "type": "Constraint",
+   "content": "J3 redesign round-2 P2 (J3-R2R-2): an acked write does NOT wait for an embedder. N1's classification was wired into the "
+  },
+  {
+   "rank": 13,
+   "node_id": "17e16aa6-9774-45a6-9353-b9772fff09c8",
+   "score": 4.92347478387275,
+   "type": "Observation",
+   "content": "Real MCP client startup tolerances measured 2026-08-20: opencode 1.18.18 gives up on a slow-to-start stdio MCP server at"
+  },
+  {
+   "rank": 14,
+   "node_id": "21706d0f-f770-4dfc-a1e9-0fbf111877af",
+   "score": 4.848994447143275,
+   "type": "Logic",
+   "content": "J2-R1-1 fix decision (remediation round 1): a forwarding layer that loses a call in flight must answer with a DIFFERENT "
+  },
+  {
+   "rank": 15,
+   "node_id": "27e5bd33-4f99-4a92-803a-c3376de6c7f9",
+   "score": 4.84528344684457,
+   "type": "Constraint",
+   "content": "J1 round-2 P2 (J1-R2-2): conflict_err (the J1-R1-2 remediation) matches on the LamboError::Conflict VARIANT, not on its "
+  },
+  {
+   "rank": 16,
+   "node_id": "842ce8f0-257d-44bb-8e3d-937d02957345",
+   "score": 4.8184462004632165,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 17,
+   "node_id": "0954e346-7b10-4a70-9d5c-48c761347acf",
+   "score": 4.748004830742558,
+   "type": "Resource",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 18,
+   "node_id": "8b9044ee-063c-40ca-a3ac-ebfcbf060160",
+   "score": 4.692035053133089,
+   "type": "Logic",
+   "content": "Positioning thesis (operator, 2026-08-20): even with canonization never triggering, lambo beats RAG for WORKING SESSIONS"
+  },
+  {
+   "rank": 19,
+   "node_id": "ff27297d-211b-489b-b2c9-b16d504aa3a6",
+   "score": 4.689363135855144,
+   "type": "Entity",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 20,
+   "node_id": "0ccca893-af0f-4bae-9237-dbbe0ca8db70",
+   "score": 4.597039079966827,
+   "type": "Constraint",
+   "content": "Prescribed fix for J3-R2R-1, recorded in J3-durability-redesign.md on wt/j3 (7c036f0): the P1 is a WILDCARD SWALLOWING S"
+  },
+  {
+   "rank": 21,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 0.38263413242009126,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  }
+ ]
+}

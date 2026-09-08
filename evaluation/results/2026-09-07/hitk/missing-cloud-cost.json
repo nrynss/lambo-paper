@@ -1,0 +1,154 @@
+{
+ "run": "lambo-2026-09-07",
+ "id": "missing-cloud-cost",
+ "question": "What is the monthly cost of the lambo-pg Cloud SQL instance used for the hosted Postgres workstream?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "330a20c7-a72b-477f-8ba3-f926778cb188",
+   "score": 8.293485679699618,
+   "type": "Logic",
+   "content": "Workstream B is extract-then-extend, not copy-then-edit: B0 extracts PgStore<D: Dialect> from the hardened Cockroach ada"
+  },
+  {
+   "rank": 2,
+   "node_id": "d8910fb8-01bb-44ae-a758-fc02252b324d",
+   "score": 6.951256452138509,
+   "type": "Logic",
+   "content": "Alias split: config strings postgres/pg resolve to PgStore<PostgresDialect>, cockroach/crdb to PgStore<CockroachDialect>"
+  },
+  {
+   "rank": 3,
+   "node_id": "0d0f6137-b0b4-410c-8f84-317b0021f47e",
+   "score": 4.595150114538282,
+   "type": "Logic",
+   "content": "J1 round-2 lesson: matching an error VARIANT is not matching a PATH. conflict_err matched LamboError::Conflict to surfac"
+  },
+  {
+   "rank": 4,
+   "node_id": "a7563f80-0bcd-4a3c-aa26-fe8f7fc242d4",
+   "score": 4.5450143431125465,
+   "type": "Constraint",
+   "content": "Counter-argument that keeps J3's N1 fix necessary regardless of candle (2026-08-21): workstream A is a HOSTED Gemini emb"
+  },
+  {
+   "rank": 5,
+   "node_id": "50d32fd9-b72d-4ac9-92f6-808a69a7390c",
+   "score": 4.036049377475191,
+   "type": "Logic",
+   "content": "Codex + Cursor enforcement layers 2026-09-01 (parity with the Claude Code hooks; user clarified 'Codex' means the ChatGP"
+  },
+  {
+   "rank": 6,
+   "node_id": "8b9044ee-063c-40ca-a3ac-ebfcbf060160",
+   "score": 4.017734135834988,
+   "type": "Logic",
+   "content": "Positioning thesis (operator, 2026-08-20): even with canonization never triggering, lambo beats RAG for WORKING SESSIONS"
+  },
+  {
+   "rank": 7,
+   "node_id": "6a901cd9-8c4d-4414-b604-672a180f1fbf",
+   "score": 3.7427499913359235,
+   "type": "Logic",
+   "content": "The Postgres dialect ships the hnsw index in init DDL from day one \u2014 no later index migration event. Behavioural stabili"
+  },
+  {
+   "rank": 8,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 3.737650330470191,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 9,
+   "node_id": "7c4a5a55-84e4-4bc4-8a3e-67821e2d8564",
+   "score": 3.643192056975199,
+   "type": "Constraint",
+   "content": "The embedding space is defined by the model artifact including quantization \u2014 instances are fungible, so two machines ru"
+  },
+  {
+   "rank": 10,
+   "node_id": "84d68178-3314-4cd9-8b39-089dd0e112d1",
+   "score": 3.1257779166733277,
+   "type": "Constraint",
+   "content": "J2 makes session_leases.endpoint NULLABLE and only `serve` publishes it, because only a serve process is reachable. A CL"
+  },
+  {
+   "rank": 11,
+   "node_id": "09359559-7acd-4faf-b87c-630358806547",
+   "score": 3.1138805686918367,
+   "type": "Observation",
+   "content": "J1 review correction to a stated expectation: docs/reference/mcp.mdx and site/src/content/docs/mcp.mdx are NOT byte-iden"
+  },
+  {
+   "rank": 12,
+   "node_id": "2edce513-a16a-4b3e-9ccc-98651e6063c8",
+   "score": 3.025534421198985,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 13,
+   "node_id": "1c92eb6d-f8e4-4362-9ef6-f9de3eb091f4",
+   "score": 3.014583357882645,
+   "type": "Logic",
+   "content": "Claude Code enforcement layer 2026-09-01: instructions alone do not make Claude Code follow the lambo-dogfood protocol ("
+  },
+  {
+   "rank": 14,
+   "node_id": "5f2a83e4-6b85-4cbd-b6d0-58e697ccd4d4",
+   "score": 2.982860137461393,
+   "type": "Logic",
+   "content": "Test-shape lesson from J2-R2-1: prefer a mutation that fails an ASSERTION over one that hangs. Because dial_bounded carr"
+  },
+  {
+   "rank": 15,
+   "node_id": "c8d25b0b-f274-489b-9d8c-0d22ad791f88",
+   "score": 2.919340533963744,
+   "type": "Logic",
+   "content": "G3's most valuable side-finding (2026-08-21): lambo's dogfood graph connects ARTIFACTS, not REASONING, and the Derives/T"
+  },
+  {
+   "rank": 16,
+   "node_id": "de15b4b5-234d-417d-9da4-c4eb90dc5126",
+   "score": 2.877861225106413,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 17,
+   "node_id": "35926aac-3f53-47c8-a0dc-6a839d910f5c",
+   "score": 2.814309554105016,
+   "type": "Logic",
+   "content": "Thutapi post-submission plan (2026-09-06): GMI Cloud judged unreliable (image models queued forever, TTS 503 for an even"
+  },
+  {
+   "rank": 18,
+   "node_id": "cc937c3f-d3d3-4598-b196-aa9294287b11",
+   "score": 2.709391608266581,
+   "type": "Logic",
+   "content": "J1 replaced LamboServer::attribution with two helpers: check_agent_id (shape only \u2014 non-empty, size cap) and caller_agen"
+  },
+  {
+   "rank": 19,
+   "node_id": "03fcca77-f90b-4d84-aa25-7f4f1a4fff94",
+   "score": 2.69156775484793,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 20,
+   "node_id": "a43853d5-3a72-451b-a88a-fd7232e5b403",
+   "score": 2.684609906754259,
+   "type": "Resource",
+   "content": "Open GitHub issues on nrynss/lambo as of 2026-09-04: #2 recall tie-breaks on per-run random UUIDs (latent); #3 Bedrock e"
+  },
+  {
+   "rank": 21,
+   "node_id": "27e5bd33-4f99-4a92-803a-c3376de6c7f9",
+   "score": 2.6733125587862343,
+   "type": "Constraint",
+   "content": "J1 round-2 P2 (J1-R2-2): conflict_err (the J1-R1-2 remediation) matches on the LamboError::Conflict VARIANT, not on its "
+  }
+ ]
+}

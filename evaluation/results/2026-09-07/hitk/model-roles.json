@@ -1,0 +1,154 @@
+{
+ "run": "lambo-2026-09-07",
+ "id": "model-roles",
+ "question": "Which Claude model runs Lambo remediation agents, and which model runs whole-workstream end-to-end review?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "31786f8b-8f3e-411c-99e7-72f3f68307e2",
+   "score": 6.186041240569207,
+   "type": "Logic",
+   "content": "Post-J plan (operator, 2026-08-20): after J closes (J3 \u2192 J4 \u2192 J5 \u2192 phase close with rig re-pin + DOGFOOD-SETUP rewrite i"
+  },
+  {
+   "rank": 2,
+   "node_id": "682bd2b0-a30a-4903-b96f-0a18b9c5ebc0",
+   "score": 5.698057988560191,
+   "type": "Logic",
+   "content": "Workstream I (observability) runs before all further implementation cycles \u2014 decided 2026-08-19. Lambo is strong on stat"
+  },
+  {
+   "rank": 3,
+   "node_id": "a43853d5-3a72-451b-a88a-fd7232e5b403",
+   "score": 5.595671858185236,
+   "type": "Resource",
+   "content": "Open GitHub issues on nrynss/lambo as of 2026-09-04: #2 recall tie-breaks on per-run random UUIDs (latent); #3 Bedrock e"
+  },
+  {
+   "rank": 4,
+   "node_id": "02d1a5a9-1065-43f4-85b2-0427e1ddfd20",
+   "score": 5.193664318899646,
+   "type": "Resource",
+   "content": "Operator ruling 2026-09-01 (follow-up): the lambo repo is NOT updated with the agent_id ruling or the Claude Code hook l"
+  },
+  {
+   "rank": 5,
+   "node_id": "1c92eb6d-f8e4-4362-9ef6-f9de3eb091f4",
+   "score": 5.11595349589771,
+   "type": "Logic",
+   "content": "Claude Code enforcement layer 2026-09-01: instructions alone do not make Claude Code follow the lambo-dogfood protocol ("
+  },
+  {
+   "rank": 6,
+   "node_id": "93a2021a-2130-4e6f-9b9d-c7aacaa8fd39",
+   "score": 4.959845002927636,
+   "type": "Resource",
+   "content": "lambo-paper now has scripts/compare_memory.py (prepare/run/report), .claude/skills/compare-memory/SKILL.md and evaluatio"
+  },
+  {
+   "rank": 7,
+   "node_id": "f681f36f-27f8-4add-a2f9-a64f94069cce",
+   "score": 4.666125329563682,
+   "type": "Entity",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 8,
+   "node_id": "2c113380-a252-49cf-bd27-a993c31186e3",
+   "score": 4.489377947404489,
+   "type": "Logic",
+   "content": "J2-L1's general fix: proxyable() compares the endpoint's FILE NAME, not the whole path, and returns the path to dial. Th"
+  },
+  {
+   "rank": 9,
+   "node_id": "c88dc2ff-32dc-4009-9632-f165fbdb028d",
+   "score": 4.308168074096229,
+   "type": "Observation",
+   "content": "Dogfood adoption gap 2026-09-03: since every harness was wired to :7700 on 2026-09-01, the only agent_ids that have appe"
+  },
+  {
+   "rank": 10,
+   "node_id": "e7f5b719-8038-4c17-9348-c920df8dca15",
+   "score": 4.266316822210508,
+   "type": "Logic",
+   "content": "Operator ruling 2026-09-01: the agent_id every client sends to lambo-dogfood is the MODEL name (claude-fable-5, gpt-5-co"
+  },
+  {
+   "rank": 11,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 4.2573897004808074,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 12,
+   "node_id": "7c4a5a55-84e4-4bc4-8a3e-67821e2d8564",
+   "score": 4.256365278919525,
+   "type": "Constraint",
+   "content": "The embedding space is defined by the model artifact including quantization \u2014 instances are fungible, so two machines ru"
+  },
+  {
+   "rank": 13,
+   "node_id": "03ff6c9a-cdbf-4d13-b91b-475ddef085ea",
+   "score": 4.249848438344963,
+   "type": "Resource",
+   "content": "Integrated J0 to lambo-for-mooshik and pushed (0bcb275..5e049f1). Cycle: implement 0c81419 \u2192 review r1 CLEAN 6 P3 (77f11"
+  },
+  {
+   "rank": 14,
+   "node_id": "92d992a2-f8ae-4003-95b4-8533d054ea22",
+   "score": 4.246433596328399,
+   "type": "Logic",
+   "content": "Refinement to the P3-handling delegation (operator, 2026-08-20): when a remediation round is running ANYWAY (any P1/P2 p"
+  },
+  {
+   "rank": 15,
+   "node_id": "b484ede8-b450-491d-9ec3-6da9972158aa",
+   "score": 4.0275967057736475,
+   "type": "Logic",
+   "content": "Process decision (2026-08-20): anything the I round-3 review surfaces \u2014 findings or advisories \u2014 is recorded as J0 (carr"
+  },
+  {
+   "rank": 16,
+   "node_id": "e4220b1b-9581-4d60-af16-b06da964da1d",
+   "score": 3.9475115813273813,
+   "type": "Constraint",
+   "content": "Integration rule (operator, 2026-08-20, standing for J3 onward and the E2E cycle): a workstream integrates only after AL"
+  },
+  {
+   "rank": 17,
+   "node_id": "2fa6c47e-8352-488b-8d99-c510c8c9829d",
+   "score": 3.867361746290346,
+   "type": "Resource",
+   "content": "Stood up the dogfood rig: pinned binary lambo-3039b82 serving session lambo-dev over stdio MCP, SQLite store at ~/lambo-"
+  },
+  {
+   "rank": 18,
+   "node_id": "db8e4137-e6a1-4f04-87c4-fd7abf40d170",
+   "score": 3.7713816351124407,
+   "type": "Logic",
+   "content": "J2 startup-election decision: resolve_role is the ONLY place allowed to attempt the lease acquire, and it may retry it o"
+  },
+  {
+   "rank": 19,
+   "node_id": "842ce8f0-257d-44bb-8e3d-937d02957345",
+   "score": 3.6835529268008296,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 20,
+   "node_id": "60855249-d1a1-4abd-b151-40795e325232",
+   "score": 3.581791262627302,
+   "type": "Observation",
+   "content": "Completed local lambo-paper revisions with gpt-5.6-terra plus root review: source-faithful lanes/receipts, defaults0.5/0"
+  },
+  {
+   "rank": 21,
+   "node_id": "19a3bfa4-96fd-4b7f-a0b1-fd5d0596d94d",
+   "score": 3.527479187554317,
+   "type": "Constraint",
+   "content": "SWEEP-FAMILY LESSON from J2: the two sweeps the phase doc predicted (startup ordering, lease schema) were both necessary"
+  }
+ ]
+}

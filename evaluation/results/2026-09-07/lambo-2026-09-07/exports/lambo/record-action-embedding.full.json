@@ -1,0 +1,55 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Re-pinned the dogfood binary to lambo-e11fb06 (lambo-for-mooshik @ e11fb06, clean tree, LAMBO_GIT_SHA set, features store-sqlite,embed-candle-metal,embed-bge). This pin carries the record_action embedder-hop fix (record_action concepts previously stored embedding NULL — everything an agent DID was invisible to semantic recall) and the new re-embed --missing-only repair verb. Ran the repair with serve stopped: backfilled 42 NULL-vector concepts, coverage 534/576 -> 576/576, contract untouched (candle BAAI/bge-m3, dim 1024). Repointed launchd from lambo-4c6fc93, restarted, verified: lease http-shared-writer pid 35655, MCP stats embedded=576/576, ledger heartbeat git_sha=e11fb06. [Resource] (score 7.77)\n\nDogfood finding (2026-08-20, DOGFOOD-FINDINGS.md): 92 of 100 concepts in the lambo-dev store carry no durable embedding — interleaved in time, not one outage window; all 44 record_action Resources plus most Constraints/Logics/Entities. Semantic recall and dedup are blind to them and the damage is cumulative with no backfill path. Candidate product work: embedding-coverage counter in lambo_stats, and a re-embed backfill verb. Cause unsettled: record_action-never-embeds by design, intermittent embedder unavailability degrading hybrid to keyword, or a flush gap. [Entity] (score 6.90)"
+    }
+  ],
+  "structuredContent": {
+    "context": "Re-pinned the dogfood binary to lambo-e11fb06 (lambo-for-mooshik @ e11fb06, clean tree, LAMBO_GIT_SHA set, features store-sqlite,embed-candle-metal,embed-bge). This pin carries the record_action embedder-hop fix (record_action concepts previously stored embedding NULL — everything an agent DID was invisible to semantic recall) and the new re-embed --missing-only repair verb. Ran the repair with serve stopped: backfilled 42 NULL-vector concepts, coverage 534/576 -> 576/576, contract untouched (candle BAAI/bge-m3, dim 1024). Repointed launchd from lambo-4c6fc93, restarted, verified: lease http-shared-writer pid 35655, MCP stats embedded=576/576, ledger heartbeat git_sha=e11fb06. [Resource] (score 7.77)\n\nDogfood finding (2026-08-20, DOGFOOD-FINDINGS.md): 92 of 100 concepts in the lambo-dev store carry no durable embedding — interleaved in time, not one outage window; all 44 record_action Resources plus most Constraints/Logics/Entities. Semantic recall and dedup are blind to them and the damage is cumulative with no backfill path. Candidate product work: embedding-coverage counter in lambo_stats, and a re-embed backfill verb. Cause unsettled: record_action-never-embeds by design, intermittent embedder unavailability degrading hybrid to keyword, or a flush gap. [Entity] (score 6.90)",
+    "hits": [
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "Re-pinned the dogfood binary to lambo-e11fb06 (lambo-for-mooshik @ e11fb06, clean tree, LAMBO_GIT_SHA set, features store-sqlite,embed-candle-metal,embed-bge). This pin carries the record_action embedder-hop fix (record_action concepts previously stored embedding NULL — everything an agent DID was invisible to semantic recall) and the new re-embed --missing-only repair verb. Ran the repair with serve stopped: backfilled 42 NULL-vector concepts, coverage 534/576 -> 576/576, contract untouched (candle BAAI/bge-m3, dim 1024). Repointed launchd from lambo-4c6fc93, restarted, verified: lease http-shared-writer pid 35655, MCP stats embedded=576/576, ledger heartbeat git_sha=e11fb06.",
+        "is_canonical": false,
+        "node_id": "c0c976ed-ed17-4d20-bbce-03ebe06ea3a7",
+        "score": 7.77062201766196
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Entity",
+        "content": "Dogfood finding (2026-08-20, DOGFOOD-FINDINGS.md): 92 of 100 concepts in the lambo-dev store carry no durable embedding — interleaved in time, not one outage window; all 44 record_action Resources plus most Constraints/Logics/Entities. Semantic recall and dedup are blind to them and the damage is cumulative with no backfill path. Candidate product work: embedding-coverage counter in lambo_stats, and a re-embed backfill verb. Cause unsettled: record_action-never-embeds by design, intermittent embedder unavailability degrading hybrid to keyword, or a flush gap.",
+        "is_canonical": false,
+        "node_id": "95c6f0a8-1eef-4942-b1f4-ced4f1bd0276",
+        "score": 6.903076377562165
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Observation",
+        "content": "Dogfood finding (2026-08-20, DOGFOOD-FINDINGS.md): 92 of 100 concepts in the lambo-dev store carry no durable embedding — interleaved in time, not one outage window; all 44 record_action Resources plus most Constraints/Logics/Entities. Semantic recall and dedup are blind to them and the damage is cumulative with no backfill path. Candidate product work: embedding-coverage counter in lambo_stats, and a re-embed backfill verb. Cause unsettled: record_action-never-embeds by design, intermittent embedder unavailability degrading hybrid to keyword, or a flush gap.",
+        "is_canonical": false,
+        "node_id": "ee438234-ddfe-46f4-b272-52cf00273180",
+        "score": 6.844595924299843
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "G3's most valuable side-finding (2026-08-21): lambo's dogfood graph connects ARTIFACTS, not REASONING, and the Derives/Temporal provenance spine does not fix it. Adding the Derives co-parent projection collapses 41 islands to only 40 (giant component 266 -> 271), so record_action provenance is NOT what joins the islands -- Causal edges are (207 edges, 170 concepts, largest single-type component 135). The giant component holds 92% of Resource and 85% of Entity concepts but only 49% of Constraint, 37% of Logic and 30% of Observation. Mechanism: record_action writes Causal/Dependency edges to shared file and commit resources, which become hubs; lambo_derive writes only intra-call CoOccurrence cliques (capped by max_cooccurrence_per_derive, largest CoOccurrence component 11) plus Hierarchical edges from the rarely-used parent_of (25 edges total). So the decisions, lessons and constraints agents derive arrive edge-less and strand on islands, and NO phase-2 expansion algorithm can reach them from an artifact hit. Fix connectivity before fixing the traversal.",
+        "is_canonical": false,
+        "node_id": "c8d25b0b-f274-489b-9d8c-0d22ad791f88",
+        "score": 5.910440329207774
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Solo policy simulation on the Mac store (2026-09-04, action term only, recurrence ignored): 12 concepts would be Canonical, 20 Venerable, 58 Candidate, 781 None. Solo's score is recurrence_sessions*1 + human_confirmed*4 + valid_action_count*2 - reverts*3, times type resistance, with bars 3/6/10; valid_action_count is distinct action concepts with Causal or Dependency edges INTO the concept. So under Solo the things that promote are record_action resource strings (files, commits, PRs) that many actions touched, not decisions or constraints. Switching the dogfood rig to Solo would end the zero-promotion state but would canonize artifacts. access_count and last_accessed are never written by any code path (documented as dead in PHASE-4-daemon.md), so recall frequency cannot feed either policy.",
+        "is_canonical": false,
+        "node_id": "095941d8-69a5-4633-af2b-799240278ba3",
+        "score": 4.792859140272839
+      }
+    ],
+    "warnings": []
+  },
+  "isError": false
+}

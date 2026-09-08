@@ -1,0 +1,7 @@
+Fixed vimanam CI failure on PRs #91 and #92: CI stable had moved to Rust 1.98 whose clippy question_mark lint flagged the pre-existing resolve_ref loop in src/utils.rs (local default toolchain 1.96 passed). Rewrote the loop with ? via match on Value::Object/Array, committed 1b06b71 on feat/completions-hygiene-stats, rebased feat/diff on it and force-pushed. All CI checks now green on both PRs. [Resource] (score 5.15)
+
+Event-time MCP round-1 review verdict: REQUEST CHANGES. Optional RFC3339 event_time is correctly deserialized into DateTime<Utc>, threaded through derive_async_as and Action.event_time, preserved through the J2 byte proxy, stamped onto interactions and action edges, and restores Solo separated-session evidence; focused tests plus cargo test --all --features fixtures pass. [Entity] (score 4.91)
+
+Event-time MCP round-1 review verdict: REQUEST CHANGES. Optional RFC3339 event_time is correctly deserialized into DateTime<Utc>, threaded through derive_async_as and Action.event_time, preserved through the J2 byte proxy, stamped onto interactions and action edges, and restores Solo separated-session evidence; focused tests plus cargo test --all --features fixtures pass. [Observation] (score 4.82)
+warnings:
+- Session inactive 7427 seconds

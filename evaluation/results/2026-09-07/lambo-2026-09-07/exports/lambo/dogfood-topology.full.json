@@ -1,0 +1,55 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "J1 gates everything multi-client: the serve applies its own --agent to every connected client, and lambo_reserve hard-refuses any caller whose agent_id differs — correct fail-closed behaviour that leaves every client but one without lambo's only mutual-exclusion primitive. Per-call agent_id must be accepted at the Memory level and recorded on the interaction before a proxy or shared writer can be honest. [Constraint] (score 6.53)\n\nClaude Code enforcement layer 2026-09-01: instructions alone do not make Claude Code follow the lambo-dogfood protocol (operator observation: other harnesses comply from AGENTS.md text; Claude Code is notorious for skipping it). Fix is mechanical, at user scope so it covers every project: ~/.claude/settings.json hooks driving ~/lambo-dogfood/hooks/lambo-hook.sh. SessionStart injects the protocol + writer health; PreToolUse denies Edit/Write/NotebookEdit until the session has made one lambo_recall (bounded at 2 denials so restricted-toolset agents cannot deadlock); PostToolUse markers track recall/derive/edit per session_id under ~/lambo-dogfood/hooks/state; Stop blocks ending a turn that edited files without a derive or record_action, once per session, honoring stop_hook_active. Every gate fails open when the writer is down. Verified live: a Write was denied, lambo_recall lifted the gate, the retry succeeded. [Logic] (score 5.93)"
+    }
+  ],
+  "structuredContent": {
+    "context": "J1 gates everything multi-client: the serve applies its own --agent to every connected client, and lambo_reserve hard-refuses any caller whose agent_id differs — correct fail-closed behaviour that leaves every client but one without lambo's only mutual-exclusion primitive. Per-call agent_id must be accepted at the Memory level and recorded on the interaction before a proxy or shared writer can be honest. [Constraint] (score 6.53)\n\nClaude Code enforcement layer 2026-09-01: instructions alone do not make Claude Code follow the lambo-dogfood protocol (operator observation: other harnesses comply from AGENTS.md text; Claude Code is notorious for skipping it). Fix is mechanical, at user scope so it covers every project: ~/.claude/settings.json hooks driving ~/lambo-dogfood/hooks/lambo-hook.sh. SessionStart injects the protocol + writer health; PreToolUse denies Edit/Write/NotebookEdit until the session has made one lambo_recall (bounded at 2 denials so restricted-toolset agents cannot deadlock); PostToolUse markers track recall/derive/edit per session_id under ~/lambo-dogfood/hooks/state; Stop blocks ending a turn that edited files without a derive or record_action, once per session, honoring stop_hook_active. Every gate fails open when the writer is down. Verified live: a Write was denied, lambo_recall lifted the gate, the retry succeeded. [Logic] (score 5.93)",
+    "hits": [
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "J1 gates everything multi-client: the serve applies its own --agent to every connected client, and lambo_reserve hard-refuses any caller whose agent_id differs — correct fail-closed behaviour that leaves every client but one without lambo's only mutual-exclusion primitive. Per-call agent_id must be accepted at the Memory level and recorded on the interaction before a proxy or shared writer can be honest.",
+        "is_canonical": false,
+        "node_id": "b285b9be-fcd4-42ae-86d2-734201adae77",
+        "score": 6.533432853490297
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "Claude Code enforcement layer 2026-09-01: instructions alone do not make Claude Code follow the lambo-dogfood protocol (operator observation: other harnesses comply from AGENTS.md text; Claude Code is notorious for skipping it). Fix is mechanical, at user scope so it covers every project: ~/.claude/settings.json hooks driving ~/lambo-dogfood/hooks/lambo-hook.sh. SessionStart injects the protocol + writer health; PreToolUse denies Edit/Write/NotebookEdit until the session has made one lambo_recall (bounded at 2 denials so restricted-toolset agents cannot deadlock); PostToolUse markers track recall/derive/edit per session_id under ~/lambo-dogfood/hooks/state; Stop blocks ending a turn that edited files without a derive or record_action, once per session, honoring stop_hook_active. Every gate fails open when the writer is down. Verified live: a Write was denied, lambo_recall lifted the gate, the retry succeeded.",
+        "is_canonical": false,
+        "node_id": "1c92eb6d-f8e4-4362-9ef6-f9de3eb091f4",
+        "score": 5.9300220392101695
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Logic",
+        "content": "How lambo dogfood compares to published memory-system numbers (2026-09-03): only the latency row is like-for-like. Lambo recall on the candle Metal BGE-M3 rig sits between Mem0-base and Mem0-graph/Zep on search latency, with a long tail (multi-second cold or long-query recalls) the vendors do not show. No accuracy comparison exists because lambo has never been run on LoCoMo/LongMemEval; a run needs a harness that ingests the benchmark conversations via derive and answers via recall plus a reader model. Structurally lambo is closest to Zep/Graphiti (typed graph, provenance, temporal edges) and Mem0-graph, not to Letta (agent-edited files) or full-context.",
+        "is_canonical": false,
+        "node_id": "690cdc0a-d35f-403f-b54e-8ced9061a998",
+        "score": 5.654732377535597
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Constraint",
+        "content": "J2 deviation argued, not taken: the review's stronger fix for J2-R1-8 (hoist the reconnect out of the select! arm body behind a pending_frame state machine so the shutdown branch stays live) was declined. Every send in the proxy pump is also awaited in an arm body — that is what keeps writes from being torn by select! cancellation — so arm-body awaits do not go away; only the UNBOUNDED one was the defect. Bounded instead by CONNECT_BUDGET + MAX_REPLAY_FRAMES, with the worst-case SIGTERM deafness stated as 2 × CONNECT_BUDGET. Carried as a J-workstream candidate.",
+        "is_canonical": false,
+        "node_id": "af31ef53-3fbd-4228-bd83-90070a3ef951",
+        "score": 4.957097564174429
+      },
+      {
+        "blast_radius": null,
+        "concept_type": "Resource",
+        "content": "Re-pinned the dogfood binary to lambo-e11fb06 (lambo-for-mooshik @ e11fb06, clean tree, LAMBO_GIT_SHA set, features store-sqlite,embed-candle-metal,embed-bge). This pin carries the record_action embedder-hop fix (record_action concepts previously stored embedding NULL — everything an agent DID was invisible to semantic recall) and the new re-embed --missing-only repair verb. Ran the repair with serve stopped: backfilled 42 NULL-vector concepts, coverage 534/576 -> 576/576, contract untouched (candle BAAI/bge-m3, dim 1024). Repointed launchd from lambo-4c6fc93, restarted, verified: lease http-shared-writer pid 35655, MCP stats embedded=576/576, ledger heartbeat git_sha=e11fb06.",
+        "is_canonical": false,
+        "node_id": "c0c976ed-ed17-4d20-bbce-03ebe06ea3a7",
+        "score": 4.895451451155098
+      }
+    ],
+    "warnings": []
+  },
+  "isError": false
+}

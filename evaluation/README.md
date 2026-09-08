@@ -6,6 +6,10 @@ and manual grading evidence. It does not yet automate memory ingestion or live
 retrieval. It cannot reconstruct the paper's historical five-query anecdote.
 Canonization is deferred.
 
+The first two graded runs are published under `results/2026-09-07/`. See that
+directory's `README.md` for scores, protocol, and caveats, and its
+`REDACTIONS.md` for what was removed before publication.
+
 Requires Python 3.10+ (standard library only). Real model runs also require an
 authenticated Claude Code CLI supporting the flags shown by `run --help` and the
 script's recorded command. No package installation is necessary.
@@ -109,6 +113,15 @@ No significance claim or retrieval-latency comparison is generated automatically
 Frozen inputs improve repeatability; stochastic model outputs need not match byte
 for byte. Keep the original run as evidence.
 
+## Published results
+
 Private run directories under `evaluation/runs/` are ignored by Git. Publish only
-reviewed, appropriately shareable snapshots, exports, protocol, and results. Until
-real runs are collected and graded, the paper's efficacy evidence remains unchanged.
+reviewed, appropriately shareable snapshots, exports, protocol, and results.
+
+`results/2026-09-07/` is the reviewed copy of the first two graded runs. It holds
+both suites, both frozen bundles, every reader answer and grade, the grader
+provenance, the layered efficacy readout, and `top_k=20` recalls for all twelve
+questions. Headline scores are file 8/12 against Lambo 2/12 on the lambo project
+and file 10/12 against Lambo 8/12 on the vimanam project. Those runs are the
+paper's preliminary paired comparison. They are two runs on one machine and
+support no significance claim.

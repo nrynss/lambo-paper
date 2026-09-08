@@ -1,0 +1,154 @@
+{
+ "run": "vimanam-2026-09-07",
+ "id": "merge-workflow",
+ "question": "How are pull requests merged into vimanam's main branch, and why is that path used?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "07c474bc-6b65-4253-8a6b-56ea1ee637c0",
+   "score": 7.049783502728397,
+   "type": "Resource",
+   "content": "vimanam main branch"
+  },
+  {
+   "rank": 2,
+   "node_id": "0d234b2e-386c-43a6-9d44-5e05cc0ea07f",
+   "score": 6.862275248157252,
+   "type": "Resource",
+   "content": "Merged both vimanam PRs to main with admin override (user explicitly authorized bypassing the 1-review branch protection"
+  },
+  {
+   "rank": 3,
+   "node_id": "160bf787-17ed-4069-9457-52d4502bb086",
+   "score": 4.820363546854613,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 4,
+   "node_id": "9aabb887-8e28-456c-bdaa-1ebce1cc4c78",
+   "score": 4.392419166010583,
+   "type": "Resource",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 5,
+   "node_id": "b6eeaf92-7398-4107-b6db-0d225196c7db",
+   "score": 4.359253749937355,
+   "type": "Observation",
+   "content": "CI is a timing adversary local gates are not: a race with a microsecond window on a dev machine is a real defect on a lo"
+  },
+  {
+   "rank": 6,
+   "node_id": "b1bb99ae-c6f6-47a2-8245-dffeaabf5cb8",
+   "score": 4.310709442055284,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 7,
+   "node_id": "560f1377-a2c5-4253-b0fb-842050637399",
+   "score": 4.248334200715578,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 8,
+   "node_id": "bff3251b-c27a-4d0e-8585-bcbf3f1c556a",
+   "score": 4.220056811176365,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 9,
+   "node_id": "6e98c851-efa9-4068-bd39-3404cf43fd54",
+   "score": 4.183547539652843,
+   "type": "Constraint",
+   "content": "Integration mandate (operator, 2026-08-21): J3 must be integrated into lambo-for-mooshik and is not done until it is. wt"
+  },
+  {
+   "rank": 10,
+   "node_id": "72a00947-1b52-44c5-8ed6-a82b04d5ec18",
+   "score": 4.0305524517825395,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 11,
+   "node_id": "6b040903-40e4-486f-a090-24bb88346071",
+   "score": 3.9258174014117957,
+   "type": "Constraint",
+   "content": "Since J3 made lambo_derive asynchronous, the ledger's derive lines carry only receipt/admitted/concepts_requested \u2014 crea"
+  },
+  {
+   "rank": 12,
+   "node_id": "4279f68a-e226-4b80-a3ab-229c445f21a9",
+   "score": 3.8776002741499744,
+   "type": "Entity",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 13,
+   "node_id": "daaff91c-2f80-4194-abcc-2b7a2f9bf673",
+   "score": 3.8141219410610865,
+   "type": "Resource",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 14,
+   "node_id": "eb872380-140d-4d60-ac32-a5173148ca18",
+   "score": 3.794518785711279,
+   "type": "Resource",
+   "content": "vimanam PR feat/diff"
+  },
+  {
+   "rank": 15,
+   "node_id": "71b915ba-f588-4c0f-8692-bdf8b302302c",
+   "score": 3.785573868014664,
+   "type": "Constraint",
+   "content": "J2 round-1 review P2 (J2-R1-6), mutation-proven: the rule 'every retry re-READS session_leases.endpoint, never a cached "
+  },
+  {
+   "rank": 16,
+   "node_id": "c71fa9c4-527d-4575-b4dd-c2a150fe65f1",
+   "score": 3.721096891795899,
+   "type": "Resource",
+   "content": "vimanam PR feat/completions-hygiene-stats"
+  },
+  {
+   "rank": 17,
+   "node_id": "c75c39ae-93e9-4953-a9ee-b2f0f5283e46",
+   "score": 3.6998815111198233,
+   "type": "Constraint",
+   "content": "Memory-tooling preference (operator, 2026-09-01, standing): record operator directives, standing style rules, and decisi"
+  },
+  {
+   "rank": 18,
+   "node_id": "f4f9bb05-7078-44f0-b01e-c2328ec941df",
+   "score": 3.4752080217446792,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 19,
+   "node_id": "6d69ce30-6480-4136-8b5c-ddfcebba4b75",
+   "score": 3.46833192058048,
+   "type": "Logic",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 20,
+   "node_id": "dea0c087-6785-43b9-8772-1f8ac3d84ef8",
+   "score": 3.4611854874050345,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 21,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 0.38263413242009126,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  }
+ ]
+}

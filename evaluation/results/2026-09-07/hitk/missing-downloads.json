@@ -1,0 +1,154 @@
+{
+ "run": "vimanam-2026-09-07",
+ "id": "missing-downloads",
+ "question": "How many downloads has vimanam had to date on crates.io and through its Homebrew tap?",
+ "hits": [
+  {
+   "rank": 1,
+   "node_id": "aad37198-f922-45b3-8d68-b6e294cea550",
+   "score": 5.148447152989733,
+   "type": "Resource",
+   "content": "Fixed vimanam CI failure on PRs #91 and #92: CI stable had moved to Rust 1.98 whose clippy question_mark lint flagged th"
+  },
+  {
+   "rank": 2,
+   "node_id": "eeecc7a0-de15-4763-8f19-8325e39c98f8",
+   "score": 4.914148014029045,
+   "type": "Entity",
+   "content": "Event-time MCP round-1 review verdict: REQUEST CHANGES. Optional RFC3339 event_time is correctly deserialized into DateT"
+  },
+  {
+   "rank": 3,
+   "node_id": "4a80278b-248e-4975-8771-62ade68618cb",
+   "score": 4.821513881608954,
+   "type": "Observation",
+   "content": "Event-time MCP round-1 review verdict: REQUEST CHANGES. Optional RFC3339 event_time is correctly deserialized into DateT"
+  },
+  {
+   "rank": 4,
+   "node_id": "d8f3ce2f-0067-470e-8ae0-b4e3976b1342",
+   "score": 4.779257272304483,
+   "type": "Observation",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 5,
+   "node_id": "e98c0bd7-9573-4d82-8698-dabd97d6ffba",
+   "score": 4.328250511242593,
+   "type": "Observation",
+   "content": "G3 H2's judge-readable cases (2026-08-21): 'Implemented J3 (writes acknowledged before the embedder) ... 427fabf..528ade"
+  },
+  {
+   "rank": 6,
+   "node_id": "d0feb24b-118f-472e-ae38-53652f80f1ac",
+   "score": 3.9924690564308865,
+   "type": "Observation",
+   "content": "J2-R1-9's message-literal rules (no double space, and a phrase spanning a `\\`-continuation must survive it) are worth as"
+  },
+  {
+   "rank": 7,
+   "node_id": "5f109edc-d103-468f-9576-3014e5acfe12",
+   "score": 3.891508756483975,
+   "type": "Logic",
+   "content": "A forwarding byte pipe must never use tokio::io::Lines: it invents a frame boundary (an unterminated remainder is yielde"
+  },
+  {
+   "rank": 8,
+   "node_id": "eb872380-140d-4d60-ac32-a5173148ca18",
+   "score": 3.794518785711279,
+   "type": "Resource",
+   "content": "vimanam PR feat/diff"
+  },
+  {
+   "rank": 9,
+   "node_id": "07c474bc-6b65-4253-8a6b-56ea1ee637c0",
+   "score": 3.765328514130573,
+   "type": "Resource",
+   "content": "vimanam main branch"
+  },
+  {
+   "rank": 10,
+   "node_id": "c71fa9c4-527d-4575-b4dd-c2a150fe65f1",
+   "score": 3.721096891795899,
+   "type": "Resource",
+   "content": "vimanam PR feat/completions-hygiene-stats"
+  },
+  {
+   "rank": 11,
+   "node_id": "fb70cdcb-2640-4297-8332-e7c9ec033499",
+   "score": 3.572524744020664,
+   "type": "Resource",
+   "content": "Implemented rustydocs #39 on branch feat/profiles-and-buildinfo via implement/review/remediate loop (3 review passes to "
+  },
+  {
+   "rank": 12,
+   "node_id": "e956392c-5231-4542-a320-cbd83acc4b4a",
+   "score": 3.4503308637307115,
+   "type": "Resource",
+   "content": "J1 implementation state (wt/j1, uncommitted at time of derive): src/memory.rs has derive_as/record_action_as/reserve_as/"
+  },
+  {
+   "rank": 13,
+   "node_id": "543ec3b5-017f-4ef8-a614-9aa4a9962c8b",
+   "score": 3.419265044467266,
+   "type": "Resource",
+   "content": "Implemented vimanam #45 diff subcommand (design option b) on branch feat/diff stacked on PR #91: src/diff.rs (Node gramm"
+  },
+  {
+   "rank": 14,
+   "node_id": "7976b275-5697-4291-813d-7598fc04f0b4",
+   "score": 3.2690040971930427,
+   "type": "Logic",
+   "content": "Exit-on-fence ruling (operator, 2026-08-22, JE2E-4): a fenced ex-holder now winds down instead of living forever serving"
+  },
+  {
+   "rank": 15,
+   "node_id": "4f8aac45-2d50-4900-9901-a125360110fc",
+   "score": 3.1840514894784353,
+   "type": "Logic",
+   "content": "Recommended 8-hour plan for rustydocs (2026-09-05): #39 (1h) -> profile scaffold + #11 + #7 Mintlify (3h) -> #12 MkDocs "
+  },
+  {
+   "rank": 16,
+   "node_id": "15e9191d-2871-4a01-a162-1d12f7aaec19",
+   "score": 3.1279442302495037,
+   "type": "Observation",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  },
+  {
+   "rank": 17,
+   "node_id": "183b939a-1d22-4eb7-8421-9ade7bb94a08",
+   "score": 2.888378395704007,
+   "type": "Observation",
+   "content": "J1-R1-2 (P2, J1 round 1): post-J1 the ONLY reserve refusal is a \u00a711 Conflict, and it goes through tool_err whose N4 poli"
+  },
+  {
+   "rank": 18,
+   "node_id": "38e18db8-45e4-41cd-84b4-6318d124c5c1",
+   "score": 2.8668465877771716,
+   "type": "Logic",
+   "content": "Neither lambo store adapter overrides sqlx's default acquire_timeout, which is 30s in sqlx 0.8.6 (PoolOptions::default)."
+  },
+  {
+   "rank": 19,
+   "node_id": "690cdc0a-d35f-403f-b54e-8ced9061a998",
+   "score": 2.7243142049170737,
+   "type": "Logic",
+   "content": "How lambo dogfood compares to published memory-system numbers (2026-09-03): only the latency row is like-for-like. Lambo"
+  },
+  {
+   "rank": 20,
+   "node_id": "09359559-7acd-4faf-b87c-630358806547",
+   "score": 2.7126204541912076,
+   "type": "Observation",
+   "content": "J1 review correction to a stated expectation: docs/reference/mcp.mdx and site/src/content/docs/mcp.mdx are NOT byte-iden"
+  },
+  {
+   "rank": 21,
+   "node_id": "be4f9416-5c10-426d-9e9c-f350e522f252",
+   "score": 0.38263413242009126,
+   "type": "Constraint",
+   "content": "[REDACTED: sensitive data, 120 bytes]"
+  }
+ ]
+}

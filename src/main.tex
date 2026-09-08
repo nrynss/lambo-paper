@@ -541,7 +541,7 @@ This allows agents to proceed without synchronous blocking.
 The \href{https://github.com/nrynss/lambo/issues/17}{Issue 17 deployment report} described an anecdotal comparison against Claude Code file memory.
 It omitted the query set, prompts, model version, token budget, baseline construction, and grading protocol. A reproducible harness replaces it here. These results are preliminary.
 
-Contexts were frozen before any answer was produced, and rubrics were fixed from primary sources.
+We froze every context before producing any answer and fixed the rubrics from primary sources.
 One pinned reader answered every prompt, Claude Code 2.1.241 running \texttt{claude-sonnet-5} without tools or network memory.
 A separate model grader scored the answers blind, receiving shuffled answer identifiers and no arm key.
 Mode was as-deployed, with six questions and two repeats on each of two corpora drawn from the operator's open-source projects.
@@ -582,11 +582,11 @@ Readers were correct on 6 of 8 answers where that context covered the rubric. Th
 Canonization has never promoted a concept, so recall has no supersession signal.
 The embedder question came back stale twice, presenting a retired encoder as current.
 Two further answers repeated a stale hypothesis beside the correct mechanism.
-No fact was invented across 48 answers, and abstention was the failure mode everywhere else.
+The readers invented no fact across 48 answers, and abstention accounted for every other failure.
 In the vimanam run, Lambo used about a fifth of the evidence tokens per correct answer.
 That run spent 2,467 evidence tokens per correct file answer against 477 for Lambo. The lambo run spent 4,542 against 2,058.
 Server-side recall p50 was 86 to 94 ms over 990 concepts.
-Suites, frozen bundles, answers, grades, and grader provenance are published under \texttt{evaluation/results/2026-09-07}.
+The repository publishes the suites, frozen bundles, answers, grades, and grader provenance under \texttt{evaluation/results/2026-09-07}.
 
 \begin{figure}[t]
 \centering
@@ -635,7 +635,7 @@ These bins contain 19, 9, and 17 observations respectively and do not establish 
 The paired comparison names two open problems in the deployed design.
 First, the rendered context budget carries two or three hits, so it cuts off answers the store already holds. Six of seven answerable questions had an answer-bearing concept within depth 20, and only four were reachable at depth 3. Widening that budget or exporting the structured hits would separate ranking from rendering.
 Second, recall carries no supersession signal. No concept has ever reached Canonical status, and no invalidation edge marked the superseded encoder concepts. The reader therefore presented a retired embedder as current in both repeats of that question.
-These are two runs on one machine. They support no significance claim. The matched-corpus and equal-budget controls have not been run.
+These are two runs on one machine. They support no significance claim. We have not yet run the matched-corpus and equal-budget controls.
 
 \section{Related Work}
 

@@ -113,7 +113,7 @@ The [Issue 8 probe report](https://github.com/nrynss/lambo/issues/8) used isolat
 
 The [Issue 17 report](https://github.com/nrynss/lambo/issues/17) described an anecdotal comparison against Claude Code file memory. It omitted the query set, prompts, model version, token budget, baseline construction, and grading protocol. A reproducible harness replaces it here. These results are preliminary.
 
-Contexts were frozen before any answer was produced, and rubrics were fixed from primary sources. One pinned reader answered every prompt, Claude Code 2.1.241 running `claude-sonnet-5` without tools or network memory. A separate model grader scored the answers blind, receiving shuffled answer identifiers and no arm key. Mode was as-deployed, with six questions and two repeats on each of two corpora drawn from the operator's open-source projects.
+We froze every context before producing any answer and fixed the rubrics from primary sources. One pinned reader answered every prompt, Claude Code 2.1.241 running `claude-sonnet-5` without tools or network memory. A separate model grader scored the answers blind, receiving shuffled answer identifiers and no arm key. Mode was as-deployed, with six questions and two repeats on each of two corpora drawn from the operator's open-source projects.
 
 | Question | File | Lambo |
 |---|---:|---:|
@@ -132,8 +132,8 @@ Each system won exactly the questions only it had ingested. Lambo won the in-ses
 
 Seven of the twelve questions have an answer-bearing concept in the store. Lambo's answers are present at depth 20 for 6 of 7 of those questions. They are present at depth 3 for only 4 of 7. The rendered context carried two or three hits, so readers saw the shallower figure. Readers were correct on 6 of 8 answers where that context covered the rubric. They were correct on 0 of 6 answers where it did not.
 
-Canonization has never promoted a concept, so recall has no supersession signal. The embedder question came back stale twice, presenting a retired encoder as current. Two further answers repeated a stale hypothesis beside the correct mechanism. No fact was invented across 48 answers, and abstention was the failure mode everywhere else.
+Canonization has never promoted a concept, so recall has no supersession signal. The embedder question came back stale twice, presenting a retired encoder as current. Two further answers repeated a stale hypothesis beside the correct mechanism. The readers invented no fact across 48 answers, and abstention accounted for every other failure.
 
 In the vimanam run, Lambo used about a fifth of the evidence tokens per correct answer. That run spent 2,467 evidence tokens per correct file answer against 477 for Lambo. The lambo run spent 4,542 against 2,058. Server-side recall p50 was 86 to 94 ms over 990 concepts.
 
-Suites, frozen bundles, answers, grades, and grader provenance are published under `evaluation/results/2026-09-07`.
+The repository publishes the suites, frozen bundles, answers, grades, and grader provenance under `evaluation/results/2026-09-07`.

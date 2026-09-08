@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+type: dataset
+title: "Lambo: Shared Graph Memory for Multi-Agent Software Development (paper, datasets, and evaluation harness)"
+authors:
+  - family-names: "SS"
+    given-names: "Narayan"
+    email: "nryn@lambo.dev"
+version: "0.1-preprint"
+date-released: "2026-09-08"
+repository-code: "https://github.com/nrynss/lambo-paper"
+url: "https://nrynss.github.io/lambo-paper/"
+license: "CC-BY-4.0"
+keywords:
+  - agent memory
+  - multi-agent systems
+  - software engineering agents
+  - graph memory
+  - retrieval
+  - Model Context Protocol
+preferred-citation:
+  type: unpublished
+  title: "Lambo: Shared Graph Memory for Multi-Agent Software Development"
+  authors:
+    - family-names: "SS"
+      given-names: "Narayan"
+  year: 2026
+  month: 9
+  notes: "Work-in-progress preprint, v0.1"
+  url: "https://nrynss.github.io/lambo-paper/lambo-paper.pdf"
+  repository-code: "https://github.com/nrynss/lambo-paper"

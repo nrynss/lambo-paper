@@ -14,9 +14,24 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Lambo',
-      description: 'A Living Topological Memory Substrate for Multi-Agent Software Development',
+      description: 'Shared Graph Memory for Multi-Agent Software Development',
       favicon: '/favicon.svg',
       customCss: ['katex/dist/katex.min.css'],
+      // Google Scholar and Dublin Core citation metadata for the web edition.
+      head: [
+        { tag: 'meta', attrs: { name: 'citation_title', content: 'Lambo: Shared Graph Memory for Multi-Agent Software Development' } },
+        { tag: 'meta', attrs: { name: 'citation_author', content: 'Narayan SS' } },
+        { tag: 'meta', attrs: { name: 'citation_publication_date', content: '2026/09/08' } },
+        { tag: 'meta', attrs: { name: 'citation_online_date', content: '2026/09/08' } },
+        { tag: 'meta', attrs: { name: 'citation_pdf_url', content: 'https://nrynss.github.io/lambo-paper/lambo-paper.pdf' } },
+        { tag: 'meta', attrs: { name: 'citation_abstract_html_url', content: 'https://nrynss.github.io/lambo-paper/' } },
+        { tag: 'meta', attrs: { name: 'citation_technical_report_institution', content: 'Independent' } },
+        { tag: 'meta', attrs: { name: 'DC.title', content: 'Lambo: Shared Graph Memory for Multi-Agent Software Development' } },
+        { tag: 'meta', attrs: { name: 'DC.creator', content: 'Narayan SS' } },
+        { tag: 'meta', attrs: { name: 'DC.date', content: '2026-09-08' } },
+        { tag: 'meta', attrs: { name: 'DC.type', content: 'Text' } },
+        { tag: 'meta', attrs: { name: 'DC.identifier', content: 'https://github.com/nrynss/lambo-paper' } },
+      ],
       social: [
         { icon: 'github', label: 'Paper Repo', href: 'https://github.com/nrynss/lambo-paper' },
         { icon: 'external', label: 'Lambo Core', href: 'https://github.com/nrynss/lambo' },

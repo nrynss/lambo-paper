@@ -13,8 +13,8 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: 'Lambo Paper',
-      description: 'Scalable Attributed Graph Memory for Multi-Agent Software Engineering',
+      title: 'Lambo',
+      description: 'A Living Topological Memory Substrate for Multi-Agent Software Development',
       favicon: '/favicon.svg',
       customCss: ['katex/dist/katex.min.css'],
       social: [

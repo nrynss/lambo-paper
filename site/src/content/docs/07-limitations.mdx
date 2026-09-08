@@ -29,7 +29,19 @@ CUDA recorded 22 inspect misses in 82 calls. Metal recorded one miss in four cal
 On the Metal rig, recall observations varied by idle-duration bin. Those bins do not establish an operating-system mechanism. Periodic lightweight touches are a proposed mitigation, not a demonstrated elimination of latency.
 
 
-## 7.4 Controlled Retrieval Evaluation
+## 7.4 Rendered Context Budget and Supersession
+
+The [preliminary paired comparison](/lambo-paper/05-evaluation/) names two open problems in the deployed design.
+
+First, the rendered context budget carries two or three hits, so it cuts off answers the store already holds. Six of seven answerable questions had an answer-bearing concept within depth 20, and only four were reachable at depth 3. Widening that budget or exporting the structured hits would separate ranking from rendering.
+
+Second, recall carries no supersession signal. No concept has ever reached Canonical status, and no invalidation edge marked the superseded encoder concepts. The reader therefore presented a retired embedder as current in both repeats of that question.
+
+<MdxWarning>
+**Scope:** These are two runs on one machine. They support no significance claim. The matched-corpus and equal-budget controls have not been run.
+</MdxWarning>
+
+## 7.5 Controlled Retrieval Evaluation
 
 A reproducible evaluation should hold memory contents, reader model, prompts, and token budgets constant. Compare flat-file, vector, and graph retrieval, then ablate graph expansion and invalidation handling. Publish questions, expected answers, grading criteria, repeated-run outputs, and retrieval latency alongside answer accuracy.
 

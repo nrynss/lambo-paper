@@ -14,6 +14,8 @@ Automated verification script for Lambo research paper constraints:
    - data/metal_telemetry.json
    - src/main.tex
    - site/src/content/docs/*.mdx
+9. Paired-comparison headline figures reconciled against the published run
+   artifacts in evaluation/results/2026-09-07/ rather than retyped
 """
 
 import re
@@ -30,6 +32,99 @@ TEX_FILE = os.path.join(SRC_DIR, "main.tex")
 BIB_FILE = os.path.join(SRC_DIR, "references.bib")
 CUDA_DATA_FILE = os.path.join(DATA_DIR, "cuda_telemetry.json")
 METAL_DATA_FILE = os.path.join(DATA_DIR, "metal_telemetry.json")
+
+RESULTS_DIR = os.path.join(ROOT_DIR, "evaluation", "results", "2026-09-07")
+PAIRED_RUNS = ("lambo-2026-09-07", "vimanam-2026-09-07")
+
+
+def verify_paired_comparison(tex_text, eval_mdx_text, telem_mdx_text):
+    """Derive the paired-comparison headline tokens from the published run
+    artifacts, then require the manuscript and the web edition to state them.
+
+    The scores, the graded-answer count, and the coverage depths are read out
+    of evaluation/results/2026-09-07/ so a retyped figure in prose cannot drift
+    away from the data it claims to summarize.
+    """
+    problems = []
+    if not os.path.isdir(RESULTS_DIR):
+        return [f"Published results directory missing: {RESULTS_DIR}"]
+
+    tokens = {}
+
+    # Per-run totals from each run's generated report.
+    for run in PAIRED_RUNS:
+        report = os.path.join(RESULTS_DIR, run, "run-1", "report.md")
+        if not os.path.exists(report):
+            problems.append(f"Missing run report: {report}")
+            continue
+        with open(report, "r", encoding="utf-8") as f:
+            text = f.read()
+        m = re.search(r"File:\s*(\d+)/(\d+)\s*;\s*Lambo:\s*(\d+)/(\d+)", text)
+        if not m:
+            problems.append(f"Cannot read paired totals from {report}")
+            continue
+        short = run.split("-")[0]
+        tokens[f"{short} file total"] = f"{m.group(1)}/{m.group(2)}"
+        tokens[f"{short} Lambo total"] = f"{m.group(3)}/{m.group(4)}"
+
+    # Graded answers actually present, across both runs. run-1/grading.json is
+    # the blank sheet handed to the grader; grader/grading.json is its return.
+    graded = 0
+    for run in PAIRED_RUNS:
+        grading = os.path.join(RESULTS_DIR, run, "grader", "grading.json")
+        if not os.path.exists(grading):
+            problems.append(f"Missing graded file: {grading}")
+            continue
+        with open(grading, "r", encoding="utf-8") as f:
+            rows = json.load(f)
+        graded += len(rows)
+        ungraded = [r["answer_id"] for r in rows if r.get("score") is None]
+        if ungraded:
+            problems.append(f"{grading}: {len(ungraded)} answers still ungraded")
+            continue
+        # The report totals must equal the grader's own arm sums.
+        with open(os.path.join(RESULTS_DIR, run, "bundle", "bundle.json"),
+                  "r", encoding="utf-8") as f:
+            arms = {j["answer_id"]: j["arm"] for j in json.load(f)["jobs"]}
+        sums = {"file": 0, "lambo": 0}
+        for r in rows:
+            arm = arms.get(r["answer_id"])
+            if arm in sums:
+                sums[arm] += int(r["score"])
+        short = run.split("-")[0]
+        for arm, label in (("file", "file"), ("lambo", "Lambo")):
+            key = f"{short} {label} total"
+            if key in tokens and tokens[key].split("/")[0] != str(sums[arm]):
+                problems.append(
+                    f"{run}: report states {tokens[key]} for the {label} arm, "
+                    f"grader scores sum to {sums[arm]}")
+    if graded:
+        tokens["graded answer count"] = f"{graded} answers"
+
+    # Coverage depths from the layered efficacy readout.
+    efficacy = os.path.join(RESULTS_DIR, "efficacy.md")
+    if not os.path.exists(efficacy):
+        problems.append(f"Missing layered readout: {efficacy}")
+    else:
+        with open(efficacy, "r", encoding="utf-8") as f:
+            text = f.read()
+        for depth, label in (("20", "deep"), ("3", "shallow")):
+            m = re.search(r"@%s\s+(\d+)/(\d+)" % depth, text)
+            if not m:
+                problems.append(f"Cannot read covered@{depth} from {efficacy}")
+                continue
+            tokens[f"coverage at depth {depth} ({label})"] = f"{m.group(1)} of {m.group(2)}"
+
+    corpora = (
+        ("src/main.tex", tex_text),
+        ("site/src/content/docs/05-evaluation.mdx", eval_mdx_text),
+        ("site/src/content/docs/telemetry-data.mdx", telem_mdx_text),
+    )
+    for name, token in sorted(tokens.items()):
+        for path, text in corpora:
+            if token not in text:
+                problems.append(f"{name}: expected '{token}' in {path}")
+    return problems
 
 def verify():
     failed = False
@@ -385,6 +480,17 @@ def verify():
         failed = True
     else:
         print(f"[PASS] All {len(checks)} empirical figures reconcile across data/*.json, src/main.tex, and site/src/content/docs/.")
+
+    # 8. Paired-comparison headline figures against the published run artifacts.
+    paired = verify_paired_comparison(tex_text, eval_mdx_text, telem_mdx_text)
+    if paired:
+        print(f"[FAIL] Found {len(paired)} paired-comparison inconsistencies:")
+        for msg in paired:
+            print(f"  {msg}")
+        failed = True
+    else:
+        print("[PASS] Paired-comparison headline figures reconcile with "
+              "evaluation/results/2026-09-07/.")
 
     if failed:
         sys.exit(1)

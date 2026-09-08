@@ -10,7 +10,7 @@ This repository contains a systems experience report, frozen multi-rig telemetry
 
 ## Abstract
 
-Autonomous coding agents operate within ephemeral process lifecycles. When agents complete execution, their intermediate reasoning and architectural context vanish. Similarity retrieval alone does not explicitly encode dependency or invalidation relationships. We present Lambo, an in-memory topological memory daemon for multi-agent software engineering. Lambo models development state as a directed typed graph with an earned canonization lifecycle. Concurrent agents submit asynchronous writes through per-agent lanes with individual receipt states. Context retrieval uses three-leg hybrid candidate scoring and prioritized breadth-first topological expansion. Phase one merges lexical, recency, and dense vector signals. Phase two traverses structural dependency edges while respecting invalidation semantics. Phase three enforces canonical-first ranking and hot-list conflict preservation under token budgets. We report operational telemetry from two production rigs using nominal 5-minute health sampling. The extract contains 2,495 CUDA and 3,429 Metal heartbeat snapshots. At the nominal interval, those counts correspond to 8.7 and 11.9 interval-equivalent days within 12.7 and 16.0 day windows. Deduplication rates reached 12.0% during synchronized review swarms on Metal (against 0.8% in single-agent sessions) and 4.3% among swarm-named agents on CUDA (against 1.7% in non-swarm streams, 2.2% aggregate). The tracked infrastructure counters were zero in this extract, which does not establish zero failures or data loss. CUDA inspect misses were 22 of 82, while Metal had one miss in four calls and is too small for a cross-rig rate comparison. No concepts reached Canonical status, and the observed Metal store had no concepts eligible for the first promotion gate. We discuss citation dilution as a separate hypothesis and identify controlled retrieval evaluation as future work.
+Autonomous coding agents operate within ephemeral process lifecycles. When agents complete execution, their intermediate reasoning and architectural context vanish. Similarity retrieval alone does not explicitly encode dependency or invalidation relationships. We present Lambo, an in-memory topological memory daemon for multi-agent software engineering. Lambo models development state as a directed typed graph with an earned canonization lifecycle. Concurrent agents submit asynchronous writes through per-agent lanes with individual receipt states. Context retrieval uses three-leg hybrid candidate scoring and prioritized breadth-first topological expansion. Phase one merges lexical, recency, and dense vector signals. Phase two traverses structural dependency edges while respecting invalidation semantics. Phase three enforces canonical-first ranking and hot-list conflict preservation under token budgets. We report operational telemetry from two production rigs using nominal 5-minute health sampling. The extract contains 2,495 CUDA and 3,429 Metal heartbeat snapshots. At the nominal interval, those counts correspond to 8.7 and 11.9 interval-equivalent days within 12.7 and 16.0 day windows. Deduplication rates reached 12.0% during synchronized review swarms on Metal (against 0.8% in single-agent sessions) and 4.3% among swarm-named agents on CUDA (against 1.7% in non-swarm streams, 2.2% aggregate). The tracked infrastructure counters were zero in this extract, which does not establish zero failures or data loss. CUDA inspect misses were 22 of 82, while Metal had one miss in four calls and is too small for a cross-rig rate comparison. No concepts reached Canonical status, and the observed Metal store had no concepts eligible for the first promotion gate. A preliminary paired comparison against Claude Code file memory scored 10/12 for file memory against 8/12 for Lambo on one corpus, and 8/12 against 2/12 on a second. We discuss citation dilution as a separate hypothesis and identify controlled retrieval evaluation as future work.
 
 ---
 
@@ -21,10 +21,20 @@ lambo-paper/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml          # GitHub Actions workflow (compiles PDF & deploys site)
+├── arxiv/                      # arXiv v1 submission bundle and upload checklist
+│   ├── README.md               # Category, endorsement, cutoff, licence, .bbl checklist
+│   ├── abstract.txt            # Plain-text abstract for the submission form
+│   └── lambo-paper-arxiv-v1.tar.gz
 ├── data/
 │   ├── cuda_telemetry.json     # Stamped extract from live production dogfooding logs
 │   └── metal_telemetry.json    # Stamped replay of the Metal rig ledger and store
+├── evaluation/
+│   ├── README.md               # Paired file-memory versus Lambo protocol
+│   ├── example/                # Synthetic suite that exercises the harness
+│   └── results/2026-09-07/     # First two graded runs: suites, bundles, answers,
+│                               # grades, grader provenance, hit@k, REDACTIONS.md
 ├── scripts/
+│   ├── compare_memory.py       # Frozen-context comparison harness
 │   ├── extract_telemetry.py    # Replays rig ledgers and stores into stamped JSON datasets
 │   ├── plot_figures.py         # Reproduces vector PDF and web PNG figures
 │   └── verify_constraints.py   # Linter auditing zero em dashes, zero semicolons, sentence limits
@@ -55,6 +65,15 @@ context exports and preserves answers for blinded grading. In Claude Code, use
 `/compare-memory` to follow the [repository skill](.claude/skills/compare-memory/SKILL.md).
 The included synthetic example checks the harness; it adds no empirical results
 to the paper.
+
+The first two graded runs are published under
+[`evaluation/results/2026-09-07/`](evaluation/results/2026-09-07/README.md):
+file memory 8/12 against Lambo 2/12 on the lambo project, and file memory 10/12
+against Lambo 8/12 on the vimanam project. That directory holds both suites, both
+frozen bundles, all 48 reader answers with grades and grader provenance, `top_k=20`
+recalls for every question, and a `REDACTIONS.md` recording what was removed
+before publication. These are two runs on one machine and support no significance
+claim.
 
 ### 1. Extract Stamped Telemetry
 The default invocation emits the frozen benchmark datasets in `data/`:

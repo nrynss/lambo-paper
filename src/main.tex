@@ -62,6 +62,7 @@ Deduplication rates reached 12.0\% during synchronized review swarms on Metal (a
 The tracked infrastructure counters were zero in this extract, which does not establish zero failures or data loss.
 CUDA inspect misses were 22 of 82, while Metal had one miss in four calls and is too small for a cross-rig rate comparison.
 No concepts reached Canonical status, and the observed Metal store had no concepts eligible for the first promotion gate.
+A preliminary paired comparison against Claude Code file memory scored 10/12 for file memory against 8/12 for Lambo on one corpus, and 8/12 against 2/12 on a second.
 We discuss citation dilution as a separate hypothesis and identify controlled retrieval evaluation as future work.
 \end{abstract}
 
@@ -536,9 +537,56 @@ Instead, agents used asynchronous receipt-bearing writes.
 Issue 8 reports a 0.1 ms median CUDA derive acknowledgement. The Metal window also contains earlier synchronous calls.
 This allows agents to proceed without synchronous blocking.
 
-\subsection{Preliminary Operational Comparison}
-The \href{https://github.com/nrynss/lambo/issues/17}{Issue 17 deployment report} describes Lambo answering four of five working questions in a comparison against Claude Code file memory.
-The published artifacts omit the query set, prompts, model version, token budget, baseline construction, and grading protocol. This anecdotal result motivates a reproducible comparison.
+\subsection{Preliminary Paired Comparison}
+The \href{https://github.com/nrynss/lambo/issues/17}{Issue 17 deployment report} described an anecdotal comparison against Claude Code file memory.
+It omitted the query set, prompts, model version, token budget, baseline construction, and grading protocol. A reproducible harness replaces it here. These results are preliminary.
+
+Contexts were frozen before any answer was produced, and rubrics were fixed from primary sources.
+One pinned reader answered every prompt, Claude Code 2.1.241 running \texttt{claude-sonnet-5} without tools or network memory.
+A separate model grader scored the answers blind, receiving shuffled answer identifiers and no arm key.
+Mode was as-deployed, with six questions and two repeats on each of two corpora drawn from the operator's open-source projects.
+
+\begin{table}[t]
+\centering
+\caption{Preliminary paired comparison of 2026-09-07. Each cell is correct answers out of two repeats.}
+\label{tab:paired}
+\scriptsize
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrr@{}}
+\toprule
+\textbf{Question} & \textbf{File} & \textbf{Lambo} \\
+\midrule
+\multicolumn{3}{l}{\textit{vimanam project}} \\
+merge-workflow & 2/2 & 2/2 \\
+ci-clippy-failure & 2/2 & 2/2 \\
+diff-design & 0/2 & 2/2 \\
+packaging-decision & 2/2 & 0/2 \\
+brand-org & 2/2 & 0/2 \\
+abstention & 2/2 & 2/2 \\
+\textbf{Total} & \textbf{10/12} & \textbf{8/12} \\
+\midrule
+\multicolumn{3}{l}{\textit{lambo project}} \\
+\textbf{Total} & \textbf{8/12} & \textbf{2/12} \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+Table \ref{tab:paired} reports the per-question scores. Each system won exactly the questions only it had ingested.
+Lambo won the in-session design decision that never reached a curated note. File memory won two decisions taken before the store existed.
+Under the grader's stricter alternative readings, the vimanam run is 9/12 against 6/12.
+
+Seven of the twelve questions have an answer-bearing concept in the store.
+Lambo's answers are present at depth 20 for 6 of 7 of those questions. They are present at depth 3 for only 4 of 7.
+The rendered context carried two or three hits, so readers saw the shallower figure.
+Readers were correct on 6 of 8 answers where that context covered the rubric. They were correct on 0 of 6 answers where it did not.
+
+Canonization has never promoted a concept, so recall has no supersession signal.
+The embedder question came back stale twice, presenting a retired encoder as current.
+Two further answers repeated a stale hypothesis beside the correct mechanism.
+No fact was invented across 48 answers, and abstention was the failure mode everywhere else.
+In the vimanam run, Lambo used about a fifth of the evidence tokens per correct answer.
+That run spent 2,467 evidence tokens per correct file answer against 477 for Lambo. The lambo run spent 4,542 against 2,058.
+Server-side recall p50 was 86 to 94 ms over 990 concepts.
+Suites, frozen bundles, answers, grades, and grader provenance are published under \texttt{evaluation/results/2026-09-07}.
 
 \begin{figure}[t]
 \centering
@@ -581,6 +629,13 @@ In the recorded idle-duration bins, recall latency varied as follows:
     \item \textbf{$>$30 minutes idle:} Recall latency p50 reached 780 ms, with p90 reaching 9,059 ms.
 \end{itemize}
 These bins contain 19, 9, and 17 observations respectively and do not establish a causal operating-system mechanism. Periodic lightweight touches are a proposed mitigation that needs an intervention study.
+
+\section{Limitations and Open Problems}
+
+The paired comparison names two open problems in the deployed design.
+First, the rendered context budget carries two or three hits, so it cuts off answers the store already holds. Six of seven answerable questions had an answer-bearing concept within depth 20, and only four were reachable at depth 3. Widening that budget or exporting the structured hits would separate ranking from rendering.
+Second, recall carries no supersession signal. No concept has ever reached Canonical status, and no invalidation edge marked the superseded encoder concepts. The reader therefore presented a retired embedder as current in both repeats of that question.
+These are two runs on one machine. They support no significance claim. The matched-corpus and equal-budget controls have not been run.
 
 \section{Related Work}
 

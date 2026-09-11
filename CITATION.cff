@@ -11,6 +11,13 @@ date-released: "2026-09-08"
 repository-code: "https://github.com/nrynss/lambo-paper"
 url: "https://nrynss.github.io/lambo-paper/"
 license: "CC-BY-4.0"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.22701169"
+    description: "Concept DOI, resolves to the latest Zenodo version"
+  - type: doi
+    value: "10.5281/zenodo.22701170"
+    description: "Zenodo DOI of release v0.1.1-preprint"
 keywords:
   - agent memory
   - multi-agent systems
@@ -27,5 +34,6 @@ preferred-citation:
   year: 2026
   month: 9
   notes: "Work-in-progress preprint, v0.1"
+  doi: "10.5281/zenodo.22701170"
   url: "https://nrynss.github.io/lambo-paper/lambo-paper.pdf"
   repository-code: "https://github.com/nrynss/lambo-paper"

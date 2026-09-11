@@ -1,5 +1,6 @@
 # Lambo: A Living Topological Memory Substrate for Multi-Agent Software Development
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22701169.svg)](https://doi.org/10.5281/zenodo.22701169)
 [![Paper PDF](https://img.shields.io/badge/Paper-PDF-red.svg)](site/public/lambo-paper.pdf)
 [![Web Edition](https://img.shields.io/badge/Web-Edition-blue.svg)](https://nrynss.github.io/lambo-paper/)
 [![Lambo Core](https://img.shields.io/badge/Lambo-Core_Engine-green.svg)](https://github.com/nrynss/lambo)

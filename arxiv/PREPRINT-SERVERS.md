@@ -14,6 +14,8 @@ Everything below is copy-ready. Each service needs the account holder to sign in
 - Version note: work-in-progress preprint v0.1. State this in any "comments" or "notes" field.
 
 ## Zenodo (DOI, minutes)
+Done 2026-09-11: concept DOI 10.5281/zenodo.22701169, version DOI 10.5281/zenodo.22701170 (release v0.1.1-preprint), https://zenodo.org/records/22701170. Each new GitHub release now mints a new version DOI automatically.
+
 1. Sign in at https://zenodo.org with GitHub. Go to https://zenodo.org/account/settings/github/ and flip the switch for `nrynss/lambo-paper`.
 2. Zenodo archives on the next release. Publish a new release (for example `v0.1.1-preprint`) and Zenodo mints a DOI within a minute. The metadata comes from `.zenodo.json`.
 3. Paste the DOI badge into README.md and add the DOI to `CITATION.cff` under `identifiers`.
